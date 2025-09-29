@@ -2,7 +2,7 @@ import { makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, GoogleAIBackend, ResponseModality } from 'firebase/ai';
 import { initializeApp } from "firebase/app";
 import firebaseConfig from '../../firebase-ai.json';
-import { ACTION_FIGURE_MODEL, NANO_BANANA_MODEL, RESTORE_PHOTO_MODEL } from '../constants/firebase.constant';
+import { FIGURINE_MODEL, NANO_BANANA_MODEL, RESTORE_PHOTO_MODEL } from '../constants/firebase.constant';
 
 const { app, geminiModelName = 'gemini-2.5-flash-image-preview' } = firebaseConfig;
 const firebaseApp = initializeApp(app);
@@ -35,7 +35,7 @@ export function provideFirebase() {
           }
         },
         {
-          provide: ACTION_FIGURE_MODEL,
+          provide: FIGURINE_MODEL,
           useFactory: () => {
               return getGenerativeModel(ai, {
                   model: geminiModelName,

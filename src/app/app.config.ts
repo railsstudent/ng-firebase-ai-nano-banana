@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZonelessChangeDetection, provideBrowserGlobal
 import { provideRouter, withComponentInputBinding, withHashLocation, withViewTransitions } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
+import { provideFirebase } from './ai/providers/firebase.provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -9,5 +10,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideHttpClient(),
     provideRouter(routes, withHashLocation(), withComponentInputBinding(), withViewTransitions()),
+    provideFirebase(),
   ]
 };

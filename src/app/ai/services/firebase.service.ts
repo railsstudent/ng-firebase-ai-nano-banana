@@ -30,8 +30,6 @@ export class FirebaseService  {
             throw Error('Prompt is required to generate an image.');
         }
 
-        console.log('prompt', prompt);
-
         // Handle the generated image
         try {
           const parts: Array<string | Part> = [prompt];
@@ -44,7 +42,6 @@ export class FirebaseService  {
           const inlineDataParts = result.response.inlineDataParts();
           if (inlineDataParts?.[0]) {
             const { data, mimeType } = inlineDataParts[0].inlineData;
-            console.log(mimeType, data);
             return `data:${mimeType};base64,${data}`;
           }
           throw new Error('Error in generating the image.');

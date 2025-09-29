@@ -1,0 +1,68 @@
+<div class="w-full">
+  <div
+    (click)="triggerFileInput()"
+    class="relative flex flex-col items-center justify-center w-full p-6 border-2 border-dashed rounded-lg transition-colors duration-200"
+    [class.cursor-pointer]="!isUploadDisabled()"
+    [class.cursor-not-allowed]="isUploadDisabled()"
+    [class.opacity-60]="isUploadDisabled()"
+    [class.border-indigo-500]="isDragging() && !isUploadDisabled()"
+    [class.border-gray-600]="!isDragging() || isUploadDisabled()"
+    [class.hover:border-gray-500]="!isDragging() && !isUploadDisabled()">
+    <input
+      #fileInput
+      type="file"
+      class="hidden"
+      [accept]="strAcceptedFileTypes()"
+      [multiple]="allowMultiple()"
+      (change)="onFileSelected($event)" />
+
+    @if (uploadedFiles().length === 0) {
+      <div class="text-center">
+        <app-upload-cloud-icon />
+        <p class="mt-4 text-lg text-gray-300">
+          <span class="font-semibold text-indigo-400">Click to upload</span> or drag and drop
+        </p>
+        <p class="mt-1 text-sm text-gray-500">
+          PNG, JPG, or JPEG (Max {{ maxFileSizeMB() }}MB)
+        </p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full">
+        @for (uploadedFile of uploadedFiles(); track uploadedFile.file.name) {
+          <div class="relative group aspect-w-1 aspect-h-1 animate-scale-in-up">
+            <img [src]="uploadedFile.url" [alt]="uploadedFile.file.name" class="object-cover w-full h-full rounded-md shadow-lg" />
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center rounded-md">
+              <button
+                (click)="$event.stopPropagation(); removeFile(uploadedFile)"
+                class="opacity-0 group-hover:opacity-100 p-2 bg-red-600 hover:bg-red-700 rounded-full text-white transition-opacity duration-200">
+                <app-trash-icon />
+              </button>
+            </div>
+            <p class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs truncate p-1 rounded-b-md">{{ uploadedFile.file.name }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="mt-2 text-sm text-red-500">{{ error() }}</p>
+  } @else if (uploadedFiles().length > 0 && mode() === 'multiple') {
+    <p class="mt-2 text-sm text-gray-400">
+      @if (isUploadDisabled()) {
+        Maximum number of files reached ({{ maxFiles() }}).
+      } @else {
+        You can add more files. ({{ uploadedFiles().length }} / {{ maxFiles() }})
+      }
+    </p>
+  }
+
+   @if (mode() === 'multiple' && uploadedFiles().length > 0) {
+    <button
+      (click)="clearAllFiles()"
+      class="text-sm text-gray-400 hover:text-white hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-2 py-1"
+    >
+      Clear All
+    </button>
+  }  
+</div>

@@ -1,0 +1,23 @@
+@if (history().length > 0) {
+  <div class="mt-6 generator-container">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-indigo-400">Prompt History</h2>
+      <button (click)="onClearHistory()"
+        [disabled]="history().length === 0"
+        class="text-sm text-gray-400 hover:text-white hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+      >
+        Clear History
+      </button>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      @for (historyPrompt of history(); track historyPrompt) {
+        <button
+          (click)="onPromptClick(historyPrompt)"
+          class="bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm font-medium py-1 px-3 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 max-w-full"
+          [title]="historyPrompt">
+          <span class="truncate block">{{ historyPrompt }}</span>
+        </button>
+      }
+    </div>
+  </div>
+}

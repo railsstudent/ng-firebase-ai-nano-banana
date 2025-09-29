@@ -1,0 +1,47 @@
+<header class="bg-gray-800 shadow-lg sticky top-0 z-50">
+  <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="text-2xl font-bold text-indigo-500">
+      <a routerLink="/home" class="transition-transform duration-300 hover:scale-105 inline-flex items-center gap-2">
+         <app-photo-icon />
+        <span>Photo Editing App</span>
+      </a>
+    </div>
+    <ul class="flex items-center space-x-6">
+      <li>
+        <a
+          routerLink="/home"
+          routerLinkActive="text-indigo-500 border-b-2 border-indigo-500"
+          class="hover:text-indigo-300 transition-colors duration-300 pb-1 inline-flex items-center gap-2"
+        >
+          <app-home-icon />
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="relative">
+        <button
+          (click)="toggleDropdown()"
+          class="hover:text-indigo-300 transition-colors duration-300 pb-1 inline-flex items-center gap-2"
+          [class.text-indigo-500]="isDropdownOpen()"
+        >
+          <span>Editor</span>
+          <app-chevron-down-icon />
+        </button>
+
+        @if (isDropdownOpen()) {
+          <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl animate-fade-in py-2">
+            @for (feature of features; track feature.id) {
+              <a
+                [routerLink]="['/editor', feature.id]"
+                routerLinkActive="bg-indigo-500 text-white"
+                class="px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white flex items-center gap-3 transition-colors duration-200"
+              >
+                <ng-container [ngComponentOutlet]="feature.icon" />
+                <span>{{ feature.name }}</span>
+              </a>
+            }
+          </div>
+        }
+      </li>
+    </ul>
+  </nav>
+</header>

@@ -1,0 +1,49 @@
+<div class="animate-fade-in w-full flex flex-col items-center">
+    <div class="relative group">
+      <img
+        [src]="url()"
+        alt="Generated image"
+        class="rounded-lg shadow-2xl border-4 border-gray-700 max-w-full h-auto"
+        width="512"
+        height="512"
+        [style.filter]="imageFilterStyle()" />
+      <button
+        (click)="downloadImage.emit()"
+        title="Download Image"
+        class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
+        <app-download-icon />
+      </button>
+    </div>
+
+    <div class="mt-6 w-full max-w-lg mx-auto bg-gray-800 p-4 rounded-lg border border-gray-700 animate-fade-in">
+      <h3 class="text-lg font-semibold text-indigo-400 mb-4 text-left">Adjust Image Quality</h3>
+      <div class="space-y-4">
+        <div>
+          <label for="brightness" class="flex justify-between text-sm font-medium text-gray-300">
+            <span>Brightness</span>
+            <span>{{ brightness() }}%</span>
+          </label>
+          <input id="brightness" type="range" min="0" max="200" [(ngModel)]="brightness" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+        </div>
+        <div>
+          <label for="contrast" class="flex justify-between text-sm font-medium text-gray-300">
+            <span>Contrast</span>
+            <span>{{ contrast() }}%</span>
+          </label>
+          <input id="contrast" type="range" min="0" max="200" [(ngModel)]="contrast" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+        </div>
+        <div>
+          <label for="saturation" class="flex justify-between text-sm font-medium text-gray-300">
+            <span>Saturation</span>
+            <span>{{ saturation() }}%</span>
+          </label>
+          <input id="saturation" type="range" min="0" max="200" [(ngModel)]="saturation" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+        </div>
+      </div>
+      <div class="mt-4 text-right">
+        <button (click)="resetImageControls()" class="text-sm text-gray-400 hover:text-white hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-2 py-1">
+          Reset Adjustments
+        </button>
+      </div>
+    </div>
+</div>

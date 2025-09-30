@@ -10,7 +10,7 @@
 
     @if (featureNeedsImage()) {
       <div class="w-full max-w-2xl mx-auto mb-8">
-        <app-dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
+        <app-dropzone #dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
       </div>
     }
 
@@ -30,7 +30,7 @@
           (historyCleared)="onClearHistory()"
       />
     </div>
-    
+
     <app-error-display [error]="error()" />
 
     <div class="mt-8 min-h-[200px] flex flex-col items-center justify-center">

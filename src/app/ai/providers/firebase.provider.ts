@@ -8,43 +8,34 @@ const { app, geminiModelName = 'gemini-2.5-flash-image-preview' } = firebaseConf
 const firebaseApp = initializeApp(app);
 const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
 
+const defaultConfig = {
+  model: geminiModelName,
+  generationConfig: {
+      responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
+  }
+};
+
 export function provideFirebase() {
     return makeEnvironmentProviders([
         {
             provide: NANO_BANANA_MODEL,
-            useFactory: () => {
-                return getGenerativeModel(ai, {
-                    model: geminiModelName,
-                    generationConfig: {
-                        responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
-                    }
-                });
-            }
+            useFactory: () => getGenerativeModel(ai, defaultConfig)
         },
         {
+          // https://www.easemate.ai/ai-resources/how-to-restore-old-photos-with-nano-banana.html
           provide: RESTORE_PHOTO_MODEL,
-          useFactory: () => {
-              // https://www.easemate.ai/ai-resources/how-to-restore-old-photos-with-nano-banana.html
-              return getGenerativeModel(ai, {
-                  model: geminiModelName,
+          useFactory: () =>
+              getGenerativeModel(ai, {
+                  ...defaultConfig,
                   systemInstruction: 'Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken.',
-                  generationConfig: {
-                      responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
-                  }
-              });
-          }
+              })
         },
         {
           provide: FIGURINE_MODEL,
-          useFactory: () => {
-              return getGenerativeModel(ai, {
-                  model: geminiModelName,
-                  systemInstruction: 'First ask me to upload an image and then create a 1/7 scale commercialized figurine of the characters in the picture, in a realistic style, in a real environment. The figurine is placed on a computer desk. The figurine has a round transparent acrylic base, with no text on the base. The content on the computer screen is a 3D modeling process of this figurine. Next to the computer screen is a toy packaging box, designed in a style reminiscent of high-quality collectible figures, printed with original artwork. The packaging features two-dimensional flat illustrations.',
-                  generationConfig: {
-                      responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
-                  }
-              });
-          }
+          useFactory: () => getGenerativeModel(ai, {
+                ...defaultConfig,
+                systemInstruction: 'First ask me to upload an image and then create a 1/7 scale commercialized figurine of the characters in the picture, in a realistic style, in a real environment. The figurine is placed on a computer desk. The figurine has a round transparent acrylic base, with no text on the base. The content on the computer screen is a 3D modeling process of this figurine. Next to the computer screen is a toy packaging box, designed in a style reminiscent of high-quality collectible figures, printed with original artwork. The packaging features two-dimensional flat illustrations.',
+            })
         },
     ]);
 }

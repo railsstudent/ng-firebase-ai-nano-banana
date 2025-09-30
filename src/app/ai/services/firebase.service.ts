@@ -34,7 +34,9 @@ export class FirebaseService  {
         try {
           const parts: Array<string | Part> = [prompt];
           if (imageFiles.length) {
-            const imageParts = await Promise.all(imageFiles.map(file => this.fileToGenerativePart(file)));
+            const imagePartResults = await Promise.allSettled(imageFiles.map(file => this.fileToGenerativePart(file)));
+            const imageParts = imagePartResults.filter((result) => result.status === 'fulfilled')
+              .map((result) => result.value);
             parts.push(...imageParts);
           }
 

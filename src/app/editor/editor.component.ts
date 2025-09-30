@@ -27,7 +27,7 @@ export default class EditorComponent {
   featureId = input.required<string>();
   featureName = input.required<string>();
 
-  private readonly navigationService = inject(FeatureService);
+  private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
 
   prompt = this.editorService.prompt;
@@ -39,10 +39,7 @@ export default class EditorComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  feature = computed(() => {
-    const id = this.featureId();
-    return this.navigationService.getFeatures().find(f => f.id === id);
-  });
+  feature = computed(() => this.featureService.getFeature(this.featureId()));
 
   featureNeedsImage = computed(() => !!this.feature()?.mode);
 
@@ -50,9 +47,9 @@ export default class EditorComponent {
 
   imageFiles = signal<File[]>([]);
 
-  featureDetails = computed(() => {
-    return this.editorService.getFeatureDetails(this.featureId());
-  });
+  featureDetails = computed(() =>
+    this.featureService.getFeatureDetails(this.featureId())
+  );
 
   hasImageFiles = linkedSignal({
     source: () => ({ numOfImages: this.imageFiles().length, featureNeedsImage: this.featureNeedsImage() }),

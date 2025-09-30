@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon.component';
 import { HomeIconComponent } from './icons/home-icon.component';
 import { PhotoIconComponent } from './icons/photo-icon.component';
-import { FeatureService } from './services/feature.service';
+import { FeatureService } from '../feature/services/feature.service';
 
 @Component({
   selector: 'app-navigation',

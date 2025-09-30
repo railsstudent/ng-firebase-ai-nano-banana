@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSign
 import { FormsModule } from '@angular/forms';
 import { ImageViewerComponent } from '../editor/image-viewer/image-viewer.component';
 import { EditorService } from '../editor/services/editor.service';
-import { FeatureService } from '../navigation/services/feature.service';
+import { FeatureService } from '../feature/services/feature.service';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';

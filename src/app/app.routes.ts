@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { featureNameResolver } from './navigation/resolvers/feature-name.resolver';
+import { systemInstructionResolver } from './editor/resolvers/system-instruction.resolver';
+import { featureNameResolver } from './feature/resolvers/feature-name.resolver';
 
 export const routes: Routes = [
   {
@@ -11,11 +12,9 @@ export const routes: Routes = [
     path: 'system-instruction/:featureId',
     loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
     title: featureNameResolver,
-    data: {
-      sysmtePrompt: '',
-    },
     resolve: {
       featureName: featureNameResolver,
+      systemInstruction: systemInstructionResolver,
     },
   },
   {

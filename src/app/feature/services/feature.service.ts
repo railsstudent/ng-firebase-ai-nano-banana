@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { CubeIconComponent } from '../icons/cube-icon.component';
-import { HistoryIconComponent } from '../icons/history-icon.component';
-import { MagicWandIconComponent } from '../icons/magic-wand-icon.component';
-import { ScissorsIconComponent } from '../icons/scissors-icon.component';
-import { SparklesIconComponent } from '../icons/sparkles-icon.component';
+import { CubeIconComponent } from '../../navigation/icons/cube-icon.component';
+import { HistoryIconComponent } from '../../navigation/icons/history-icon.component';
+import { MagicWandIconComponent } from '../../navigation/icons/magic-wand-icon.component';
+import { ScissorsIconComponent } from '../../navigation/icons/scissors-icon.component';
+import { SparklesIconComponent } from '../../navigation/icons/sparkles-icon.component';
 import { FeatureDetails } from '../types/feature-details.type';
 import { Feature } from '../types/feature.type';
 

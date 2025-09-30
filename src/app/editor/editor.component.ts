@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
-import { FeatureService } from '../navigation/services/feature.service';
+import { FeatureService } from '../feature/services/feature.service';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';

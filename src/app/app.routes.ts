@@ -14,7 +14,7 @@ export const routes: Routes = [
     title: featureNameResolver,
     resolve: {
       featureName: featureNameResolver,
-      systemInstruction: systemInstructionResolver,
+      customPrompt: systemInstructionResolver,
     },
   },
   {

@@ -59,20 +59,19 @@ export class EditorService {
     }
   }
 
-  async handleGenerateWithSystemInstruction(systemInstruction: string, imageFiles: File[]): Promise<string> {
-    const trimmedSystemInstruction = systemInstruction.trim();
+  async handleGenerateWithCustomPrompt(prompt: string, imageFiles: File[]): Promise<string> {
+    const currentPrompt = prompt.trim();
 
-    const editImageCondition = !!trimmedSystemInstruction && imageFiles.length > 0;
+    const editImageCondition = !!currentPrompt && imageFiles.length > 0;
     if (!editImageCondition) {
       return ''; // Button should be disabled, but this is a safeguard.
     }
 
     this.isLoading.set(true);
     this.error.set('');
-    console.log(`Generating with system instruction: ${trimmedSystemInstruction}`);
 
     try {
-      return await this.firebaseService.generateImageWithSystemInstruction({ systemInstruction, imageFiles });
+      return await this.firebaseService.generateImage(currentPrompt, imageFiles);
     } catch (e: unknown) {
       if (e instanceof Error) {
         this.error.set(e.message);

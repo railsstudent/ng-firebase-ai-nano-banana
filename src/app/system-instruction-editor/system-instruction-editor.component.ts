@@ -26,7 +26,7 @@ import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
   featureName = input.required<string>();
-  systemInstruction = input.required<string>();
+  customPrompt = input.required<string>();
 
   private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
@@ -55,8 +55,8 @@ export default class SystemInstructionEditorComponent {
   }
 
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.editorService.handleGenerateWithSystemInstruction(
-      this.systemInstruction(),
+    const imageUrl = await this.editorService.handleGenerateWithCustomPrompt(
+      this.customPrompt(),
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);

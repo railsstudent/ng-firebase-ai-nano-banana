@@ -1,14 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { getGenerativeModel, Part } from 'firebase/ai';
-import { NANO_BANANA_MODEL, FIREBASE_AI } from '../constants/firebase.constant';
-import { DEFAULT_CONFIG } from '../providers/firebase.provider';
+import { Part } from 'firebase/ai';
+import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService  {
     private readonly geminiModel = inject(NANO_BANANA_MODEL);
-    private readonly firebaseAI = inject(FIREBASE_AI);
 
     // Prepare an image for the model to edit
     private async fileToGenerativePart(file: File) {
@@ -55,31 +53,25 @@ export class FirebaseService  {
         }
     }
 
-    async generateImageWithSystemInstruction(config: { systemInstruction: string, imageFiles: File[]}) {
-      if (!config.systemInstruction) {
-          throw Error('System instruction is required to generate an image.');
+    async generateImageWithCustomPrompt(customPrompt: string, imageFiles: File[] = []) {
+      if (!customPrompt) {
+          throw Error('Custom prompt is required to generate an image.');
       }
 
       // Handle the generated image
       try {
-        const parts: Array<string | Part> = [];
-        if (config.imageFiles.length) {
-          const imagePartResults = await Promise.allSettled(config.imageFiles.map(file => this.fileToGenerativePart(file)));
-          const imageParts = imagePartResults.filter((result) => result.status === 'fulfilled')
-            .map((result) => result.value);
-          parts.push(...imageParts);
-        }
+        const parts: Array<string | Part> = [customPrompt];
 
-        if (!parts || parts.length === 0) {
+        if (imageFiles.length === 0) {
           throw Error('At least one image file is required to generate an image with system instruction.');
         }
 
-        const geminiModel = getGenerativeModel(this.firebaseAI, {
-          ...DEFAULT_CONFIG,
-          systemInstruction: config.systemInstruction,
-        });
+        const imagePartResults = await Promise.allSettled(imageFiles.map(file => this.fileToGenerativePart(file)));
+        const imageParts = imagePartResults.filter((result) => result.status === 'fulfilled')
+          .map((result) => result.value);
+        parts.push(...imageParts);
 
-        const result = await geminiModel.generateContent(parts);
+        const result = await this.geminiModel.generateContent(parts);
         const inlineDataParts = result.response.inlineDataParts();
         if (inlineDataParts?.[0]) {
           const { data, mimeType } = inlineDataParts[0].inlineData;

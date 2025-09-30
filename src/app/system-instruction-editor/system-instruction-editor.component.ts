@@ -64,6 +64,9 @@ export default class SystemInstructionEditorComponent {
   }
 
   downloadImage(): void {
-      this.editorService.downloadImage(this.generatedImageUrl());
+      this.editorService.downloadImage(
+        this.generatedImageUrl(),
+        this.featureName()
+      );
   }
 }

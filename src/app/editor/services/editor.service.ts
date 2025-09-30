@@ -88,7 +88,7 @@ export class EditorService {
     this.promptHistoryService.clearHistory(featureId);
   }
 
-  downloadImage(imageUrl: string): void {
+  downloadImage(imageUrl: string, custom_filename?: string): void {
       if (!imageUrl) {
         this.error.set('No image to download.');
         return;
@@ -98,12 +98,23 @@ export class EditorService {
       link.href = imageUrl;
 
       // Create a filename from the prompt
-      const promptText = this.prompt() || 'generated-image';
-      const safeFilename = promptText.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+      const safeFilename = this.getFilename(custom_filename);
 
       link.download = `${safeFilename}.png`;
       this.document.body.appendChild(link);
       link.click();
       this.document.body.removeChild(link);
+  }
+
+  private getFilename(custom_filename?: string) {
+    if (custom_filename) {
+      const safeCustomFilename = custom_filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+      return safeCustomFilename;
+    }
+
+    // Fallback to prompt-based filename
+    const promptText = this.prompt() || 'generated-image';
+    const safeFilename = promptText.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+    return safeFilename;
   }
 }

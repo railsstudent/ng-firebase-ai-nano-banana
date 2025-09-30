@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 export const systemInstructionResolver: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
   const featureId = route.paramMap.get('featureId') || '';
 
+  // https://www.easemate.ai/ai-resources/how-to-restore-old-photos-with-nano-banana.html
   if (featureId === 'restoration') {
     return 'Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken.';
   } else if (featureId === 'figurine') {

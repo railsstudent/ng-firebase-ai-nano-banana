@@ -26,6 +26,7 @@ import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
   featureName = input.required<string>();
+  systemInstruction = input.required<string>();
 
   private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
@@ -48,28 +49,18 @@ export default class SystemInstructionEditorComponent {
     this.featureService.getFeatureDetails(this.featureId())
   );
 
-  hasImageFiles = linkedSignal({
-    source: () => ({ numOfImages: this.imageFiles().length, featureNeedsImage: this.featureNeedsImage() }),
-    computation: ({ numOfImages, featureNeedsImage}) => featureNeedsImage ? numOfImages > 0 : true
-  });
-
   onFilesChanged(files: File[]): void {
     console.log('Files selected in editor:', files);
     this.imageFiles.set(files);
   }
 
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.editorService.handleGenerate(
-      this.featureId(),
-      this.featureNeedsImage(),
+    const imageUrl = await this.editorService.handleGenerateWithSystemInstruction(
+      this.systemInstruction(),
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);
     this.dropzone().clearAllFiles();
-  }
-
-  onClearHistory(): void {
-    this.editorService.clearHistory(this.featureId());
   }
 
   downloadImage(): void {

@@ -1,7 +1,7 @@
-import { DOCUMENT, Injectable, Signal, computed, inject, linkedSignal } from '@angular/core';
-import { PromptHistoryService } from '../../ui/services/prompt-history.service';
-import { PromptFormService } from '../../ui/services/prompt-form.service';
+import { DOCUMENT, Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
+import { PromptFormService } from '../../ui/services/prompt-form.service';
+import { PromptHistoryService } from '../../ui/services/prompt-history.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +47,32 @@ export class EditorService {
 
     try {
       return await this.firebaseService.generateImage(currentPrompt, imageFiles);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        this.error.set(e.message);
+      } else {
+        this.error.set('An unexpected error occurred.');
+      }
+      return '';
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async handleGenerateWithSystemInstruction(systemInstruction: string, imageFiles: File[]): Promise<string> {
+    const trimmedSystemInstruction = systemInstruction.trim();
+
+    const editImageCondition = !!trimmedSystemInstruction && imageFiles.length > 0;
+    if (!editImageCondition) {
+      return ''; // Button should be disabled, but this is a safeguard.
+    }
+
+    this.isLoading.set(true);
+    this.error.set('');
+    console.log(`Generating with system instruction: ${trimmedSystemInstruction}`);
+
+    try {
+      return await this.firebaseService.generateImageWithSystemInstruction({ systemInstruction, imageFiles });
     } catch (e: unknown) {
       if (e instanceof Error) {
         this.error.set(e.message);

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
-import { NavigationService } from '../navigation/services/navigation.service';
+import { FeatureService } from '../navigation/services/feature.service';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
@@ -27,7 +27,7 @@ export default class EditorComponent {
   featureId = input.required<string>();
   featureName = input.required<string>();
 
-  private readonly navigationService = inject(NavigationService);
+  private readonly navigationService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
 
   prompt = this.editorService.prompt;

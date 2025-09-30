@@ -10,7 +10,7 @@ import { Feature } from '../types/feature.type';
 @Injectable({
   providedIn: 'root'
 })
-export class NavigationService {
+export class FeatureService {
   getFeatures(): Feature[] {
     return [
       { id: 'create', name: 'Image Creation', icon: MagicWandIconComponent },

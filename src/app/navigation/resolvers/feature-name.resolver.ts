@@ -1,9 +1,9 @@
 import { inject } from '@angular/core';
 import { ResolveFn, ActivatedRouteSnapshot } from '@angular/router';
-import { NavigationService } from '../services/navigation.service';
+import { FeatureService } from '../services/feature.service';
 
 export const featureNameResolver: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {
-  const navigationService = inject(NavigationService);
+  const navigationService = inject(FeatureService);
   const featureId = route.paramMap.get('featureId');
 
   if (!featureId) {

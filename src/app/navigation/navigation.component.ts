@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon.component';
 import { HomeIconComponent } from './icons/home-icon.component';
 import { PhotoIconComponent } from './icons/photo-icon.component';
-import { NavigationService } from './services/navigation.service';
+import { FeatureService } from './services/feature.service';
 
 @Component({
   selector: 'app-navigation',
@@ -24,7 +24,7 @@ import { NavigationService } from './services/navigation.service';
 })
 export class NavigationComponent {
   private readonly elementRef = inject(ElementRef);
-  private readonly navigationService = inject(NavigationService);
+  private readonly navigationService = inject(FeatureService);
 
   isDropdownOpen = signal(false);
   features = this.navigationService.getFeatures();

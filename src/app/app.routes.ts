@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { featureNameResolver } from './navigation/resolvers/feature-name.resolver';
-import { restorationResolver } from './navigation/resolvers/restoration.resolver';
-import { figurineResolver } from './navigation/resolvers/figurine.resolver';
 
 export const routes: Routes = [
   {
@@ -10,25 +8,14 @@ export const routes: Routes = [
     title: 'Home'
   },
   {
-    path: 'editor/restoration',
+    path: 'system-instruction/:featureId',
     loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
-    title: 'Photo Restoration',
+    title: featureNameResolver,
     data: {
-      featureId: 'restoration'
+      sysmtePrompt: '',
     },
     resolve: {
-      featureName: restorationResolver,
-    },
-  },
-  {
-    path: 'editor/figurine',
-    loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
-    title: 'Figurine',
-    data: {
-      featureId: 'figurine'
-    },
-    resolve: {
-      featureName: figurineResolver,
+      featureName: featureNameResolver,
     },
   },
   {

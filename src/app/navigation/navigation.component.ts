@@ -29,7 +29,6 @@ export class NavigationComponent {
   isDropdownOpen = signal(false);
   features = this.navigationService.getFeatures();
 
-
   toggleDropdown(): void {
     this.isDropdownOpen.update(v => !v);
   }

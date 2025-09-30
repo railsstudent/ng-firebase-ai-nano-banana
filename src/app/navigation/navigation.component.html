@@ -31,7 +31,7 @@
           <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl animate-fade-in py-2">
             @for (feature of features; track feature.id) {
               <a
-                [routerLink]="['/editor', feature.id]"
+                [routerLink]="feature.path"
                 routerLinkActive="bg-indigo-500 text-white"
                 class="px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white flex items-center gap-3 transition-colors duration-200"
               >

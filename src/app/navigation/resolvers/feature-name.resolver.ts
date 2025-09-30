@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ResolveFn, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { FeatureService } from '../services/feature.service';
 
 export const featureNameResolver: ResolveFn<string> = (route: ActivatedRouteSnapshot) => {

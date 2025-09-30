@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { CubeIconComponent } from '../icons/cube-icon.component';
 import { HistoryIconComponent } from '../icons/history-icon.component';
 import { MagicWandIconComponent } from '../icons/magic-wand-icon.component';
-import { MessageCircleIconComponent } from '../icons/message-circle-icon.component';
 import { ScissorsIconComponent } from '../icons/scissors-icon.component';
 import { SparklesIconComponent } from '../icons/sparkles-icon.component';
 import { FeatureDetails } from '../types/feature-details.type';
@@ -14,12 +13,12 @@ import { Feature } from '../types/feature.type';
 export class FeatureService {
   getFeatures(): Feature[] {
     return [
-      { id: 'create', name: 'Image Creation', icon: MagicWandIconComponent },
-      { id: 'edit', name: 'Image Editing', icon: SparklesIconComponent, mode: 'single' },
-      { id: 'restoration', name: 'Photo Restoration', icon: HistoryIconComponent, mode: 'single' },
-      { id: 'fuse', name: 'Fuse Photos', icon: ScissorsIconComponent, mode: 'multiple' },
-      { id: 'figurine', name: '3D Figurine', icon: CubeIconComponent, mode: 'single' },
-      { id: 'conversational', name: 'Conversational Image Editing', icon: MessageCircleIconComponent, mode: 'single' },
+      { id: 'create', name: 'Image Creation', icon: MagicWandIconComponent, path: '/editor/create' },
+      { id: 'edit', name: 'Image Editing', icon: SparklesIconComponent, mode: 'single', path: '/editor/edit' },
+      { id: 'restoration', name: 'Photo Restoration', icon: HistoryIconComponent, mode: 'single', path: '/system-instruction/restoration' },
+      { id: 'fuse', name: 'Fuse Photos', icon: ScissorsIconComponent, mode: 'multiple', path: '/editor/fuse' },
+      { id: 'figurine', name: 'Figurine', icon: CubeIconComponent, mode: 'single', path: '/system-instruction/figurine' },
+      // { id: 'conversational', name: 'Conversational Image Editing', icon: MessageCircleIconComponent, mode: 'single' },
     ];
   }
 
@@ -64,7 +63,7 @@ export class FeatureService {
           loadingText: 'Fusing images...',
           description: 'Creatively merge two photos into a single, artistic masterpiece.'
         };
-      case '3d-model':
+      case 'figurine':
         return {
           buttonText: 'Make a toy',
           loadingText: 'Generating 3D model...',

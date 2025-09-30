@@ -17,8 +17,19 @@ export class FeatureService {
       { id: 'edit', name: 'Image Editing', icon: SparklesIconComponent, mode: 'single' },
       { id: 'restoration', name: 'Photo Restoration', icon: HistoryIconComponent, mode: 'single' },
       { id: 'fuse', name: 'Fuse Photos', icon: ScissorsIconComponent, mode: 'multiple' },
-      { id: '3d-model', name: '3D Model', icon: CubeIconComponent, mode: 'single' },
+      { id: 'figurine', name: '3D Figurine', icon: CubeIconComponent, mode: 'single' },
       { id: 'conversational', name: 'Conversational Image Editing', icon: MessageCircleIconComponent, mode: 'single' },
     ];
+  }
+
+  getFeatureName(featureId: string) {
+    const feature = this.getFeatures().find(f => f.id === featureId);
+    if (feature) {
+      return feature.name;
+    }
+
+    // Fallback for featureIds not present in the navigation service.
+    // This mimics the previous title logic from the editor component.
+    return featureId.charAt(0).toUpperCase() + featureId.slice(1).replace(/-/g, ' ');
   }
 }

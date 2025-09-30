@@ -23,7 +23,7 @@ export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
   featureName = input.required<string>();
 
-  private readonly navigationService = inject(FeatureService);
+  private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
 
   prompt = this.editorService.prompt;
@@ -37,7 +37,7 @@ export default class SystemInstructionEditorComponent {
 
   feature = computed(() => {
     const id = this.featureId();
-    return this.navigationService.getFeatures().find(f => f.id === id);
+    return this.featureService.getFeatures().find(f => f.id === id);
   });
 
   featureNeedsImage = computed(() => !!this.feature()?.mode);

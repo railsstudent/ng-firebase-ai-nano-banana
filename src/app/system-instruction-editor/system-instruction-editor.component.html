@@ -1,1 +1,25 @@
-<p>system-instruction-editor works!</p>
+<app-card>
+  @let details = featureDetails();
+  <h2 class="text-4xl font-bold text-indigo-500 mb-4">
+    {{ featureName() }}
+  </h2>
+  <p class="text-lg text-gray-300 max-w-xl mx-auto mb-8">
+    {{ details.description }}
+  </p>
+
+  @if (featureNeedsImage()) {
+    <div class="w-full max-w-2xl mx-auto mb-8">
+      <app-dropzone #dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
+    </div>
+  }
+
+  <app-error-display [error]="error()" />
+
+  <div class="mt-8 min-h-[200px] flex flex-col items-center justify-center">
+    @if (isLoading()) {
+      <app-loader [loadingText]="details.loadingText" />
+    } @else if (generatedImageUrl()) {
+      <app-image-viewer [url]="generatedImageUrl()" (downloadImage)="downloadImage()" />
+    }
+  </div>
+</app-card>

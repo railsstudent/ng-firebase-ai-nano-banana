@@ -8,6 +8,14 @@ export const routes: Routes = [
     title: 'Home'
   },
   {
+    path: 'editor/restoration',
+    loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
+    title: featureNameResolver,
+    resolve: {
+      featureName: featureNameResolver,
+    },
+  },
+  {
     path: 'editor/:featureId',
     loadComponent: () => import('./editor/editor.component'),
     title: featureNameResolver,

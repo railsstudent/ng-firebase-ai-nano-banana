@@ -48,6 +48,7 @@ export class EditorService {
     try {
       return await this.firebaseService.generateImage(currentPrompt, imageFiles);
     } catch (e: unknown) {
+      console.error(e);
       if (e instanceof Error) {
         this.error.set(e.message);
       } else {
@@ -73,6 +74,7 @@ export class EditorService {
     try {
       return await this.firebaseService.generateImage(currentPrompt, imageFiles);
     } catch (e: unknown) {
+      console.error(e);
       if (e instanceof Error) {
         this.error.set(e.message);
       } else {
@@ -107,14 +109,8 @@ export class EditorService {
   }
 
   private getFilename(custom_filename?: string) {
-    if (custom_filename) {
-      const safeCustomFilename = custom_filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
-      return safeCustomFilename;
-    }
-
-    // Fallback to prompt-based filename
-    const promptText = this.prompt() || 'generated-image';
-    const safeFilename = promptText.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+    const filename = custom_filename ? custom_filename : (this.prompt() || 'generated-image');
+    const safeFilename = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
     return safeFilename;
   }
 }

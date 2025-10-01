@@ -3,10 +3,10 @@ import { FeatureService } from '../feature/services/feature.service';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
+import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
 import { LoaderComponent } from '../ui/loader/loader.component';
 import { PromptFormComponent } from '../ui/prompt-form/prompt-form.component';
 import { PromptHistoryComponent } from '../ui/prompt-history/prompt-history.component';
-import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { EditorService } from './services/editor.service';
 
 @Component({

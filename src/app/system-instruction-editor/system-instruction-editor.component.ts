@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ImageViewerComponent } from '../editor/image-viewer/image-viewer.component';
 import { EditorService } from '../editor/services/editor.service';
 import { FeatureService } from '../feature/services/feature.service';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
-import { LoaderComponent } from '../ui/loader/loader.component';
 import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
+import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
+import { LoaderComponent } from '../ui/loader/loader.component';
 
 @Component({
   selector: 'app-system-instruction-editor',
@@ -60,7 +60,7 @@ export default class SystemInstructionEditorComponent {
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);
-    this.dropzone().clearAllFiles();
+    // this.dropzone().clearAllFiles();
   }
 
   downloadImage(): void {

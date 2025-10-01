@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, computed, input, output } from '@angular/core';
-import { DownloadIconComponent } from '../icons/download-icon.component';
+import { DownloadIconComponent } from '../../editor/icons/download-icon.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({

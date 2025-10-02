@@ -68,7 +68,7 @@ export default class EditorComponent {
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);
-    this.dropzone().clearAllFiles();
+    // this.dropzone().clearAllFiles();
   }
 
   onClearHistory(): void {

@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import firebaseConfig from '../../firebase-ai.json';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 
-const { app, geminiModelName = 'gemini-2.5-flash-image-preview' } = firebaseConfig;
+const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
 const firebaseApp = initializeApp(app);
 const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
 

@@ -8,6 +8,7 @@ import { ErrorDisplayComponent } from '../ui/error-display/error-display.compone
 import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
 import { LoaderComponent } from '../ui/loader/loader.component';
+import { FeatureDetails } from '../feature/types/feature-details.type';
 
 @Component({
   selector: 'app-system-instruction-editor',
@@ -25,10 +26,9 @@ import { LoaderComponent } from '../ui/loader/loader.component';
 })
 export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
-  featureName = input.required<string>();
   customPrompt = input.required<string>();
+  feature = input.required<FeatureDetails>();
 
-  private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
 
   error = this.editorService.error;
@@ -37,17 +37,11 @@ export default class SystemInstructionEditorComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  feature = computed(() => this.featureService.getFeature(this.featureId()));
-
   featureNeedsImage = computed(() => !!this.feature()?.mode);
 
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
   imageFiles = signal<File[]>([]);
-
-  featureDetails = computed(() =>
-    this.featureService.getFeatureDetails(this.featureId())
-  );
 
   onFilesChanged(files: File[]): void {
     console.log('Files selected in editor:', files);
@@ -64,9 +58,9 @@ export default class SystemInstructionEditorComponent {
   }
 
   downloadImage(): void {
-      this.editorService.downloadImage(
-        this.generatedImageUrl(),
-        this.featureName()
-      );
+    this.editorService.downloadImage(
+      this.generatedImageUrl(),
+      this.feature().name
+    );
   }
 }

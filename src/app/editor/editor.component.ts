@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
-import { FeatureService } from '../feature/services/feature.service';
+import { FeatureDetails } from '../feature/types/feature-details.type';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
@@ -25,9 +25,8 @@ import { EditorService } from './services/editor.service';
 })
 export default class EditorComponent {
   featureId = input.required<string>();
-  featureName = input.required<string>();
+  feature = input.required<FeatureDetails>();
 
-  private readonly featureService = inject(FeatureService);
   private readonly editorService = inject(EditorService);
 
   prompt = this.editorService.prompt;
@@ -39,17 +38,11 @@ export default class EditorComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  feature = computed(() => this.featureService.getFeature(this.featureId()));
-
-  featureNeedsImage = computed(() => !!this.feature()?.mode);
+  featureNeedsImage = computed(() => this.feature()?.mode !== undefined);
 
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
   imageFiles = signal<File[]>([]);
-
-  featureDetails = computed(() =>
-    this.featureService.getFeatureDetails(this.featureId())
-  );
 
   hasImageFiles = linkedSignal({
     source: () => ({ numOfImages: this.imageFiles().length, featureNeedsImage: this.featureNeedsImage() }),
@@ -76,6 +69,6 @@ export default class EditorComponent {
   }
 
   downloadImage(): void {
-      this.editorService.downloadImage(this.generatedImageUrl());
+    this.editorService.downloadImage(this.generatedImageUrl());
   }
 }

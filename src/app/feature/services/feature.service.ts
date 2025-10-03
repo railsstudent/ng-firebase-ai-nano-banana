@@ -50,7 +50,7 @@ export class FeatureService {
       buttonText: 'Create',
       loadingText: 'Generating...',
       description: 'Select a feature to get started on your masterpiece.',
-      name: 'Editor',
+      name: 'Image Creation',
       path: '/editor/create',
     }
   }

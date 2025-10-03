@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { customPromptResolver } from './resolvers/custom-prompt.resolver';
-import { featureNameResolver } from './resolvers/feature-name.resolver';
+import { featureNameResolver, featureResolver } from './resolvers/feature-name.resolver';
 
 export const routes: Routes = [
   {
@@ -13,7 +13,7 @@ export const routes: Routes = [
     loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
     title: featureNameResolver,
     resolve: {
-      featureName: featureNameResolver,
+      feature: featureResolver,
       customPrompt: customPromptResolver,
     },
   },
@@ -22,7 +22,7 @@ export const routes: Routes = [
     loadComponent: () => import('./editor/editor.component'),
     title: featureNameResolver,
     resolve: {
-      featureName: featureNameResolver,
+      feature: featureResolver,
     },
   },
   {

@@ -1,7 +1,7 @@
   <app-card>
-    @let details = featureDetails();
+    @let details = feature();
     <h2 class="text-4xl font-bold text-indigo-500 mb-4">
-      {{ featureName() }}
+      {{ details.name }}
     </h2>
     <p class="text-lg text-gray-300 max-w-xl mx-auto mb-8">
       {{ details.description }}

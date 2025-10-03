@@ -54,10 +54,12 @@ export class FeatureService {
           description: 'Use generative AI to edit your images with simple text prompts.'
         };
       case 'restoration':
+        // https://www.easemate.ai/ai-resources/how-to-restore-old-photos-with-nano-banana.html
         return {
           buttonText: 'Restore',
           loadingText: 'Restoring photo...',
-          description: 'Bring old and damaged photos back to life by removing scratches and restoring color.'
+          description: 'Bring old and damaged photos back to life by removing scratches and restoring color.',
+          customPrompt: 'Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken.',
         };
       case 'fuse':
         return {
@@ -67,9 +69,10 @@ export class FeatureService {
         };
       case 'figurine':
         return {
-          buttonText: 'Make a toy',
+          buttonText: 'Make a 3D model',
           loadingText: 'Generating 3D model...',
-          description: 'Transform your 2D images into 3D models ready for any project.'
+          description: 'Transform your 2D images into 3D models ready for any project.',
+          customPrompt: 'First ask me to upload an image and then create a 1/7 scale commercialized figurine of the characters in the picture, in a realistic style, in a real environment. The figurine is placed on a computer desk. The figurine has a round transparent acrylic base, with no text on the base. The content on the computer screen is a 3D modeling process of this figurine. Next to the computer screen is a toy packaging box, designed in a style reminiscent of high-quality collectible figures, printed with original artwork. The packaging features two-dimensional flat illustrations.',
         };
       case 'conversational':
         return {
@@ -81,7 +84,8 @@ export class FeatureService {
         return {
           buttonText: 'Make a 3D map',
           loadingText: 'Generating 3D map...',
-          description: 'Transform your 2D maps into 3D models ready for any project.'
+          description: 'Transform your 2D maps into 3D models ready for any project.',
+          customPrompt: '用這個地圖的位置，在地標上面蓋「3D等距透視」的建築物，建築物要彼此要連起來，風格是動畫黏土風',
         };
       default:
         return {

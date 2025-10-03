@@ -49,7 +49,9 @@ export class FeatureService {
     return {
       buttonText: 'Create',
       loadingText: 'Generating...',
-      description: 'Select a feature to get started on your masterpiece.'
+      description: 'Select a feature to get started on your masterpiece.',
+      name: 'Editor',
+      path: '/editor/create',
     }
   }
 }

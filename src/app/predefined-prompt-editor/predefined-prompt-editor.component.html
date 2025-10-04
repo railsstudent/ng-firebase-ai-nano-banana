@@ -33,7 +33,11 @@
     @if (isLoading()) {
       <app-loader [loadingText]="details.loadingText" />
     } @else if (generatedImageUrl()) {
-      <app-image-viewer [url]="generatedImageUrl()" (downloadImage)="downloadImage()" />
+      <app-image-viewer
+        [url]="generatedImageUrl()"
+        (downloadImage)="downloadImage()"
+        (clearImage)="generatedImageUrl.set('')"
+      />
     }
   </div>
 </app-card>

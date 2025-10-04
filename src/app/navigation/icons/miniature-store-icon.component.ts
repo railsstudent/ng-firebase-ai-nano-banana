@@ -1,15 +1,16 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-map-icon',
+  selector: 'app-magic-wand-icon',
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="4 6 10 3 14 6 20 3 20 18 14 21 10 18 4 21 4 6" />
-      <line x1="10" y1="3" x2="10" y2="18" />
-      <line x1="14" y1="6" x2="14" y2="21" />
-      <polyline points="4 6 10 9 14 6 20 9" />
+      <rect x="3" y="8" width="18" height="13" rx="2" ry="2" />
+      <path d="M3 8l9-5 9 5" />
+      <line x1="12" y1="3" x2="12" y2="21" />
+      <rect x="7" y="13" width="3" height="8" />
+      <rect x="14" y="13" width="3" height="8" />
     </svg>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapIconComponent {}
+export class MiniatureStoreIconComponent {}

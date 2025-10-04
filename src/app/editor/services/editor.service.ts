@@ -64,7 +64,7 @@ export class EditorService {
     this.promptHistoryService.clearHistory(featureId);
   }
 
-  downloadImage(imageUrl: string, custom_filename?: string): void {
+  downloadImage(imageUrl: string): void {
       if (!imageUrl) {
         this.error.set('No image to download.');
         return;

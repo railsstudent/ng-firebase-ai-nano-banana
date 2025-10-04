@@ -60,32 +60,6 @@ export class EditorService {
     }
   }
 
-  async handleGenerateWithCustomPrompt(prompt: string, imageFiles: File[]): Promise<string> {
-    const currentPrompt = prompt.trim();
-
-    const editImageCondition = !!currentPrompt && imageFiles.length > 0;
-    if (!editImageCondition) {
-      return ''; // Button should be disabled, but this is a safeguard.
-    }
-
-    this.isLoading.set(true);
-    this.error.set('');
-
-    try {
-      return await this.firebaseService.generateImage(currentPrompt, imageFiles);
-    } catch (e: unknown) {
-      console.error(e);
-      if (e instanceof Error) {
-        this.error.set(e.message);
-      } else {
-        this.error.set('An unexpected error occurred.');
-      }
-      return '';
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
   clearHistory(featureId: string): void {
     this.promptHistoryService.clearHistory(featureId);
   }
@@ -100,17 +74,12 @@ export class EditorService {
       link.href = imageUrl;
 
       // Create a filename from the prompt
-      const safeFilename = this.getFilename(custom_filename);
+      const filename = this.prompt() || 'generated-image';
+      const safeFilename = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
 
       link.download = `${safeFilename}.png`;
       this.document.body.appendChild(link);
       link.click();
       this.document.body.removeChild(link);
-  }
-
-  private getFilename(custom_filename?: string) {
-    const filename = custom_filename ? custom_filename : (this.prompt() || 'generated-image');
-    const safeFilename = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
-    return safeFilename;
   }
 }

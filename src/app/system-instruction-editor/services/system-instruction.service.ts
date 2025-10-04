@@ -1,0 +1,57 @@
+import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
+import { FirebaseService } from '../../ai/services/firebase.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SystemInstructionService {
+  private readonly firebaseService = inject(FirebaseService);
+  private readonly document = inject(DOCUMENT);
+
+  readonly error = signal('');
+  readonly isLoading = signal(false)
+
+  async handleGenerateWithCustomPrompt(prompt: string, imageFiles: File[]): Promise<string> {
+    const currentPrompt = prompt.trim();
+
+    const editImageCondition = !!currentPrompt && imageFiles.length > 0;
+    if (!editImageCondition) {
+      return ''; // Button should be disabled, but this is a safeguard.
+    }
+
+    this.isLoading.set(true);
+    this.error.set('');
+
+    try {
+      return await this.firebaseService.generateImage(currentPrompt, imageFiles);
+    } catch (e: unknown) {
+      console.error(e);
+      if (e instanceof Error) {
+        this.error.set(e.message);
+      } else {
+        this.error.set('An unexpected error occurred.');
+      }
+      return '';
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  downloadImage(imageUrl: string, custom_filename: string): void {
+      if (!imageUrl) {
+        this.error.set('No image to download.');
+        return;
+      }
+
+      const link = this.document.createElement('a');
+      link.href = imageUrl;
+
+      // Create a filename from the prompt
+      const safeFilename = custom_filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
+
+      link.download = `${safeFilename}.png`;
+      this.document.body.appendChild(link);
+      link.click();
+      this.document.body.removeChild(link);
+  }
+}

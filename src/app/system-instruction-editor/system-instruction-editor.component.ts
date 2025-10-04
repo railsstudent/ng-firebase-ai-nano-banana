@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { EditorService } from '../editor/services/editor.service';
-import { FeatureService } from '../feature/services/feature.service';
+import { FeatureDetails } from '../feature/types/feature-details.type';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
 import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
 import { LoaderComponent } from '../ui/loader/loader.component';
-import { FeatureDetails } from '../feature/types/feature-details.type';
+import { SystemInstructionService } from './services/system-instruction.service';
 
 @Component({
   selector: 'app-system-instruction-editor',
@@ -29,10 +28,10 @@ export default class SystemInstructionEditorComponent {
   customPrompt = input.required<string>();
   feature = input.required<FeatureDetails>();
 
-  private readonly editorService = inject(EditorService);
+  private readonly systemInstructionService = inject(SystemInstructionService);
 
-  error = this.editorService.error;
-  isLoading = this.editorService.isLoading;
+  error = this.systemInstructionService.error;
+  isLoading = this.systemInstructionService.isLoading;
   generatedImageUrl = signal('');
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
@@ -49,16 +48,15 @@ export default class SystemInstructionEditorComponent {
   }
 
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.editorService.handleGenerateWithCustomPrompt(
+    const imageUrl = await this.systemInstructionService.handleGenerateWithCustomPrompt(
       this.customPrompt(),
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);
-    // this.dropzone().clearAllFiles();
   }
 
   downloadImage(): void {
-    this.editorService.downloadImage(
+    this.systemInstructionService.downloadImage(
       this.generatedImageUrl(),
       this.feature().name
     );

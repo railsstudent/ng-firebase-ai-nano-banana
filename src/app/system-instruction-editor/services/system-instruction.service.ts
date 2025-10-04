@@ -23,6 +23,9 @@ export class SystemInstructionService {
     this.error.set('');
 
     try {
+      if (imageFiles.length === 0) {
+        throw Error('At least one image file is required to generate an image with system instruction.');
+      }
       return await this.firebaseService.generateImage(currentPrompt, imageFiles);
     } catch (e: unknown) {
       console.error(e);

@@ -11,7 +11,8 @@ const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
 const DEFAULT_CONFIG = {
   model: geminiModelName,
   generationConfig: {
-      responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
+      responseModalities: [ResponseModality.IMAGE],
+      candidateCount: 1,
   }
 };
 

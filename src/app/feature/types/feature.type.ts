@@ -1,9 +1,7 @@
 import { Type } from '@angular/core';
+import { FeatureDetails } from './feature-details.type';
 
-export type Feature = {
+export type Feature = Pick<FeatureDetails, 'name' | 'path' | 'mode'> & {
   id: string;
-  name: string;
-  path: string;
   icon: Type<any>;
-  mode?: 'single' | 'multiple';
 };

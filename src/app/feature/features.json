@@ -15,15 +15,6 @@
       "loadingText": "Applying edits...",
       "description": "Use generative AI to edit your images with simple text prompts."
     },
-    "restoration": {
-      "name": "Photo Restoration",
-      "path": "/editor/fuse",
-      "mode": "single",
-      "buttonText": "Restore",
-      "loadingText": "Restoring photo...",
-      "description": "Bring old and damaged photos back to life by removing scratches and restoring color.",
-      "customPrompt": "Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken."
-    },
     "fuse": {
       "name": "Fuse Photos",
       "path": "/editor/fuse",
@@ -31,6 +22,15 @@
       "buttonText": "Fuse",
       "loadingText": "Fusing images...",
       "description": "Creatively merge multiples photos into a single, artistic masterpiece."
+    },
+    "restoration": {
+      "name": "Photo Restoration",
+      "path": "/system-instruction/restoration",
+      "mode": "single",
+      "buttonText": "Restore",
+      "loadingText": "Restoring photo...",
+      "description": "Bring old and damaged photos back to life by removing scratches and restoring color.",
+      "customPrompt": "Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken."
     },
     "figurine": {
       "name": "Figurine",

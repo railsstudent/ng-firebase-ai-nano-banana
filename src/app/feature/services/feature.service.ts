@@ -14,15 +14,28 @@ import { Feature } from '../types/feature.type';
 })
 export class FeatureService {
   getFeatures(): Feature[] {
-    return [
-      { id: 'create', name: 'Image Creation', icon: MagicWandIconComponent, path: '/editor/create' },
-      { id: 'edit', name: 'Image Editing', icon: SparklesIconComponent, mode: 'single', path: '/editor/edit' },
-      { id: 'restoration', name: 'Photo Restoration', icon: HistoryIconComponent, mode: 'single', path: '/system-instruction/restoration' },
-      { id: 'fuse', name: 'Fuse Photos', icon: ScissorsIconComponent, mode: 'multiple', path: '/editor/fuse' },
-      { id: 'figurine', name: 'Figurine', icon: CubeIconComponent, mode: 'single', path: '/system-instruction/figurine' },
-      { id: '3d-map', name: '3D Map', icon: MapIconComponent, mode: 'single', path: '/system-instruction/3d-map' },
-      // { id: 'conversational', name: 'Conversational Image Editing', icon: MessageCircleIconComponent, mode: 'single' },
-    ];
+    const features = featureConfigs.features as Record<string, FeatureDetails>;
+    const keys = Object.keys(features);
+
+    const iconMap: Record<string, any> = {
+      create: MagicWandIconComponent,
+      edit: SparklesIconComponent,
+      restoration: HistoryIconComponent,
+      fuse: ScissorsIconComponent,
+      figurine: CubeIconComponent,
+      '3d-map': MapIconComponent,
+    };
+
+    return keys.reduce((acc, key) => {
+      if (features[key]) {
+        const feature = features[key];
+        const { name, path } = feature;
+        const icon = iconMap[key] || MagicWandIconComponent; // Default icon if not found in the map
+        return acc.concat({ id: key, icon, name, path });
+      }
+
+      return acc;
+    }, [] as Feature[]);
   }
 
   getFeature(featureId: string) {

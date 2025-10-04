@@ -7,15 +7,11 @@
     {{ details.description }}
   </p>
 
-  @if (featureNeedsImage()) {
-    <div class="w-full max-w-2xl mx-auto mb-8">
-      <app-dropzone #dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
-    </div>
-  }
+  <div class="w-full max-w-2xl mx-auto mb-8">
+    <app-dropzone #dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
+  </div>
 
-  <form class="flex justify-center sm:flex-row gap-4"
-    id="form"
-    name="form"
+  <form class="flex justify-center sm:flex-row gap-4" id="form" name="form"
     (ngSubmit)="handleGenerate()"
   >
     <button

@@ -4,14 +4,14 @@ import { FirebaseService } from '../../ai/services/firebase.service';
 @Injectable({
   providedIn: 'root'
 })
-export class SystemInstructionService {
+export class PredefinedPromptService {
   private readonly firebaseService = inject(FirebaseService);
   private readonly document = inject(DOCUMENT);
 
   readonly error = signal('');
   readonly isLoading = signal(false)
 
-  async handleGenerateWithCustomPrompt(prompt: string, imageFiles: File[]): Promise<string> {
+  async handleGenerate(prompt: string, imageFiles: File[]): Promise<string> {
     const currentPrompt = prompt.trim();
 
     const editImageCondition = !!currentPrompt && imageFiles.length > 0;

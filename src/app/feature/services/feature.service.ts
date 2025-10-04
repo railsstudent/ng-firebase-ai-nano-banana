@@ -59,12 +59,6 @@ export class FeatureService {
       return features[featureId];
     }
 
-    return {
-      buttonText: 'Create',
-      loadingText: 'Generating...',
-      description: 'Select a feature to get started on your masterpiece.',
-      name: 'Image Creation',
-      path: '/editor/create',
-    }
+    return featureConfigs.features.create;
   }
 }

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { customPromptResolver } from './resolvers/custom-prompt.resolver';
 import { featureNameResolver, featureResolver } from './resolvers/feature-name.resolver';
 
 export const routes: Routes = [
@@ -10,11 +9,10 @@ export const routes: Routes = [
   },
   {
     path: 'system-instruction/:featureId',
-    loadComponent: () => import('./system-instruction-editor/system-instruction-editor.component'),
+    loadComponent: () => import('./predefined-prompt-editor/predefined-prompt-editor.component'),
     title: featureNameResolver,
     resolve: {
       feature: featureResolver,
-      customPrompt: customPromptResolver,
     },
   },
   {

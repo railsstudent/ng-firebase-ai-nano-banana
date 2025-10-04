@@ -7,7 +7,7 @@ import { ErrorDisplayComponent } from '../ui/error-display/error-display.compone
 import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
 import { LoaderComponent } from '../ui/loader/loader.component';
-import { SystemInstructionService } from './services/system-instruction.service';
+import { PredefinedPromptService } from './services/predefined-prompt.service';
 
 @Component({
   selector: 'app-system-instruction-editor',
@@ -20,27 +20,24 @@ import { SystemInstructionService } from './services/system-instruction.service'
     FormsModule,
     SpinnerIconComponent,
   ],
-  templateUrl: './system-instruction-editor.component.html',
+  templateUrl: './predefined-prompt-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
-  customPrompt = input.required<string>();
   feature = input.required<FeatureDetails>();
+  dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  private readonly systemInstructionService = inject(SystemInstructionService);
+  private readonly systemInstructionService = inject(PredefinedPromptService);
 
   error = this.systemInstructionService.error;
   isLoading = this.systemInstructionService.isLoading;
+
   generatedImageUrl = signal('');
-
-  dropzone = viewChild.required<DropzoneComponent>('dropzone');
-
-  featureNeedsImage = computed(() => !!this.feature()?.mode);
-
-  dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
-
   imageFiles = signal<File[]>([]);
+
+  customPrompt = computed(() => this.feature().customPrompt || '');
+  dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
   onFilesChanged(files: File[]): void {
     console.log('Files selected in editor:', files);
@@ -48,7 +45,7 @@ export default class SystemInstructionEditorComponent {
   }
 
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.systemInstructionService.handleGenerateWithCustomPrompt(
+    const imageUrl = await this.systemInstructionService.handleGenerate(
       this.customPrompt(),
       this.imageFiles()
     );

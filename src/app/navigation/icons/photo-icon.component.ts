@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-photo-icon',
@@ -9,6 +9,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <polyline points="22 21 16 15 11 20 6 15 2 19" />
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhotoIconComponent {}

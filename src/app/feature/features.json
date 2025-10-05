@@ -25,7 +25,7 @@
     },
     "restoration": {
       "name": "Photo Restoration",
-      "path": "/system-instruction/restoration",
+      "path": "/predefined-prompt/restoration",
       "mode": "single",
       "buttonText": "Restore",
       "loadingText": "Restoring photo...",
@@ -34,7 +34,7 @@
     },
     "figurine": {
       "name": "Figurine",
-      "path": "/system-instruction/figurine",
+      "path": "/predefined-prompt/figurine",
       "mode": "single",
       "buttonText": "Make a 3D model",
       "loadingText": "Generating 3D model...",
@@ -43,7 +43,7 @@
     },
     "3d-map": {
       "name": "3D Map",
-      "path": "/system-instruction/3d-map",
+      "path": "/predefined-prompt/3d-map",
       "mode": "single",
       "buttonText": "Make a 3D map",
       "loadingText": "Generating 3D map...",

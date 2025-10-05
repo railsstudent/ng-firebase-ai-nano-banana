@@ -8,7 +8,7 @@ export const routes: Routes = [
     title: 'Home'
   },
   {
-    path: 'system-instruction/:featureId',
+    path: 'predefined-prompt/:featureId',
     loadComponent: () => import('./predefined-prompt-editor/predefined-prompt-editor.component'),
     title: featureNameResolver,
     resolve: {

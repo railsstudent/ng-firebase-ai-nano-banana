@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-magic-wand-icon',
@@ -7,6 +7,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <path d="M14 12L5 3m0 9l9-9M3 21l6-6m-3 0l6-6"/>
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MagicWandIconComponent {}

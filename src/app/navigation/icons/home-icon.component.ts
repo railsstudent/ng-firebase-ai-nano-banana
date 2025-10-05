@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-home-icon',
@@ -8,6 +8,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <polyline points="9 22 9 12 15 12 15 22"></polyline>
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeIconComponent {}

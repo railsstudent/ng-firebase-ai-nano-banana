@@ -9,6 +9,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <line x1="12" y1="22.08" x2="12" y2="12"></line>
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CubeIconComponent {}

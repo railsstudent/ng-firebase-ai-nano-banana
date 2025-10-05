@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-map-icon',
@@ -10,6 +10,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <polyline points="4 6 10 9 14 6 20 9" />
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapIconComponent {}

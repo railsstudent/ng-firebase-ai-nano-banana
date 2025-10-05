@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-scissors-icon',
@@ -10,6 +10,5 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       <line x1="9" y1="9" x2="19" y2="19"></line>
     </svg>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScissorsIconComponent {}

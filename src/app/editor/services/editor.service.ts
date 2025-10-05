@@ -1,5 +1,6 @@
-import { DOCUMENT, Injectable, Signal, inject, linkedSignal } from '@angular/core';
+import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
+import { ImageViewerService } from '../../ui/image-viewer/services/image-viewer.service';
 import { PromptFormService } from '../../ui/services/prompt-form.service';
 import { PromptHistoryService } from '../../ui/services/prompt-history.service';
 
@@ -10,7 +11,7 @@ export class EditorService {
   private readonly promptFormService = inject(PromptFormService);
   private readonly promptHistoryService = inject(PromptHistoryService);
   private readonly firebaseService = inject(FirebaseService);
-  private readonly document = inject(DOCUMENT);
+  private readonly imageViewerService = inject(ImageViewerService);
 
   readonly prompt = this.promptFormService.prompt;
   readonly error = this.promptFormService.error;
@@ -70,16 +71,7 @@ export class EditorService {
         return;
       }
 
-      const link = this.document.createElement('a');
-      link.href = imageUrl;
-
-      // Create a filename from the prompt
       const filename = this.prompt() || 'generated-image';
-      const safeFilename = filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
-
-      link.download = `${safeFilename}.png`;
-      this.document.body.appendChild(link);
-      link.click();
-      this.document.body.removeChild(link);
+      this.imageViewerService.downloadImage(filename, imageUrl);
   }
 }

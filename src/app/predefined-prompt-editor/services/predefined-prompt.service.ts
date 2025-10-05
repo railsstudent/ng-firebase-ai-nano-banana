@@ -1,12 +1,13 @@
-import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
+import { ImageViewerService } from '../../ui/image-viewer/services/image-viewer.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredefinedPromptService {
   private readonly firebaseService = inject(FirebaseService);
-  private readonly document = inject(DOCUMENT);
+  private readonly imageViewerService = inject(ImageViewerService);
 
   readonly error = signal('');
   readonly isLoading = signal(false)
@@ -46,15 +47,6 @@ export class PredefinedPromptService {
         return;
       }
 
-      const link = this.document.createElement('a');
-      link.href = imageUrl;
-
-      // Create a filename from the prompt
-      const safeFilename = custom_filename.replace(/[^a-z0-9]/gi, '_').toLowerCase().substring(0, 50);
-
-      link.download = `${safeFilename}.png`;
-      this.document.body.appendChild(link);
-      link.click();
-      this.document.body.removeChild(link);
+      this.imageViewerService.downloadImage(custom_filename, imageUrl);
   }
 }

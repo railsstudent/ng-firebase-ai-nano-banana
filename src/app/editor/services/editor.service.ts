@@ -42,7 +42,7 @@ export class EditorService {
     console.log(`Generating for ${featureId} with prompt: ${currentPrompt}`);
 
     // Only add non-empty prompts to history
-    if (currentPrompt.trim()) {
+    if (currentPrompt) {
       this.promptHistoryService.addPrompt(featureId, currentPrompt);
     }
 

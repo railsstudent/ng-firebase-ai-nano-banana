@@ -31,9 +31,9 @@ export class EditorService {
   ): Promise<string> {
     const currentPrompt = this.prompt().trim();
 
-    const createImageCondition = !!currentPrompt && !featureNeedsImage;
-    const editImageCondition = !!currentPrompt && featureNeedsImage && imageFiles.length > 0;
-    if (!createImageCondition && !editImageCondition) {
+    const canGenerateImage = !!currentPrompt && (featureNeedsImage ? imageFiles.length > 0 : true);
+
+    if (!canGenerateImage) {
       return ''; // Button should be disabled, but this is a safeguard.
     }
 

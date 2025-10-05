@@ -6,7 +6,6 @@ import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
 import { SpinnerIconComponent } from '../ui/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
-import { LoaderComponent } from '../ui/loader/loader.component';
 import { PredefinedPromptService } from './services/predefined-prompt.service';
 
 @Component({
@@ -15,7 +14,6 @@ import { PredefinedPromptService } from './services/predefined-prompt.service';
     CardComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    LoaderComponent,
     ImageViewerComponent,
     FormsModule,
     SpinnerIconComponent,

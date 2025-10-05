@@ -1,4 +1,7 @@
-<div class="animate-fade-in w-full flex flex-col items-center">
+@if (isLoading()) {
+  <app-loader [loadingText]="loadingText()" />
+} @else if (url()) {
+  <div class="animate-fade-in w-full flex flex-col items-center">
     <div class="relative group">
       <img
         [src]="url()"
@@ -24,4 +27,5 @@
     <app-image-style class="mt-6 w-full max-w-lg mx-auto bg-gray-800 p-4 rounded-lg border border-gray-700 animate-fade-in"
       (styleChanged)="imageFilterStyle.set($event)"
     />
-</div>
+  </div>
+}

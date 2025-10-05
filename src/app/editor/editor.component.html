@@ -32,15 +32,11 @@
 
     <app-error-display [error]="error()" />
 
-    <div class="mt-8 min-h-[200px] flex flex-col items-center justify-center">
-      @if (isLoading()) {
-        <app-loader [loadingText]="details.loadingText" />
-      } @else if (generatedImageUrl()) {
-        <app-image-viewer
-          [url]="generatedImageUrl()"
-          (downloadImage)="downloadImage()"
-          (clearImage)="generatedImageUrl.set('')"
-        />
-      }
-    </div>
+    <app-image-viewer
+      [isLoading]="isLoading()"
+      [url]="generatedImageUrl()"
+      [loadingText]="details.loadingText"
+      (downloadImage)="downloadImage()"
+      (clearImage)="generatedImageUrl.set('')"
+    />
   </app-card>

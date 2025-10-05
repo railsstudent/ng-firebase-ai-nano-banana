@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FeatureDetails } from '../feature/types/feature-details.type';
+import { CardHeaderComponent } from '../ui/card/card-header/card-header.component';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
@@ -12,6 +13,7 @@ import { PredefinedPromptService } from './services/predefined-prompt.service';
   selector: 'app-system-instruction-editor',
   imports: [
     CardComponent,
+    CardHeaderComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
     ImageViewerComponent,
@@ -24,7 +26,6 @@ import { PredefinedPromptService } from './services/predefined-prompt.service';
 export default class SystemInstructionEditorComponent {
   featureId = input.required<string>();
   feature = input.required<FeatureDetails>();
-  dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
   private readonly systemInstructionService = inject(PredefinedPromptService);
 

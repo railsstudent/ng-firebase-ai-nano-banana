@@ -30,7 +30,7 @@ export class DropzoneComponent {
 
   maxFileSizeMB = computed(() => this.maxFileSize() / KILOBYTE / KILOBYTE);
 
-  isUploadDisabled = computed(() => 
+  isUploadDisabled = computed(() =>
     this.mode() === 'multiple' && this.uploadedFiles().length >= this.maxFiles()
   );
 

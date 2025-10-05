@@ -1,14 +1,9 @@
 <app-card>
   @let details = feature();
-  <h2 class="text-4xl font-bold text-indigo-500 mb-4">
-    {{ details.name }}
-  </h2>
-  <p class="text-lg text-gray-300 max-w-xl mx-auto mb-8">
-    {{ details.description }}
-  </p>
+  <app-card-header [name]="details.name" [description]="details.description"  />
 
   <div class="w-full max-w-2xl mx-auto mb-8">
-    <app-dropzone #dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
+    <app-dropzone [mode]="dropzoneMode()" (filesChanged)="onFilesChanged($event)" />
   </div>
 
   <form class="flex justify-center sm:flex-row gap-4" id="form" name="form"

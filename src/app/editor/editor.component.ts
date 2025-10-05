@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { FeatureDetails } from '../feature/types/feature-details.type';
+import { CardHeaderComponent } from '../ui/card/card-header/card-header.component';
 import { CardComponent } from '../ui/card/card.component';
 import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
@@ -12,11 +13,12 @@ import { EditorService } from './services/editor.service';
   selector: 'app-editor',
   imports: [
     CardComponent,
+    CardHeaderComponent,
     PromptFormComponent,
     PromptHistoryComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    ImageViewerComponent
+    ImageViewerComponent,
   ],
   templateUrl: './editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,8 +35,6 @@ export default class EditorComponent {
   error = this.editorService.error;
   isLoading = this.editorService.isLoading;
   generatedImageUrl = signal('');
-
-  dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
   featureNeedsImage = computed(() => this.feature()?.mode !== undefined);
 
@@ -59,7 +59,6 @@ export default class EditorComponent {
       this.imageFiles()
     );
     this.generatedImageUrl.set(imageUrl);
-    // this.dropzone().clearAllFiles();
   }
 
   onClearHistory(): void {

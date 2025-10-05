@@ -10,7 +10,7 @@ import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component'
 import { PredefinedPromptService } from './services/predefined-prompt.service';
 
 @Component({
-  selector: 'app-system-instruction-editor',
+  selector: 'app-predefined-prompt-editor',
   imports: [
     CardComponent,
     CardHeaderComponent,

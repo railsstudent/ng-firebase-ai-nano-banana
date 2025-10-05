@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CubeIconComponent } from '../../navigation/icons/cube-icon.component';
-import { HistoryIconComponent } from '../../navigation/icons/history-icon.component';
-import { MagicWandIconComponent } from '../../navigation/icons/magic-wand-icon.component';
-import { MapIconComponent } from '../../navigation/icons/map-icon.component';
-import { ScissorsIconComponent } from '../../navigation/icons/scissors-icon.component';
-import { SparklesIconComponent } from '../../navigation/icons/sparkles-icon.component';
+import { CubeIconComponent, HistoryIconComponent, MagicWandIconComponent, MapIconComponent, ScissorsIconComponent, SparklesIconComponent } from '../../navigation/icons/icons.component';
 import featureConfigs from '../features.json';
 import { FeatureDetails } from '../types/feature-details.type';
 import { Feature } from '../types/feature.type';

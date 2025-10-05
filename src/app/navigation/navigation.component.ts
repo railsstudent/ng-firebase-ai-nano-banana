@@ -1,10 +1,8 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ChevronDownIconComponent } from './icons/chevron-down-icon.component';
-import { HomeIconComponent } from './icons/home-icon.component';
-import { PhotoIconComponent } from './icons/photo-icon.component';
 import { FeatureService } from '../feature/services/feature.service';
+import { ChevronDownIconComponent, HomeIconComponent, PhotoIconComponent } from './icons/icons.component';
 
 @Component({
   selector: 'app-navigation',

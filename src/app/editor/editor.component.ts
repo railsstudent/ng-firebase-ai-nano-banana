@@ -47,11 +47,6 @@ export default class EditorComponent {
     computation: ({ numOfImages, featureNeedsImage}) => featureNeedsImage ? numOfImages > 0 : true
   });
 
-  onFilesChanged(files: File[]): void {
-    console.log('Files selected in editor:', files);
-    this.imageFiles.set(files);
-  }
-
   async handleGenerate(): Promise<void> {
     const imageUrl = await this.editorService.handleGenerate(
       this.featureId(),

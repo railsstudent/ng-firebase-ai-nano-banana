@@ -23,14 +23,14 @@ import { PredefinedPromptService } from './services/predefined-prompt.service';
   templateUrl: './predefined-prompt-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class SystemInstructionEditorComponent {
+export default class PredefinedPromptComponent {
   featureId = input.required<string>();
   feature = input.required<FeatureDetails>();
 
-  private readonly systemInstructionService = inject(PredefinedPromptService);
+  private readonly predefinedPromptService = inject(PredefinedPromptService);
 
-  error = this.systemInstructionService.error;
-  isLoading = this.systemInstructionService.isLoading;
+  error = this.predefinedPromptService.error;
+  isLoading = this.predefinedPromptService.isLoading;
 
   generatedImageUrl = signal('');
   imageFiles = signal<File[]>([]);
@@ -38,13 +38,8 @@ export default class SystemInstructionEditorComponent {
   customPrompt = computed(() => this.feature().customPrompt || '');
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
-  onFilesChanged(files: File[]): void {
-    console.log('Files selected in editor:', files);
-    this.imageFiles.set(files);
-  }
-
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.systemInstructionService.handleGenerate(
+    const imageUrl = await this.predefinedPromptService.handleGenerate(
       this.customPrompt(),
       this.imageFiles()
     );
@@ -52,7 +47,7 @@ export default class SystemInstructionEditorComponent {
   }
 
   downloadImage(): void {
-    this.systemInstructionService.downloadImage(
+    this.predefinedPromptService.downloadImage(
       this.generatedImageUrl(),
       this.feature().name
     );

@@ -136,3 +136,16 @@ export class PhotoIconComponent {}
   `,
 })
 export class ChevronDownIconComponent {}
+
+@Component({
+  selector: 'app-chevron-down-icon',
+  template: `
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a6 6 0 1 1-9-5.196" />
+      <ellipse cx="12" cy="17" rx="5" ry="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-3h1v3m4 0v-4h1v4" />
+      <line x1="4" y1="20" x2="20" y2="20" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+    </svg>
+  `,
+})
+export class DomeIconComponent {}

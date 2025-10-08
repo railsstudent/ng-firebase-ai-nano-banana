@@ -19,17 +19,42 @@
       </li>
       <li class="relative">
         <button
-          (click)="toggleDropdown()"
+          (click)="togglePhotoDropdown()"
           class="hover:text-indigo-300 transition-colors duration-300 pb-1 inline-flex items-center gap-2"
-          [class.text-indigo-500]="isDropdownOpen()"
+          [class.text-indigo-500]="isPhotoDropdownOpen()"
         >
           <span>Editor</span>
           <app-chevron-down-icon />
         </button>
 
-        @if (isDropdownOpen()) {
+        @if (isPhotoDropdownOpen()) {
           <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl animate-fade-in py-2">
             @for (feature of features; track feature.id) {
+              <a
+                [routerLink]="feature.path"
+                routerLinkActive="bg-indigo-500 text-white"
+                class="px-4 py-2 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white flex items-center gap-3 transition-colors duration-200"
+              >
+                <ng-container [ngComponentOutlet]="feature.icon" />
+                <span>{{ feature.name }}</span>
+              </a>
+            }
+          </div>
+        }
+      </li>
+      <li class="relative">
+        <button
+          (click)="toggleModelingDropdown()"
+          class="hover:text-indigo-300 transition-colors duration-300 pb-1 inline-flex items-center gap-2"
+          [class.text-indigo-500]="isModelingDropdownOpen()"
+        >
+          <span>Modeling</span>
+          <app-chevron-down-icon />
+        </button>
+
+        @if (isModelingDropdownOpen()) {
+          <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl animate-fade-in py-2">
+            @for (feature of modelingFeatures; track feature.id) {
               <a
                 [routerLink]="feature.path"
                 routerLinkActive="bg-indigo-500 text-white"

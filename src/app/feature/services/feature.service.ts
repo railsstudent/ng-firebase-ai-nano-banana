@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
   CubeIconComponent,
+  DomeIconComponent,
+  GlassBottleIconComponent,
   HistoryIconComponent,
   MagicWandIconComponent,
   MapIconComponent,
@@ -35,8 +37,6 @@ function buildPhotoEditNavigationMap(): Feature[] {
     edit: SparklesIconComponent,
     restoration: HistoryIconComponent,
     fuse: ScissorsIconComponent,
-    figurine: CubeIconComponent,
-    '3d-map': MapIconComponent,
   };
 
   return buildNavigationMap(features, iconMap);
@@ -46,6 +46,8 @@ function buildModelingNavigationMap(): Feature[] {
   const iconMap: Record<string, any> = {
     figurine: CubeIconComponent,
     '3d-map': MapIconComponent,
+    bottle:  GlassBottleIconComponent,
+    dome: DomeIconComponent,
   };
 
   return buildNavigationMap(modeling_features, iconMap);

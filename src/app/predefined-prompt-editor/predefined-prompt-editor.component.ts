@@ -10,6 +10,7 @@ import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.compon
 import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { PredefinedPromptService } from './services/predefined-prompt.service';
 import { ImageResponse } from '../ai/types/image-response.type';
+import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -21,6 +22,7 @@ import { ImageResponse } from '../ai/types/image-response.type';
     ImageViewerComponent,
     FormsModule,
     SpinnerIconComponent,
+    VideoPlayerComponent,
   ],
   templateUrl: './predefined-prompt-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,28 +36,35 @@ export default class PredefinedPromptComponent {
   error = this.predefinedPromptService.error;
   isLoading = this.predefinedPromptService.isLoading;
 
-  generatedImageUrl = signal<ImageResponse | undefined>(undefined);
+  generatedImage = signal<ImageResponse | undefined>(undefined);
   imageFiles = signal<File[]>([]);
 
   customPrompt = computed(() => this.feature().customPrompt || '');
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
+
+  videoUrl = this.predefinedPromptService.videoUrl;
+  videoError = this.predefinedPromptService.videoError;
+  isGeneratingVideo = this.predefinedPromptService.isGeneratingVideo;
 
   async handleGenerate(): Promise<void> {
     const imageUrl = await this.predefinedPromptService.handleGenerate(
       this.customPrompt(),
       this.imageFiles()
     );
-    this.generatedImageUrl.set(imageUrl);
+    this.generatedImage.set(imageUrl);
   }
 
-  handleAction(actionName: ImageActions) {
+  async handleAction(actionName: ImageActions) {
     if (actionName === 'clearImage') {
-      this.generatedImageUrl.set(undefined);
+      this.generatedImage.set(undefined);
     } else if (actionName === 'downloadImage') {
       this.predefinedPromptService.downloadImage(
-        this.generatedImageUrl()?.inlineData || '',
+        this.generatedImage()?.inlineData || '',
         this.feature().name
       );
+    } else if (actionName === 'generateVideo') {
+      await this.predefinedPromptService.generateVideo(this.customPrompt(),
+      this.generatedImage());
     }
   }
 }

@@ -26,8 +26,14 @@
 
   <app-image-viewer class="block mt-4"
     [isLoading]="isLoading()"
-    [url]="generatedImageUrl()?.inlineData || ''"
+    [url]="generatedImage()?.inlineData || ''"
     [loadingText]="details.loadingText"
     (imageAction)="handleAction($event)"
+  />
+
+  <app-video-player
+    style="width: 512px; height: 512px"
+    [isGeneratingVideo]="isGeneratingVideo()"
+    [videoUrl]="videoUrl()"
   />
 </app-card>

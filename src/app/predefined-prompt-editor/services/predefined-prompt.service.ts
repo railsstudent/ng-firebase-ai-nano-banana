@@ -1,17 +1,21 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
-import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
 import { ImageResponse } from '../../ai/types/image-response.type';
+import { GenMediaService } from '../../shared/services/gen-media.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PredefinedPromptService {
   private readonly firebaseService = inject(FirebaseService);
-  private readonly imageViewerService = inject(ImageViewerService);
+  private readonly genMediaService = inject(GenMediaService);
 
   readonly error = signal('');
   readonly isLoading = signal(false)
+
+  videoUrl = this.genMediaService.videoUrl.asReadonly();
+  videoError = this.genMediaService.videoError.asReadonly();
+  isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
 
   async handleGenerate(prompt: string, imageFiles: File[]): Promise<ImageResponse | undefined> {
     const currentPrompt = prompt.trim();
@@ -48,6 +52,14 @@ export class PredefinedPromptService {
         return;
       }
 
-      this.imageViewerService.downloadImage(custom_filename, imageUrl);
+      this.genMediaService.downloadImage(custom_filename, imageUrl);
+  }
+
+  async generateVideo(prompt: string, imageResponse: ImageResponse | undefined): Promise<void> {
+    if (imageResponse) {
+      const imageBytes = imageResponse.data;
+      const mimeType =imageResponse.mimeType;
+      await this.genMediaService.generateVideo(prompt, imageBytes, mimeType);
+    }
   }
 }

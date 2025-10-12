@@ -1,10 +1,9 @@
 import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
 import { ImageResponse } from '../../ai/types/image-response.type';
-import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
+import { GenMediaService } from '../../shared/services/gen-media.service';
 import { PromptFormService } from '../../shared/services/prompt-form.service';
 import { PromptHistoryService } from '../../shared/services/prompt-history.service';
-import { VideoService } from '../../shared/video-player/services/video.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,16 +12,15 @@ export class EditorService {
   private readonly promptFormService = inject(PromptFormService);
   private readonly promptHistoryService = inject(PromptHistoryService);
   private readonly firebaseService = inject(FirebaseService);
-  private readonly imageViewerService = inject(ImageViewerService);
-  private readonly videoService = inject(VideoService);
+  private readonly genMediaService = inject(GenMediaService);
 
   readonly prompt = this.promptFormService.prompt;
   readonly error = this.promptFormService.error;
   readonly isLoading = this.promptFormService.isLoading;
 
-  videoUrl = this.videoService.videoUrl.asReadonly();
-  videoError = this.videoService.videoError.asReadonly();
-  isGeneratingVideo = this.videoService.isGeneratingVideo.asReadonly();
+  videoUrl = this.genMediaService.videoUrl.asReadonly();
+  videoError = this.genMediaService.videoError.asReadonly();
+  isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
 
   getPromptHistory(featureId: Signal<string>) {
     return linkedSignal({
@@ -80,14 +78,14 @@ export class EditorService {
       }
 
       const filename = this.prompt() || 'generated-image';
-      this.imageViewerService.downloadImage(filename, imageUrl);
+      this.genMediaService.downloadImage(filename, imageUrl);
   }
 
   async generateVideo(imageResponse: ImageResponse | undefined): Promise<void> {
     if (imageResponse) {
       const imageBytes = imageResponse.data;
       const mimeType =imageResponse.mimeType;
-      await this.videoService.generateVideo(this.prompt(), imageBytes, mimeType);
+      await this.genMediaService.generateVideo(this.prompt(), imageBytes, mimeType);
     }
   }
 }

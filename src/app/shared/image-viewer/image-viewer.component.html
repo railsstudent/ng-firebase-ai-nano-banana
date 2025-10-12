@@ -9,23 +9,28 @@
         class="rounded-lg shadow-2xl border-4 border-gray-700 max-w-full h-auto"
         width="512"
         height="512"
-        [style.filter]="imageFilterStyle()" />
+      />
       <button
-        (click)="downloadImage.emit()"
+        (click)="imageAction.emit('downloadImage')"
         title="Download Image"
         class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
         <app-download-icon />
       </button>
 
-      <button
-        (click)="clearImage.emit()"
-        title="Clear Image"
-        class="absolute top-4 right-4 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
-        <app-trash-icon />
-      </button>
+      <div class="absolute top-4 right-4">
+        <button
+          (click)="imageAction.emit('generateVideo')"
+          title="Generate Video"
+          class="mr-2 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
+          <app-download-icon />
+        </button>
+        <button
+          (click)="imageAction.emit('clearImage')"
+          title="Clear Image"
+          class="bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
+          <app-trash-icon />
+        </button>
+      </div>
     </div>
-    <app-image-style class="mt-6 w-full max-w-lg mx-auto bg-gray-800 p-4 rounded-lg border border-gray-700 animate-fade-in"
-      (styleChanged)="imageFilterStyle.set($event)"
-    />
   </div>
 }

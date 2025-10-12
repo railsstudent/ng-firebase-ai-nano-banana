@@ -5,6 +5,7 @@ import { CardComponent } from '../shared/card/card.component';
 import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
 import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
+import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { PromptFormComponent } from '../shared/prompt-form/prompt-form.component';
 import { PromptHistoryComponent } from '../shared/prompt-history/prompt-history.component';
 import { EditorService } from './services/editor.service';
@@ -60,7 +61,11 @@ export default class EditorComponent {
     this.editorService.clearHistory(this.featureId());
   }
 
-  downloadImage(): void {
-    this.editorService.downloadImage(this.generatedImageUrl());
+  handleAction(actionName: ImageActions) {
+    if (actionName === 'clearImage') {
+      this.generatedImageUrl.set('');
+    } else if (actionName === 'downloadImage') {
+      this.editorService.downloadImage(this.generatedImageUrl());
+    }
   }
 }

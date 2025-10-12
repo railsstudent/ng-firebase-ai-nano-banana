@@ -1,9 +1,10 @@
-import { Injectable, Signal, inject, linkedSignal, signal } from '@angular/core';
+import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
+import { ImageResponse } from '../../ai/types/image-response.type';
 import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
 import { PromptFormService } from '../../shared/services/prompt-form.service';
 import { PromptHistoryService } from '../../shared/services/prompt-history.service';
-import { ImageResponse } from '../../ai/types/image-response.type';
+import { VideoService } from '../../shared/video-player/services/video.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,15 @@ export class EditorService {
   private readonly promptHistoryService = inject(PromptHistoryService);
   private readonly firebaseService = inject(FirebaseService);
   private readonly imageViewerService = inject(ImageViewerService);
+  private readonly videoService = inject(VideoService);
 
   readonly prompt = this.promptFormService.prompt;
   readonly error = this.promptFormService.error;
   readonly isLoading = this.promptFormService.isLoading;
 
-  videoUrl = this.imageViewerService.videoUrl.asReadonly();
-  videoError = this.imageViewerService.videoError.asReadonly();
-  isGeneratingVideo = this.imageViewerService.isGeneratingVideo.asReadonly();
+  videoUrl = this.videoService.videoUrl.asReadonly();
+  videoError = this.videoService.videoError.asReadonly();
+  isGeneratingVideo = this.videoService.isGeneratingVideo.asReadonly();
 
   getPromptHistory(featureId: Signal<string>) {
     return linkedSignal({
@@ -83,7 +85,9 @@ export class EditorService {
 
   async generateVideo(imageResponse: ImageResponse | undefined): Promise<void> {
     if (imageResponse) {
-      await this.imageViewerService.generateVideo(this.prompt(),imageResponse);
+      const imageBytes = imageResponse.data;
+      const mimeType =imageResponse.mimeType;
+      await this.videoService.generateVideo(this.prompt(), imageBytes, mimeType);
     }
   }
 }

@@ -1,18 +1,10 @@
-import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
-import { GeminiService } from '../../../ai/services/gemini.service';
-import { GenerateVideoRequest } from '../../../ai/types/generate-video..type';
-import { ImageResponse } from '../../../ai/types/image-response.type';
+import { DOCUMENT, Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageViewerService {
   private readonly document = inject(DOCUMENT);
-  private readonly geminiService = inject(GeminiService);
-
-  videoError = signal('');
-  videoUrl = signal('');
-  isGeneratingVideo = signal(false);
 
   downloadImage(filename: string, imageUrl: string): void {
       if (!imageUrl) {
@@ -31,31 +23,5 @@ export class ImageViewerService {
       this.document.body.appendChild(link);
       link.click();
       this.document.body.removeChild(link);
-  }
-
-
-  async generateVideo(prompt: string, imageResponse: ImageResponse): Promise<void> {
-    try {
-      const request: GenerateVideoRequest = {
-        imageBytes: imageResponse.data,
-        mimeType: imageResponse.mimeType,
-        prompt,
-        config: {
-          aspectRatio: '16:9'
-        }
-      }
-
-      this.isGeneratingVideo.set(true);
-      const videoUrl = await this.geminiService.generateVideo(request);
-      this.videoUrl.set(videoUrl);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.videoError.set(error.message);
-      } else {
-        this.videoError.set('An unexpected error occurred.');
-      }
-    } finally {
-      this.isGeneratingVideo.set(false);
-    }
   }
 }

@@ -6,7 +6,8 @@
     "start": "./cli.js && ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:cli": "node ./cli.js"
   },
   "prettier": {
     "printWidth": 100,

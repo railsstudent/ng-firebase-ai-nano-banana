@@ -19,13 +19,25 @@ const data = {
 
 const geminiModelName = process.env.GEMINI_MODEL_NAME;
 if (!geminiModelName) {
-  throw new ERROR('GEMINI_MODEL_NAME is not set. Using default model name.');
+  throw new ERROR('GEMINI_MODEL_NAME is not set.');
+}
+
+const geminiAPIKey = process.env.GEMINI_API_KEY;
+if (!geminiAPIKey) {
+  throw new ERROR('GEMINI_API_KEY is not set. Please create the key in Gemini AI Studio.');
+}
+
+const geminiVeoModelName = process.env.GEMINI_VEO_MODEL_NAME;
+if (!geminiVeoModelName) {
+  throw new ERROR('GEMINI_VEO_MODEL_NAME is not set.');
 }
 
 // Convert data to JSON string with indentation
 const jsonString = JSON.stringify({
   app: data,
   geminiModelName,
+  geminiAPIKey,
+  geminiVeoModelName,
 }, null, 2);
 
 // Define output file path

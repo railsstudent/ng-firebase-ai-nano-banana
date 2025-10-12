@@ -1,8 +1,8 @@
 import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
-import { ImageViewerService } from '../../ui/image-viewer/services/image-viewer.service';
-import { PromptFormService } from '../../ui/services/prompt-form.service';
-import { PromptHistoryService } from '../../ui/services/prompt-history.service';
+import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
+import { PromptFormService } from '../../shared/services/prompt-form.service';
+import { PromptHistoryService } from '../../shared/services/prompt-history.service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
 import { FeatureDetails } from '../feature/types/feature-details.type';
-import { CardHeaderComponent } from '../ui/card/card-header/card-header.component';
-import { CardComponent } from '../ui/card/card.component';
-import { DropzoneComponent } from '../ui/dropzone/dropzone.component';
-import { ErrorDisplayComponent } from '../ui/error-display/error-display.component';
-import { ImageViewerComponent } from '../ui/image-viewer/image-viewer.component';
-import { PromptFormComponent } from '../ui/prompt-form/prompt-form.component';
-import { PromptHistoryComponent } from '../ui/prompt-history/prompt-history.component';
+import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
+import { CardComponent } from '../shared/card/card.component';
+import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
+import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
+import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
+import { PromptFormComponent } from '../shared/prompt-form/prompt-form.component';
+import { PromptHistoryComponent } from '../shared/prompt-history/prompt-history.component';
 import { EditorService } from './services/editor.service';
 
 @Component({

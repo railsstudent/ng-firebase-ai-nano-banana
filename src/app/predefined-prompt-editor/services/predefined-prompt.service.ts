@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
-import { ImageViewerService } from '../../ui/image-viewer/services/image-viewer.service';
+import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
 
 @Injectable({
   providedIn: 'root'

@@ -27,8 +27,8 @@ if (!geminiAPIKey) {
   throw new ERROR('GEMINI_API_KEY is not set. Please create the key in Gemini AI Studio.');
 }
 
-const geminiVeoModelName = process.env.GEMINI_VEO_MODEL_NAME;
-if (!geminiVeoModelName) {
+const geminiVideoModelName = process.env.GEMINI_VIDEO_MODEL_NAME;
+if (!geminiVideoModelName) {
   throw new ERROR('GEMINI_VEO_MODEL_NAME is not set.');
 }
 
@@ -37,7 +37,8 @@ const jsonString = JSON.stringify({
   app: data,
   geminiModelName,
   geminiAPIKey,
-  geminiVeoModelName,
+  geminiVideoModelName,
+  poillingPeriod: +(process.env.VIDEO_POLLING_PERIOD || '10000')
 }, null, 2);
 
 // Define output file path

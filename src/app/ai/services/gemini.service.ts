@@ -1,0 +1,65 @@
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { GenerateVideosParameters } from '@google/genai';
+import { catchError, firstValueFrom, map, of, retry } from 'rxjs';
+import firebaseConfig from '../../firebase-ai.json';
+import { GEMINI_AI } from '../constants/gemini.constant';
+import { GenerateVideoRequest } from '../types/generate-video..type';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GeminiService {
+  private readonly ai = inject(GEMINI_AI);
+  private readonly http = inject(HttpClient);
+
+  async generateVideo(request: GenerateVideoRequest): Promise<string> {
+    const genVidoesParams: GenerateVideosParameters = {
+      model: firebaseConfig.geminiVideoModelName,
+      prompt: request.prompt,
+      config: {
+        ...request.config,
+        numberOfVideos: 1
+      },
+      image: {
+        imageBytes: request.imageBytes,
+        mimeType: request.mimeType
+      }
+    };
+
+    const downloadLink = await this.generateDownloadLink(genVidoesParams);
+    return this.downloadVideo(downloadLink);
+  }
+
+  private async generateDownloadLink(genVidoesParams: GenerateVideosParameters): Promise<string> {
+    let operation = await this.ai.models.generateVideos(genVidoesParams);
+    while (!operation.done) {
+      await new Promise(resolve => setTimeout(resolve, firebaseConfig.poillingPeriod));
+      operation = await this.ai.operations.getVideosOperation({ operation });
+    }
+
+    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+    if (!downloadLink) {
+      const strError = 'Video generation finished but no download link was provided.';
+      console.error(strError);
+      return '';
+    }
+
+    return downloadLink;
+  }
+
+  private async downloadVideo(downloadLink: string): Promise<string> {
+    const blobUrl$ = this.http.get(`${downloadLink}&key=${firebaseConfig.geminiAPIKey}`, {
+      responseType: 'blob'
+    }).pipe(
+      map((blob) => URL.createObjectURL(blob)),
+      retry({ count: 2, delay: 300 }),
+      catchError((err) => {
+        console.error(err);
+        return of('');
+      })
+    );
+
+    return await firstValueFrom(blobUrl$);
+  }
+}

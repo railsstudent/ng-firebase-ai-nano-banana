@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { GenerateVideosParameters } from '@google/genai';
-import { catchError, firstValueFrom, map, of, retry } from 'rxjs';
+import { catchError, firstValueFrom, map, retry, throwError } from 'rxjs';
 import firebaseConfig from '../../firebase-ai.json';
 import { GEMINI_AI } from '../constants/gemini.constant';
 import { GenerateVideoRequest } from '../types/generate-video..type';
@@ -42,7 +42,7 @@ export class GeminiService {
     if (!downloadLink) {
       const strError = 'Video generation finished but no download link was provided.';
       console.error(strError);
-      return '';
+      throw new Error(strError);
     }
 
     return downloadLink;
@@ -56,7 +56,7 @@ export class GeminiService {
       retry({ count: 2, delay: 300 }),
       catchError((err) => {
         console.error(err);
-        return of('');
+        return throwError(() => err)
       })
     );
 

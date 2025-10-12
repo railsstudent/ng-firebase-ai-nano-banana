@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { InlineDataPart, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { ImageResponse } from '../types/image-response.type';
 
 async function fileToGenerativePart(file: File) {
   return await new Promise<InlineDataPart>((resolve) => {
@@ -34,17 +35,21 @@ async function resolveImageParts(imageFiles: File[]) {
 export class FirebaseService  {
     private readonly geminiModel = inject(NANO_BANANA_MODEL);
 
-    private async getBase64Image(parts: Array<string | Part>) {
+    private async getBase64Image(parts: Array<string | Part>): Promise<ImageResponse> {
       const result = await this.geminiModel.generateContent(parts);
       const inlineDataParts = result.response.inlineDataParts();
       if (inlineDataParts?.[0]) {
         const { data, mimeType } = inlineDataParts[0].inlineData;
-        return `data:${mimeType};base64,${data}`;
+        return {
+          mimeType,
+          data,
+          inlineData: `data:${mimeType};base64,${data}`
+        };
       }
       throw new Error('Error in generating the image.');
     }
 
-    async generateImage(prompt: string, imageFiles: File[]) {
+    async generateImage(prompt: string, imageFiles: File[]): Promise<ImageResponse> {
         try {
           if (!prompt) {
             throw Error('Prompt is required to generate an image.');

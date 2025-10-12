@@ -1,8 +1,9 @@
-import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
+import { Injectable, Signal, inject, linkedSignal, signal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
 import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
 import { PromptFormService } from '../../shared/services/prompt-form.service';
 import { PromptHistoryService } from '../../shared/services/prompt-history.service';
+import { ImageResponse } from '../../ai/types/image-response.type';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,10 @@ export class EditorService {
   readonly error = this.promptFormService.error;
   readonly isLoading = this.promptFormService.isLoading;
 
+  videoUrl = this.imageViewerService.videoUrl.asReadonly();
+  videoError = this.imageViewerService.videoError.asReadonly();
+  isGeneratingVideo = this.imageViewerService.isGeneratingVideo.asReadonly();
+
   getPromptHistory(featureId: Signal<string>) {
     return linkedSignal({
       source: () => featureId(),
@@ -28,14 +33,14 @@ export class EditorService {
     featureId: string,
     featureNeedsImage: boolean,
     imageFiles: File[]
-  ): Promise<string> {
+  ): Promise<ImageResponse | undefined> {
     const currentPrompt = this.prompt().trim();
 
     const canGenerateImage = !!currentPrompt
       && (featureNeedsImage ? imageFiles.length > 0 : imageFiles.length === 0);
 
     if (!canGenerateImage) {
-      return ''; // Button should be disabled, but this is a safeguard.
+      return undefined; // Button should be disabled, but this is a safeguard.
     }
 
     this.isLoading.set(true);
@@ -56,7 +61,7 @@ export class EditorService {
       } else {
         this.error.set('An unexpected error occurred.');
       }
-      return '';
+      return undefined;
     } finally {
       this.isLoading.set(false);
     }
@@ -74,5 +79,11 @@ export class EditorService {
 
       const filename = this.prompt() || 'generated-image';
       this.imageViewerService.downloadImage(filename, imageUrl);
+  }
+
+  async generateVideo(imageResponse: ImageResponse | undefined): Promise<void> {
+    if (imageResponse) {
+      await this.imageViewerService.generateVideo(this.prompt(),imageResponse);
+    }
   }
 }

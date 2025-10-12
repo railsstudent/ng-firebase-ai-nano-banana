@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
+import { ImageResponse } from '../ai/types/image-response.type';
 import { FeatureDetails } from '../feature/types/feature-details.type';
 import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
 import { CardComponent } from '../shared/card/card.component';
@@ -9,6 +10,7 @@ import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { PromptFormComponent } from '../shared/prompt-form/prompt-form.component';
 import { PromptHistoryComponent } from '../shared/prompt-history/prompt-history.component';
 import { EditorService } from './services/editor.service';
+import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
 
 @Component({
   selector: 'app-editor',
@@ -20,6 +22,7 @@ import { EditorService } from './services/editor.service';
     DropzoneComponent,
     ErrorDisplayComponent,
     ImageViewerComponent,
+    VideoPlayerComponent,
   ],
   templateUrl: './editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +38,7 @@ export default class EditorComponent {
 
   error = this.editorService.error;
   isLoading = this.editorService.isLoading;
-  generatedImageUrl = signal('');
+  generatedImage = signal<ImageResponse | undefined>(undefined);
 
   featureNeedsImage = computed(() => this.feature()?.mode !== undefined);
 
@@ -48,24 +51,30 @@ export default class EditorComponent {
     computation: ({ numOfImages, featureNeedsImage}) => featureNeedsImage ? numOfImages > 0 : true
   });
 
+  videoUrl = this.editorService.videoUrl;
+  videoError = this.editorService.videoError;
+  isGeneratingVideo = this.editorService.isGeneratingVideo;
+
   async handleGenerate(): Promise<void> {
     const imageUrl = await this.editorService.handleGenerate(
       this.featureId(),
       this.featureNeedsImage(),
       this.imageFiles()
     );
-    this.generatedImageUrl.set(imageUrl);
+    this.generatedImage.set(imageUrl);
   }
 
   onClearHistory(): void {
     this.editorService.clearHistory(this.featureId());
   }
 
-  handleAction(actionName: ImageActions) {
+  async handleAction(actionName: ImageActions) {
     if (actionName === 'clearImage') {
-      this.generatedImageUrl.set('');
+      this.generatedImage.set(undefined);
     } else if (actionName === 'downloadImage') {
-      this.editorService.downloadImage(this.generatedImageUrl());
+      this.editorService.downloadImage(this.generatedImage()?.inlineData || '');
+    } else if (actionName === 'generateVideo') {
+      await this.editorService.generateVideo(this.generatedImage());
     }
   }
 }

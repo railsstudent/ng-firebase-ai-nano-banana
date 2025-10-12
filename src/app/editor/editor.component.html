@@ -29,8 +29,13 @@
 
     <app-image-viewer
       [isLoading]="isLoading()"
-      [url]="generatedImageUrl()"
+      [url]="generatedImage()?.inlineData || ''"
       [loadingText]="details.loadingText"
       (imageAction)="handleAction($event)"
+    />
+
+    <app-video-player
+      [isGeneratingVideo]="isGeneratingVideo()"
+      [videoUrl]="videoUrl()"
     />
   </app-card>

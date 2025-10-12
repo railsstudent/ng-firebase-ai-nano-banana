@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FirebaseService } from '../../ai/services/firebase.service';
 import { ImageViewerService } from '../../shared/image-viewer/services/image-viewer.service';
+import { ImageResponse } from '../../ai/types/image-response.type';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +13,12 @@ export class PredefinedPromptService {
   readonly error = signal('');
   readonly isLoading = signal(false)
 
-  async handleGenerate(prompt: string, imageFiles: File[]): Promise<string> {
+  async handleGenerate(prompt: string, imageFiles: File[]): Promise<ImageResponse | undefined> {
     const currentPrompt = prompt.trim();
 
     const editImageCondition = !!currentPrompt && imageFiles.length > 0;
     if (!editImageCondition) {
-      return ''; // Button should be disabled, but this is a safeguard.
+      return undefined; // Button should be disabled, but this is a safeguard.
     }
 
     this.isLoading.set(true);
@@ -35,7 +36,7 @@ export class PredefinedPromptService {
       } else {
         this.error.set('An unexpected error occurred.');
       }
-      return '';
+      return undefined;
     } finally {
       this.isLoading.set(false);
     }

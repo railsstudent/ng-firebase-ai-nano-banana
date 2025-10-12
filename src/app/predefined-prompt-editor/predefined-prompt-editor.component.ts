@@ -9,6 +9,7 @@ import { SpinnerIconComponent } from '../shared/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
 import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { PredefinedPromptService } from './services/predefined-prompt.service';
+import { ImageResponse } from '../ai/types/image-response.type';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -33,7 +34,7 @@ export default class PredefinedPromptComponent {
   error = this.predefinedPromptService.error;
   isLoading = this.predefinedPromptService.isLoading;
 
-  generatedImageUrl = signal('');
+  generatedImageUrl = signal<ImageResponse | undefined>(undefined);
   imageFiles = signal<File[]>([]);
 
   customPrompt = computed(() => this.feature().customPrompt || '');
@@ -49,10 +50,10 @@ export default class PredefinedPromptComponent {
 
   handleAction(actionName: ImageActions) {
     if (actionName === 'clearImage') {
-      this.generatedImageUrl.set('');
+      this.generatedImageUrl.set(undefined);
     } else if (actionName === 'downloadImage') {
       this.predefinedPromptService.downloadImage(
-        this.generatedImageUrl(),
+        this.generatedImageUrl()?.inlineData || '',
         this.feature().name
       );
     }

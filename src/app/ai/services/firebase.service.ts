@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { InlineDataPart, Part } from 'firebase/ai';
-import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { GenerativeModel, InlineDataPart, Part } from 'firebase/ai';
+import { NANO_BANANA_MODEL, STORY_NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImageResponse } from '../types/image-response.type';
 
 async function fileToGenerativePart(file: File) {
@@ -34,18 +34,23 @@ async function resolveImageParts(imageFiles: File[]) {
 })
 export class FirebaseService  {
     private readonly geminiModel = inject(NANO_BANANA_MODEL);
+    private readonly storyGeminiModel = inject(STORY_NANO_BANANA_MODEL);
 
-    private async getBase64Image(parts: Array<string | Part>): Promise<ImageResponse> {
-      const result = await this.geminiModel.generateContent(parts);
+    private async getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageResponse[]> {
+      const result = await model.generateContent(parts);
       const inlineDataParts = result.response.inlineDataParts();
-      if (inlineDataParts?.[0]) {
-        const { data, mimeType } = inlineDataParts[0].inlineData;
-        return {
-          mimeType,
-          data,
-          inlineData: `data:${mimeType};base64,${data}`
-        };
+
+      if (inlineDataParts?.length) {
+        return inlineDataParts.map(({inlineData}) => {
+          const { data, mimeType } = inlineData;
+          return {
+            mimeType,
+            data,
+            inlineData: `data:${mimeType};base64,${data}`
+          };
+        });
       }
+
       throw new Error('Error in generating the image.');
     }
 
@@ -56,7 +61,10 @@ export class FirebaseService  {
           }
 
           const imageParts = await resolveImageParts(imageFiles);
-          return await this.getBase64Image([prompt, ...imageParts]);
+          const parts = [prompt, ...imageParts];
+          const [firstImage] = await this.getBase64Images(this.geminiModel, parts);
+
+          return firstImage;
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);
           if (err instanceof Error) {
@@ -65,4 +73,20 @@ export class FirebaseService  {
           throw new Error('Error in generating the image.');
         }
     }
+
+    async generateStory(prompt: string): Promise<ImageResponse[]> {
+      try {
+        if (!prompt) {
+          throw Error('Prompt is required to generate an image.');
+        }
+
+        return await this.getBase64Images(this.storyGeminiModel, [prompt]);
+      } catch (err) {
+        console.error('Prompt or candidate was blocked:', err);
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw new Error('Error in generating the image.');
+      }
+  }
 }

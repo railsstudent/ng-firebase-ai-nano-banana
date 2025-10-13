@@ -1,12 +1,12 @@
+import { FirebaseService } from '@/ai/services/firebase.service';
+import { ImageResponse } from '@/ai/types/image-response.type';
+import { GenMediaService } from '@/shared/services/gen-media.service';
 import { Injectable, inject, signal } from '@angular/core';
-import { FirebaseService } from '../../ai/services/firebase.service';
-import { ImageResponse } from '../../ai/types/image-response.type';
-import { GenMediaService } from '../../shared/services/gen-media.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PredefinedPromptService {
+export class VisualStoryService {
   private readonly firebaseService = inject(FirebaseService);
   private readonly genMediaService = inject(GenMediaService);
 
@@ -17,11 +17,10 @@ export class PredefinedPromptService {
   videoError = this.genMediaService.videoError.asReadonly();
   isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
 
-  async handleGenerate(prompt: string, imageFiles: File[]): Promise<ImageResponse | undefined> {
+  async handleGenerate(prompt: string): Promise<ImageResponse[] | undefined> {
     const currentPrompt = prompt.trim();
 
-    const editImageCondition = !!currentPrompt && imageFiles.length > 0;
-    if (!editImageCondition) {
+    if (!currentPrompt) {
       return undefined; // Button should be disabled, but this is a safeguard.
     }
 
@@ -29,10 +28,7 @@ export class PredefinedPromptService {
     this.error.set('');
 
     try {
-      if (imageFiles.length === 0) {
-        throw Error('At least one image file is required to generate an image with system instruction.');
-      }
-      return await this.firebaseService.generateImage(currentPrompt, imageFiles);
+      return await this.firebaseService.generateStory(currentPrompt);
     } catch (e: unknown) {
       console.error(e);
       if (e instanceof Error) {
@@ -46,13 +42,13 @@ export class PredefinedPromptService {
     }
   }
 
-  downloadImage(imageUrl: string, custom_filename: string): void {
+  downloadImage(imageUrl: string): void {
       if (!imageUrl) {
         this.error.set('No image to download.');
         return;
       }
 
-      this.genMediaService.downloadImage(custom_filename, imageUrl);
+      this.genMediaService.downloadImage('visual_story', imageUrl);
   }
 
   async generateVideo(prompt: string, imageResponse: ImageResponse | undefined): Promise<void> {

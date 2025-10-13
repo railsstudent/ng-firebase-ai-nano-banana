@@ -37,6 +37,7 @@ function buildPhotoEditNavigationMap(): Feature[] {
     edit: SparklesIconComponent,
     restoration: HistoryIconComponent,
     fuse: ScissorsIconComponent,
+    'visual-story': HistoryIconComponent,
   };
 
   return buildNavigationMap(features, iconMap);

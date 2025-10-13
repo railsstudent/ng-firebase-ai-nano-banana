@@ -1,0 +1,47 @@
+<app-card>
+  <app-card-header [name]="feature.name" [description]="feature.description"  />
+
+  <!-- <form class="flex flex-col sm:flex-row gap-4"
+    id="form"
+    name="form"
+    (ngSubmit)="onGenerateClick()"
+  >
+    <textarea
+      id="promptHistory"
+      name="promptHistory"
+      [(ngModel)]="prompt"
+      [rows]="4"
+      [placeholder]="placeholderText()"
+      (keydown)="onEnterPress($event)"
+      class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-y placeholder-gray-400">
+    </textarea>
+    <div>
+      <button
+        type="submit"
+        [disabled]="isGenerationDisabled()"
+      class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200">
+      @if (isLoading()) {
+        <app-spinner-icon />&nbsp;&nbsp;
+        <ng-content select="[loading-text]">Generating...</ng-content>
+      } @else {
+          <ng-content select="[button-text]" />
+        }
+      </button>
+    </div>
+  </form> -->
+
+  <app-error-display [error]="error()" />
+
+  <!-- <app-image-viewer class="block mt-4"
+    [isLoading]="isLoading()"
+    [url]="generatedImage()?.inlineData || ''"
+    [loadingText]="details.loadingText"
+    (imageAction)="handleAction($event)"
+  />
+
+  <app-video-player
+    style="width: 512px; height: 512px"
+    [isGeneratingVideo]="isGeneratingVideo()"
+    [videoUrl]="videoUrl()"
+  /> -->
+</app-card>

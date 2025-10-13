@@ -31,6 +31,13 @@
       "loadingText": "Restoring photo...",
       "description": "Bring old and damaged photos back to life by removing scratches and restoring color.",
       "customPrompt": "Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken."
+    },
+    "visual-story": {
+      "name": "Visual Story",
+      "path": "/visual-story",
+      "buttonText": "Write your story",
+      "loadingText": "Generating story...",
+      "description": "Fuel your creativity and ignite your visual story with vivid imagination!"
     }
   },
   "modeling": {

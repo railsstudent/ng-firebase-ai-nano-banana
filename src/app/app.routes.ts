@@ -8,6 +8,11 @@ export const routes: Routes = [
     title: 'Home'
   },
   {
+    path: 'visual-story',
+    loadComponent: () => import('./visual-story/visual-story.component'),
+    title: 'Visual Story',
+  },
+  {
     path: 'predefined-prompt/:featureId',
     loadComponent: () => import('./predefined-prompt-editor/predefined-prompt-editor.component'),
     title: featureNameResolver,

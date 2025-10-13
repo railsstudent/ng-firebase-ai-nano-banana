@@ -83,8 +83,7 @@ export class EditorService {
 
   async generateVideo(imageResponse: ImageResponse | undefined): Promise<void> {
     if (imageResponse) {
-      const imageBytes = imageResponse.data;
-      const mimeType =imageResponse.mimeType;
+      const { data: imageBytes, mimeType } = imageResponse;
       await this.genMediaService.generateVideo(this.prompt(), imageBytes, mimeType);
     }
   }

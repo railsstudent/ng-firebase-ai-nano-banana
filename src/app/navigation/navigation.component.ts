@@ -38,7 +38,6 @@ export class NavigationComponent {
   }
 
   onDocumentClick(event: MouseEvent): void {
-    console.log(event.target);
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isPhotoDropdownOpen.set(false);
       this.isModelingDropdownOpen.set(false);

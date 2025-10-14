@@ -1,17 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FeatureDetails } from '../feature/types/feature-details.type';
+import { FeatureService } from '@/feature/services/feature.service';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ImageResponse } from '../ai/types/image-response.type';
 import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
 import { CardComponent } from '../shared/card/card.component';
-import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
-import { SpinnerIconComponent } from '../shared/icons/spinner-icon.component';
-import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
 import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { VisualStoryService } from './services/visual-story.service';
-import { ImageResponse } from '../ai/types/image-response.type';
-import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
-import { FeatureService } from '@/feature/services/feature.service';
+import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
 
 @Component({
   selector: 'app-visual-story',
@@ -20,8 +15,7 @@ import { FeatureService } from '@/feature/services/feature.service';
     CardHeaderComponent,
     ErrorDisplayComponent,
     // ImageViewerComponent,
-    FormsModule,
-    // SpinnerIconComponent,
+    VisualStoryFormComponent,
     // VideoPlayerComponent,
   ],
   templateUrl: './visual-story.component.html',
@@ -33,19 +27,23 @@ export default class VisualStoryComponent {
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
+  userPrompt = signal('A detective who can talk to plants.');
+
   error = this.visualStoryService.error;
   isLoading = this.visualStoryService.isLoading;
 
-  generatedImages = signal<ImageResponse[] | undefined>(undefined);
+  images = signal<ImageResponse[] | undefined>(undefined);
 
   videoUrl = this.visualStoryService.videoUrl;
   videoError = this.visualStoryService.videoError;
   isGeneratingVideo = this.visualStoryService.isGeneratingVideo;
 
-  async handleGenerate(): Promise<void> {
-    // const imageUrl = await this.visualStoryService.handleGenerate(
-    //   this.customPrompt(),
-    // );
+  async handleGenerate(fullPrompt: string): Promise<void> {
+    const generatedImages = await this.visualStoryService.handleGenerate(
+      fullPrompt,
+    );
+
+    console.log(generatedImages)
     // this.generatedImages.set(imageUrl);
   }
 

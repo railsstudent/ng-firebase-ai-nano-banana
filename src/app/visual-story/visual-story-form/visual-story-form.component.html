@@ -12,10 +12,12 @@
     (keydown)="onEnterPress($event)"
     class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-y placeholder-gray-400">
   </textarea>
+
+  @let args = promptArgs();
   <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
     <div>
       <label for="image-count">Number of images</label>
-      <select id="image-count" name="image-count" [(ngModel)]="numberOfImages" class="ai-dropdown">
+      <select id="image-count" name="image-count" [(ngModel)]="args.numberOfImages" class="ai-dropdown">
         @for (count of numOfImagesList(); track count) {
           <option [ngValue]="count">{{ count }}</option>
         }
@@ -23,7 +25,7 @@
     </div>
     <div>
       <label for="types">Type</label>
-      <select id="types" name="type" [(ngModel)]="type" class="ai-dropdown">
+      <select id="types" name="type" [(ngModel)]="args.type" class="ai-dropdown">
         @for (type of types(); track type) {
           <option [ngValue]="type">{{ type }}</option>
         }
@@ -31,7 +33,7 @@
     </div>
     <div>
       <label for="styles">Style</label>
-      <select id="style" name="style" [(ngModel)]="style" class="ai-dropdown">
+      <select id="style" name="style" [(ngModel)]="args.style" class="ai-dropdown">
         @for (style of styleList(); track style) {
           <option [ngValue]="style">{{ style }}</option>
         }
@@ -39,7 +41,7 @@
     </div>
     <div>
       <label for="transition">Transition</label>
-      <select id="transition" name="transition" [(ngModel)]="transition" class="ai-dropdown">
+      <select id="transition" name="transition" [(ngModel)]="args.transition" class="ai-dropdown">
         @for (transition of transitionList(); track transition) {
           <option [ngValue]="transition">{{ transition }}</option>
         }

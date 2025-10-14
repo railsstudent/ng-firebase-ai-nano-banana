@@ -1,6 +1,7 @@
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { VisualStoryArgs } from '../types/visual-story-args.type';
 
 @Component({
   selector: 'app-visual-story-form',
@@ -17,16 +18,9 @@ export default class VisualStoryFormComponent {
 
   isLoading = input(false);
   numOfImagesList = signal([2,4,6,8]);
-  numberOfImages = signal(2);
-
   styleList = signal(['consistent', 'evolving']);
-  style = signal('consistent');
-
   transitionList = signal(['smooth', 'dramatic', 'fade']);
-  transition = signal('smooth');
-
   types = signal(['story', 'process', 'tutorial', 'timeline']);
-  type = signal('story');
 
   isGenerationDisabled = computed(
     () => {
@@ -35,11 +29,18 @@ export default class VisualStoryFormComponent {
     }
   );
 
+  promptArgs = signal<VisualStoryArgs>({
+    style: 'consistent',
+    transition: 'smooth',
+    numberOfImages: 2,
+    type: 'story'
+  });
+
   fullPrompt = computed(() => {
-    let prompt = `Create a ${this.numberOfImages()} part ${this.type()} for ${this.userPrompt()} `;
-    switch (this.type()) {
+    let prompt = `Create a ${this.promptArgs().numberOfImages} part ${this.promptArgs().type} for ${this.userPrompt()} `;
+    switch (this.promptArgs().type) {
       case 'story':
-        prompt += `, narrative sequence, ${this.style()} art style`;
+        prompt += `, narrative sequence, ${this.promptArgs().style} art style`;
         break;
       case 'process':
         prompt += `, instructional illustration`;
@@ -52,7 +53,7 @@ export default class VisualStoryFormComponent {
         break;
     }
 
-    prompt += `, ${this.transition()} transition from previous image.`;
+    prompt += `, ${this.promptArgs().transition} transition from previous image.`;
     return prompt;
   });
 

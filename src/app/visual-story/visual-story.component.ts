@@ -7,6 +7,7 @@ import { ErrorDisplayComponent } from '../shared/error-display/error-display.com
 import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { VisualStoryService } from './services/visual-story.service';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
+import { VisualStoryArgs, VisualStoryGenerateArgs } from './types/visual-story-args.type';
 
 @Component({
   selector: 'app-visual-story',
@@ -38,10 +39,8 @@ export default class VisualStoryComponent {
   videoError = this.visualStoryService.videoError;
   isGeneratingVideo = this.visualStoryService.isGeneratingVideo;
 
-  async handleGenerate(fullPrompt: string): Promise<void> {
-    const generatedImages = await this.visualStoryService.handleGenerate(
-      fullPrompt,
-    );
+  async handleGenerate(args: VisualStoryGenerateArgs): Promise<void> {
+    const generatedImages = await this.visualStoryService.handleGenerateSequence(args);
 
     console.log(generatedImages)
     // this.generatedImages.set(imageUrl);

@@ -1,7 +1,7 @@
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { VisualStoryArgs } from '../types/visual-story-args.type';
+import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-args.type';
 
 @Component({
   selector: 'app-visual-story-form',
@@ -36,32 +36,14 @@ export default class VisualStoryFormComponent {
     type: 'story'
   });
 
-  fullPrompt = computed(() => {
-    let prompt = `Create a ${this.promptArgs().numberOfImages} part ${this.promptArgs().type} for ${this.userPrompt()} `;
-    switch (this.promptArgs().type) {
-      case 'story':
-        prompt += `, narrative sequence, ${this.promptArgs().style} art style`;
-        break;
-      case 'process':
-        prompt += `, instructional illustration`;
-        break;
-      case 'tutorial':
-        prompt += `, educational diagram`;
-        break;
-      case 'timeline':
-        prompt += `, chronological progression, timeline visualization`;
-        break;
-    }
-
-    prompt += `, ${this.promptArgs().transition} transition from previous image.`;
-    return prompt;
-  });
-
-  generate = output<string>();
+  generate = output<VisualStoryGenerateArgs>();
 
   onGenerateClick(): void {
     if (!this.isGenerationDisabled()) {
-      this.generate.emit(this.fullPrompt());
+      this.generate.emit({
+        args: this.promptArgs(),
+        userPrompt: this.userPrompt()
+      });
     }
   }
 

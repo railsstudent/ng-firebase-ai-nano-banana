@@ -2,6 +2,7 @@ import { FirebaseService } from '@/ai/services/firebase.service';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { GenMediaService } from '@/shared/services/gen-media.service';
 import { Injectable, inject, signal } from '@angular/core';
+import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-args.type';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,9 @@ export class VisualStoryService {
   videoError = this.genMediaService.videoError.asReadonly();
   isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
 
-  async handleGenerate(prompt: string): Promise<ImageResponse[] | undefined> {
-    const currentPrompt = prompt.trim();
+  async handleGenerateSequence(genArgs: VisualStoryGenerateArgs): Promise<ImageResponse[] | undefined> {
+    const { userPrompt, args } = genArgs;
+    const currentPrompt = userPrompt.trim();
 
     if (!currentPrompt) {
       return undefined; // Button should be disabled, but this is a safeguard.
@@ -26,20 +28,72 @@ export class VisualStoryService {
 
     this.isLoading.set(true);
     this.error.set('');
+    let isFirstError = false;
+    const imageResponses: ImageResponse[] = [];
 
     try {
-      return await this.firebaseService.generateStory(currentPrompt);
-    } catch (e: unknown) {
-      console.error(e);
-      if (e instanceof Error) {
-        this.error.set(e.message);
-      } else {
-        this.error.set('An unexpected error occurred.');
+      for (let i = 0; i < args.numberOfImages; i++) {
+        const storyPrompt = this.buildStoryPrompt(currentPrompt, args, i + 1);
+        console.log('Story Prompt', storyPrompt);
+
+        try {
+          const imageResponse = await this.firebaseService.generateImage(currentPrompt, []);
+          imageResponses.push(imageResponse);
+        } catch (e: unknown) {
+          console.error(e);
+          if (!isFirstError) {
+            if (e instanceof Error) {
+              this.error.set(e.message);
+            } else {
+              this.error.set('An unexpected error occurred.');
+            }
+            isFirstError = true;
+          }
+        }
       }
-      return undefined;
+    } catch (outerError: unknown) {
+      console.error(outerError);
+      if (!isFirstError) {
+        if (outerError instanceof Error) {
+          this.error.set(outerError.message);
+        } else {
+          this.error.set('An unexpected error occurred.');
+        }
+        isFirstError = true;
+      }
     } finally {
       this.isLoading.set(false);
     }
+
+    return imageResponses;
+  }
+
+  private buildStoryPrompt(currentPrompt: string, args: VisualStoryArgs, stepNumber: number): string {
+    const { numberOfImages = 4, style = 'consistent', transition = 'smooth', type = 'story' } = args;
+    let fullPrompt = `${currentPrompt}, step ${stepNumber} of ${numberOfImages}`;
+
+    // Add context based on type
+    switch (type) {
+      case 'story':
+        fullPrompt += `, narrative sequence, ${style} art style`;
+        break;
+      case 'process':
+        fullPrompt += `, procedural step, instructional illustration`;
+        break;
+      case 'tutorial':
+        fullPrompt += `, tutorial step, educational diagram`;
+        break;
+      case 'timeline':
+        fullPrompt += `, chronological progression, timeline visualization`;
+        break;
+    }
+
+    // Add transition context
+    if (stepNumber > 1) {
+      fullPrompt += `, ${transition} transition from previous step`;
+    }
+
+    return fullPrompt;
   }
 
   downloadImage(imageUrl: string): void {

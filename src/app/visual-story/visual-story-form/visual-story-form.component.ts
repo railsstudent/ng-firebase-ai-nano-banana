@@ -1,7 +1,7 @@
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ChangeDetectionStrategy, Component, computed, input, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-args.type';
+import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
 
 @Component({
   selector: 'app-visual-story-form',

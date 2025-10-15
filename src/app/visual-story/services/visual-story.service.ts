@@ -33,7 +33,7 @@ export class VisualStoryService {
 
     try {
       for (let i = 0; i < args.numberOfImages; i++) {
-        const imageResponse = await this.buildImage(currentPrompt, args, i);
+        const imageResponse = await this.generateStepImage(currentPrompt, args, i);
         if (imageResponse) {
           imageResponses.push(imageResponse);
         }
@@ -55,7 +55,7 @@ export class VisualStoryService {
     return imageResponses;
   }
 
-  private async buildImage(currentPrompt: string, args: VisualStoryArgs, i: number) {
+  private async generateStepImage(currentPrompt: string, args: VisualStoryArgs, i: number) {
     const storyPrompt = this.buildStoryPrompt({ userPrompt: currentPrompt, args }, i + 1);
     console.log('Story Prompt', storyPrompt);
 

@@ -11,6 +11,16 @@ import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
 
+const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
+  userPrompt: 'A detective who can talk to plants.',
+  args: {
+    style: 'consistent',
+    transition: 'smooth',
+    numberOfImages: 2,
+    type: 'story'
+  }
+}
+
 @Component({
   selector: 'app-visual-story',
   imports: [
@@ -32,15 +42,7 @@ export default class VisualStoryComponent {
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
-  promptArgs = signal<VisualStoryGenerateArgs>({
-    userPrompt: 'A detective who can talk to plants.',
-    args: {
-      style: 'consistent',
-      transition: 'smooth',
-      numberOfImages: 2,
-      type: 'story'
-    }
-  });
+  promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
 
   error = this.visualStoryService.error;
   isLoading = this.visualStoryService.isLoading;
@@ -54,7 +56,23 @@ export default class VisualStoryComponent {
   key = signal('visual-story');
   promptHistory = this.visualStoryHistoryService.getPromptHistory(this.key);
 
+  private savePromptArgs(trimmedPrompt: string) {
+    this.promptArgs.update(args => {
+      args.userPrompt = trimmedPrompt;
+      return args;
+    });
+
+    this.visualStoryHistoryService.addPrompt(this.key(), this.promptArgs());
+  }
+
   async handleGenerate(): Promise<void> {
+    const userPrompt = this.promptArgs().userPrompt;
+    if (!userPrompt && !userPrompt.trim()) {
+      return;
+    }
+
+    this.savePromptArgs(userPrompt);
+
     const generatedImages = await this.visualStoryService.handleGenerateSequence(
       this.promptArgs()
     );
@@ -78,7 +96,12 @@ export default class VisualStoryComponent {
     this.visualStoryHistoryService.clearHistory(this.key());
   }
 
-  handleVisualStoryArgs(strArgs: string) {
-
+  handleVisualStoryArgs(stringifyPromptArgs: string) {
+    try {
+      this.promptArgs.set(JSON.parse(stringifyPromptArgs));
+    } catch (e) {
+      console.error(e);
+      this.promptArgs.set(DEFAULT_PROMPT_ARGS);
+    }
   }
 }

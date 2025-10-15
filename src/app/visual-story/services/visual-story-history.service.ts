@@ -1,5 +1,5 @@
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
 
 const STORY_HISTOTY_ID = 'visual-story';
@@ -10,13 +10,19 @@ const STORY_HISTOTY_ID = 'visual-story';
 export class VisualStoryHistoryService {
   private readonly promptHistoryService = inject(PromptHistoryService);
 
-  promptHistory = this.promptHistoryService.getHistory(STORY_HISTOTY_ID);
-
-  clearHistory(): void {
-    this.promptHistoryService.clearHistory(STORY_HISTOTY_ID);
+  getPromptHistory(key: Signal<string>) {
+    return linkedSignal({
+      source: () => key(),
+      computation: (featureId) => this.promptHistoryService.getHistory(featureId)()
+    });
   }
 
-  addPrompt(args: VisualStoryGenerateArgs) {
+  clearHistory(key: string): void {
+    this.promptHistoryService.clearHistory(key);
+  }
 
+  addPrompt(key: string, args: VisualStoryGenerateArgs) {
+    const strPrompt = JSON.stringify(args);
+    this.promptHistoryService.addPrompt(key, strPrompt);
   }
 }

@@ -33,22 +33,9 @@ export class VisualStoryService {
 
     try {
       for (let i = 0; i < args.numberOfImages; i++) {
-        const storyPrompt = this.buildStoryPrompt(currentPrompt, args, i + 1);
-        console.log('Story Prompt', storyPrompt);
-
-        try {
-          const imageResponse = await this.firebaseService.generateImage(currentPrompt, []);
+        const imageResponse = await this.buildImage(currentPrompt, args, i);
+        if (imageResponse) {
           imageResponses.push(imageResponse);
-        } catch (e: unknown) {
-          console.error(e);
-          if (!isFirstError) {
-            if (e instanceof Error) {
-              this.error.set(e.message);
-            } else {
-              this.error.set('An unexpected error occurred.');
-            }
-            isFirstError = true;
-          }
         }
       }
     } catch (outerError: unknown) {
@@ -68,9 +55,25 @@ export class VisualStoryService {
     return imageResponses;
   }
 
-  private buildStoryPrompt(currentPrompt: string, args: VisualStoryArgs, stepNumber: number): string {
-    const { numberOfImages = 4, style = 'consistent', transition = 'smooth', type = 'story' } = args;
-    let fullPrompt = `${currentPrompt}, step ${stepNumber} of ${numberOfImages}`;
+  private async buildImage(currentPrompt: string, args: VisualStoryArgs, i: number) {
+    const storyPrompt = this.buildStoryPrompt({ userPrompt: currentPrompt, args }, i + 1);
+    console.log('Story Prompt', storyPrompt);
+
+    try {
+      return await this.firebaseService.generateImage(currentPrompt, []);
+    } catch (e: unknown) {
+      console.error(e);
+      if (e instanceof Error) {
+        throw e;
+      }
+      throw new Error('An unexpected error occurred.');
+    }
+  }
+
+  private buildStoryPrompt(genArgs: VisualStoryGenerateArgs, stepNumber: number): string {
+    const { userPrompt, args } = genArgs;
+    const { numberOfImages, style, transition, type } = args;
+    let fullPrompt = `${userPrompt}, step ${stepNumber} of ${numberOfImages}`;
 
     // Add context based on type
     switch (type) {

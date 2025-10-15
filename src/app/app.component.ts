@@ -15,7 +15,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 
   <footer class="bg-gray-800 mt-auto">
     <div class="container mx-auto px-6 py-4 text-center text-gray-400">
-      <p>&copy; 2024 Photo Editing App. Built with Gemini, Angular & Tailwind.</p>
+      <p>&copy; 2025 Photo Editing App. Built with Gemini, Angular, Firebase AI Logic & Tailwind.</p>
     </div>
   </footer>
 </div>

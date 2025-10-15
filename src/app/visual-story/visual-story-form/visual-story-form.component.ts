@@ -13,14 +13,8 @@ import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisualStoryFormComponent {
-  userPrompt = signal('A detective who can talk to plants.');
   placeholderText = input('e.g., A detective who can talk to plants.');
-  generationArgs = model<VisualStoryArgs>({
-    style: 'consistent',
-    transition: 'smooth',
-    numberOfImages: 2,
-    type: 'story'
-  });
+  promptArgs = model.required<VisualStoryGenerateArgs>();
 
   isLoading = input(false);
   numOfImagesList = signal([2,4,6,8]);
@@ -30,26 +24,17 @@ export default class VisualStoryFormComponent {
 
   isGenerationDisabled = computed(
     () => {
-      const isEmptyInput = !this.userPrompt() || this.userPrompt().trim().length <= 0;
+      const prompt = this.promptArgs().userPrompt;
+      const isEmptyInput = !prompt || !prompt.trim();
       return this.isLoading() || isEmptyInput;
     }
   );
 
-  promptArgs = signal<VisualStoryArgs>({
-    style: 'consistent',
-    transition: 'smooth',
-    numberOfImages: 2,
-    type: 'story'
-  });
-
-  generate = output<VisualStoryGenerateArgs>();
+  generate = output<void>();
 
   onGenerateClick(): void {
     if (!this.isGenerationDisabled()) {
-      this.generate.emit({
-        args: this.promptArgs(),
-        userPrompt: this.userPrompt()
-      });
+      this.generate.emit();
     }
   }
 

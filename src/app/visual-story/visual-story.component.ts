@@ -1,15 +1,15 @@
+import { ImageResponse } from '@/ai/types/image-response.type';
 import { FeatureService } from '@/feature/services/feature.service';
+import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
+import { CardComponent } from '@/shared/card/card.component';
+import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { ImageActions } from '@/shared/image-viewer/types/actions.type';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { ImageResponse } from '../ai/types/image-response.type';
-import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
-import { CardComponent } from '../shared/card/card.component';
-import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
+import { VisualStoryHistoryService } from './services/visual-story-history.service';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
-import { VisualStoryHistoryService } from './services/visual-story-history.service';
 
 @Component({
   selector: 'app-visual-story',
@@ -32,7 +32,15 @@ export default class VisualStoryComponent {
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
-  userPrompt = signal('A detective who can talk to plants.');
+  promptArgs = signal<VisualStoryGenerateArgs>({
+    userPrompt: 'A detective who can talk to plants.',
+    args: {
+      style: 'consistent',
+      transition: 'smooth',
+      numberOfImages: 2,
+      type: 'story'
+    }
+  });
 
   error = this.visualStoryService.error;
   isLoading = this.visualStoryService.isLoading;
@@ -43,10 +51,13 @@ export default class VisualStoryComponent {
   videoError = this.visualStoryService.videoError;
   isGeneratingVideo = this.visualStoryService.isGeneratingVideo;
 
-  promptHistory = this.visualStoryHistoryService.promptHistory;
+  key = signal('visual-story');
+  promptHistory = this.visualStoryHistoryService.getPromptHistory(this.key);
 
-  async handleGenerate(args: VisualStoryGenerateArgs): Promise<void> {
-    const generatedImages = await this.visualStoryService.handleGenerateSequence(args);
+  async handleGenerate(): Promise<void> {
+    const generatedImages = await this.visualStoryService.handleGenerateSequence(
+      this.promptArgs()
+    );
 
     console.log(generatedImages)
     // this.generatedImages.set(imageUrl);
@@ -64,7 +75,7 @@ export default class VisualStoryComponent {
   }
 
   onClearHistory(): void {
-    this.visualStoryHistoryService.clearHistory();
+    this.visualStoryHistoryService.clearHistory(this.key());
   }
 
   handleVisualStoryArgs(strArgs: string) {

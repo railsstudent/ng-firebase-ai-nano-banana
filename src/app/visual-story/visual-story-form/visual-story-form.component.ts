@@ -1,5 +1,5 @@
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-args.type';
 
@@ -15,6 +15,12 @@ import { VisualStoryArgs, VisualStoryGenerateArgs } from '../types/visual-story-
 export default class VisualStoryFormComponent {
   userPrompt = signal('A detective who can talk to plants.');
   placeholderText = input('e.g., A detective who can talk to plants.');
+  generationArgs = model<VisualStoryArgs>({
+    style: 'consistent',
+    transition: 'smooth',
+    numberOfImages: 2,
+    type: 'story'
+  });
 
   isLoading = input(false);
   numOfImagesList = signal([2,4,6,8]);

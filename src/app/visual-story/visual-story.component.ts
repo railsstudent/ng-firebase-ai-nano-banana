@@ -1,13 +1,15 @@
 import { FeatureService } from '@/feature/services/feature.service';
+import { ImageActions } from '@/shared/image-viewer/types/actions.type';
+import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ImageResponse } from '../ai/types/image-response.type';
 import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
 import { CardComponent } from '../shared/card/card.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
-import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { VisualStoryService } from './services/visual-story.service';
+import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
-import { VisualStoryArgs, VisualStoryGenerateArgs } from './types/visual-story-args.type';
+import { VisualStoryHistoryService } from './services/visual-story-history.service';
 
 @Component({
   selector: 'app-visual-story',
@@ -17,6 +19,7 @@ import { VisualStoryArgs, VisualStoryGenerateArgs } from './types/visual-story-a
     ErrorDisplayComponent,
     // ImageViewerComponent,
     VisualStoryFormComponent,
+    PromptHistoryComponent
     // VideoPlayerComponent,
   ],
   templateUrl: './visual-story.component.html',
@@ -24,6 +27,7 @@ import { VisualStoryArgs, VisualStoryGenerateArgs } from './types/visual-story-a
 })
 export default class VisualStoryComponent {
   private readonly visualStoryService = inject(VisualStoryService);
+  private readonly visualStoryHistoryService = inject(VisualStoryHistoryService);
   private readonly featureService = inject(FeatureService);
 
   feature = this.featureService.getFeatureDetails('visual-story');
@@ -38,6 +42,8 @@ export default class VisualStoryComponent {
   videoUrl = this.visualStoryService.videoUrl;
   videoError = this.visualStoryService.videoError;
   isGeneratingVideo = this.visualStoryService.isGeneratingVideo;
+
+  promptHistory = this.visualStoryHistoryService.promptHistory;
 
   async handleGenerate(args: VisualStoryGenerateArgs): Promise<void> {
     const generatedImages = await this.visualStoryService.handleGenerateSequence(args);
@@ -55,5 +61,13 @@ export default class VisualStoryComponent {
     //   await this.visualStoryService.generateVideo(this.customPrompt(),
     //   this.generatedImage());
     // }
+  }
+
+  onClearHistory(): void {
+    this.visualStoryHistoryService.clearHistory();
+  }
+
+  handleVisualStoryArgs(strArgs: string) {
+
   }
 }

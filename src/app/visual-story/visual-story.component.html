@@ -1,13 +1,21 @@
 <app-card>
   <app-card-header [name]="feature.name" [description]="feature.description"  />
 
-  <app-visual-story-form
-    [isLoading]="isLoading()"
-    (generate)="handleGenerate($event)"
-  >
-    <span loading-text>{{ feature.loadingText }}</span>
-    <span button-text>{{ feature.buttonText }}</span>
-  </app-visual-story-form>
+  <div class="w-full max-w-2xl mx-auto">
+    <app-visual-story-form
+      [isLoading]="isLoading()"
+      (generate)="handleGenerate($event)"
+    >
+      <span loading-text>{{ feature.loadingText }}</span>
+      <span button-text>{{ feature.buttonText }}</span>
+    </app-visual-story-form>
+
+    <app-prompt-history
+      [history]="promptHistory()"
+      (promptSelected)="handleVisualStoryArgs($event)"
+      (historyCleared)="onClearHistory()"
+    />
+  </div>
 
   <app-error-display [error]="error()" />
 

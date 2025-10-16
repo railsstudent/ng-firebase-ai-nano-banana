@@ -41,9 +41,10 @@ export class FirebaseService  {
       const inlineDataParts = result.response.inlineDataParts();
 
       if (inlineDataParts?.length) {
-        return inlineDataParts.map(({inlineData}) => {
+        return inlineDataParts.map(({inlineData}, index) => {
           const { data, mimeType } = inlineData;
           return {
+            id: index,
             mimeType,
             data,
             inlineData: `data:${mimeType};base64,${data}`

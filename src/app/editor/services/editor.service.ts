@@ -87,4 +87,8 @@ export class EditorService {
       await this.genMediaService.generateVideo(this.prompt(), imageBytes, mimeType);
     }
   }
+
+  removeVideo() {
+    this.genMediaService.videoUrl.set('');
+  }
 }

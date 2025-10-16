@@ -11,7 +11,7 @@
         height="512"
       />
       <button
-        (click)="imageAction.emit('downloadImage')"
+        (click)="imageAction.emit({ action: 'downloadImage', context: id() })"
         title="Download Image"
         class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
         <app-download-icon />
@@ -19,13 +19,13 @@
 
       <div class="absolute top-4 right-4">
         <button
-          (click)="imageAction.emit('generateVideo')"
+          (click)="imageAction.emit({ action: 'generateVideo', context: id() })"
           title="Generate Video"
           class="mr-2 bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
           <app-video-icon />
         </button>
         <button
-          (click)="imageAction.emit('clearImage')"
+          (click)="imageAction.emit({ action: 'clearImage', context: id() })"
           title="Clear Image"
           class="bg-gray-900 bg-opacity-75 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500">
           <app-trash-icon />

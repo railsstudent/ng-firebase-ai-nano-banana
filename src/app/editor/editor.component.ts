@@ -68,12 +68,13 @@ export default class EditorComponent {
     this.editorService.clearHistory(this.featureId());
   }
 
-  async handleAction(actionName: ImageActions) {
-    if (actionName === 'clearImage') {
+  async handleAction({ action }: { action: ImageActions }) {
+    if (action === 'clearImage') {
       this.generatedImage.set(undefined);
-    } else if (actionName === 'downloadImage') {
+      this.editorService.removeVideo();
+    } else if (action === 'downloadImage') {
       this.editorService.downloadImage(this.generatedImage()?.inlineData || '');
-    } else if (actionName === 'generateVideo') {
+    } else if (action === 'generateVideo') {
       await this.editorService.generateVideo(this.generatedImage());
     }
   }

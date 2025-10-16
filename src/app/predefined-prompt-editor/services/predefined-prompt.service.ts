@@ -61,4 +61,8 @@ export class PredefinedPromptService {
       await this.genMediaService.generateVideo(prompt, imageBytes, mimeType);
     }
   }
+
+  removeVideo() {
+    this.genMediaService.videoUrl.set('');
+  }
 }

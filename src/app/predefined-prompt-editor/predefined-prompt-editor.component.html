@@ -27,6 +27,7 @@
   <app-image-viewer class="block mt-4"
     [isLoading]="isLoading()"
     [url]="generatedImage()?.inlineData || ''"
+    [id]="generatedImage()?.id || 0"
     [loadingText]="details.loadingText"
     (imageAction)="handleAction($event)"
   />

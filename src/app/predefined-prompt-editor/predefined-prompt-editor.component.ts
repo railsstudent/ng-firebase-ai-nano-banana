@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ImageResponse } from '../ai/types/image-response.type';
 import { FeatureDetails } from '../feature/types/feature-details.type';
 import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
 import { CardComponent } from '../shared/card/card.component';
@@ -8,9 +9,8 @@ import { ErrorDisplayComponent } from '../shared/error-display/error-display.com
 import { SpinnerIconComponent } from '../shared/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
 import { ImageActions } from '../shared/image-viewer/types/actions.type';
-import { PredefinedPromptService } from './services/predefined-prompt.service';
-import { ImageResponse } from '../ai/types/image-response.type';
 import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
+import { PredefinedPromptService } from './services/predefined-prompt.service';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -54,15 +54,16 @@ export default class PredefinedPromptComponent {
     this.generatedImage.set(imageUrl);
   }
 
-  async handleAction(actionName: ImageActions) {
-    if (actionName === 'clearImage') {
+  async handleAction({ action }: { action: ImageActions }) {
+    if (action === 'clearImage') {
       this.generatedImage.set(undefined);
-    } else if (actionName === 'downloadImage') {
+      this.predefinedPromptService.removeVideo();
+    } else if (action === 'downloadImage') {
       this.predefinedPromptService.downloadImage(
         this.generatedImage()?.inlineData || '',
         this.feature().name
       );
-    } else if (actionName === 'generateVideo') {
+    } else if (action === 'generateVideo') {
       await this.predefinedPromptService.generateVideo(this.customPrompt(),
       this.generatedImage());
     }

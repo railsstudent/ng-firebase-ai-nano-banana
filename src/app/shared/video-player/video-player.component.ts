@@ -20,7 +20,6 @@ import { LoaderComponent } from '../loader/loader.component';
     <video [src]="videoUrl()" controls autoplay loop class="w-full rounded-md"></video>
   </div>
 }
-
 <app-error-display [error]="videoError()" />
   `,
   styleUrl: '../tailwind-utilities.css',

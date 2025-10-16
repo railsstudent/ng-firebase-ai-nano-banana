@@ -30,6 +30,7 @@
     <app-image-viewer
       [isLoading]="isLoading()"
       [url]="generatedImage()?.inlineData || ''"
+      [id]="generatedImage()?.id || 0"
       [loadingText]="details.loadingText"
       (imageAction)="handleAction($event)"
     />

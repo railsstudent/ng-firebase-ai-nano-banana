@@ -15,6 +15,7 @@ export class ImageViewerComponent {
   isLoading = input(false);
   url = input('');
   loadingText = input('');
+  id = input(0);
 
-  imageAction = output<ImageActions>();
+  imageAction = output<{ action: ImageActions, context?: unknown }>();
 }

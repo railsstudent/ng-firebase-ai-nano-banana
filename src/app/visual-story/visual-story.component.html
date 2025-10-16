@@ -20,16 +20,29 @@
 
   <app-error-display [error]="error()" />
 
-  <!-- <app-image-viewer class="block mt-4"
-    [isLoading]="isLoading()"
-    [url]="generatedImage()?.inlineData || ''"
-    [loadingText]="details.loadingText"
-    (imageAction)="handleAction($event)"
-  />
-
-  <app-video-player
-    style="width: 512px; height: 512px"
+  @let imageResponses = images() || [];
+  @if (isLoading()) {
+    <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
+      <app-loader loadingText="Generating your visual story...">
+        <p class="text-sm">Your generated {{ promptArgs().args.type}} will appear here. Please be patient.</p>
+      </app-loader>
+    </div>
+  } @else {
+    @if (imageResponses && imageResponses.length > 0) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        @for (imageResponse of imageResponses; track imageResponse.id; let i=$index) {
+          <app-image-viewer class="block mt-4"
+            [url]="imageResponse.inlineData"
+            [loadingText]="feature.loadingText"
+            [id]="imageResponse.id"
+            (imageAction)="handleAction($event)"
+          />
+        }
+      </div>
+    }
+    <app-video-player
     [isGeneratingVideo]="isGeneratingVideo()"
     [videoUrl]="videoUrl()"
-  /> -->
+  />
+  }
 </app-card>

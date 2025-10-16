@@ -4,7 +4,7 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { ImageViewerComponent } from '@/shared/image-viewer/image-viewer.component';
-import { ImageActions } from '@/shared/image-viewer/types/actions.type';
+import { ImageActions } from '@/shared/types/actions.type';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { VisualStoryHistoryService } from './services/visual-story-history.service';
@@ -92,7 +92,13 @@ export default class VisualStoryComponent {
 
   async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {
     if (action === 'clearImage') {
-      this.images.set(undefined);
+      const id = context as number;
+      this.images.update((items) => {
+        if (!items) {
+          return items;
+        }
+        return items.filter((item) => item.id !== id);
+      });
     } else if (action === 'downloadImage') {
       const id = context as number;
       const generatedImage = this.images()?.find((image) => image.id === id);

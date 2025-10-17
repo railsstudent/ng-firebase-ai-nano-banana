@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-2xl mx-auto">
       <app-prompt-form
-        [(prompt)]="prompt"
+        [(prompt)]="editedPrompt"
         [additionalDisabled]="!hasImageFiles()"
         (generate)="handleGenerate()"
       >
@@ -20,24 +20,19 @@
 
       <app-prompt-history
           [history]="promptHistory()"
-          (promptSelected)=" prompt.set($event)"
+          (promptSelected)=" editedPrompt.set($event)"
           (historyCleared)="onClearHistory()"
       />
     </div>
 
     <app-error-display [error]="error()" />
 
-    <app-image-viewer
-      [isLoading]="isLoading()"
-      [url]="generatedImage()?.inlineData || ''"
-      [id]="generatedImage()?.id || 0"
+    <app-gen-media
       [loadingText]="details.loadingText"
-      (imageAction)="handleAction($event)"
-    />
-
-    <app-video-player
-      style="width: 512px; height: 512px"
-      [isGeneratingVideo]="isGeneratingVideo()"
-      [videoUrl]="videoUrl()"
-    />
+      [userPrompt]="prompt()"
+      [prompts]="[prompt()]"
+      #genmedia
+    >
+      <p class="text-sm">{{ details.loadingText }}</p>
+    </app-gen-media>
   </app-card>

@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal } from '@angular/core';
-import { ImageResponse } from '../ai/types/image-response.type';
+import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { FeatureDetails } from '../feature/types/feature-details.type';
 import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
 import { CardComponent } from '../shared/card/card.component';
 import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
-import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
 import { PromptFormComponent } from '../shared/prompt-form/prompt-form.component';
 import { PromptHistoryComponent } from '../shared/prompt-history/prompt-history.component';
-import { ImageActions } from '../shared/types/actions.type';
-import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
 import { EditorService } from './services/editor.service';
 
 @Component({
@@ -21,8 +18,7 @@ import { EditorService } from './services/editor.service';
     PromptHistoryComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    ImageViewerComponent,
-    VideoPlayerComponent,
+    GenMediaComponent,
   ],
   templateUrl: './editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,12 +29,13 @@ export default class EditorComponent {
 
   private readonly editorService = inject(EditorService);
 
-  prompt = this.editorService.prompt;
+  editedPrompt = signal('');
+  prompt = signal('');
   promptHistory = this.editorService.getPromptHistory(this.featureId);
 
-  error = this.editorService.error;
-  isLoading = this.editorService.isLoading;
-  generatedImage = signal<ImageResponse | undefined>(undefined);
+  genmedia = viewChild<GenMediaComponent>('genmedia');
+  isLoading = computed(() =>this.genmedia()?.isLoading() || false);
+  error = computed(() => this.genmedia()?.error() || '');
 
   featureNeedsImage = computed(() => this.feature()?.mode !== undefined);
 
@@ -51,31 +48,21 @@ export default class EditorComponent {
     computation: ({ numOfImages, featureNeedsImage}) => featureNeedsImage ? numOfImages > 0 : true
   });
 
-  videoUrl = this.editorService.videoUrl;
-  videoError = this.editorService.videoError;
-  isGeneratingVideo = this.editorService.isGeneratingVideo;
-
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.editorService.handleGenerate(
-      this.featureId(),
-      this.featureNeedsImage(),
-      this.imageFiles()
-    );
-    this.generatedImage.set(imageUrl);
+    const currentPrompt = this.editedPrompt().trim();
+
+    const canGenerateImage = !!currentPrompt
+      && (this.featureNeedsImage() ? this.imageFiles().length > 0 : this.imageFiles().length === 0);
+
+    if (!canGenerateImage) {
+      return;
+    }
+
+    this.editorService.addPrompt(this.featureId(), currentPrompt);
+    this.prompt.set(currentPrompt);
   }
 
   onClearHistory(): void {
     this.editorService.clearHistory(this.featureId());
-  }
-
-  async handleAction({ action }: { action: ImageActions }) {
-    if (action === 'clearImage') {
-      this.generatedImage.set(undefined);
-      this.editorService.removeVideo();
-    } else if (action === 'downloadImage') {
-      this.editorService.downloadImage(this.generatedImage()?.inlineData || '');
-    } else if (action === 'generateVideo') {
-      await this.editorService.generateVideo(this.generatedImage());
-    }
   }
 }

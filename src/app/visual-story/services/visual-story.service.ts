@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
 import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
+import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VisualStoryService {
+  private readonly promptHistoryService = inject(PromptHistoryService);
+
   buildStepPrompts(genArgs: VisualStoryGenerateArgs): string[] {
     const { userPrompt, args } = genArgs;
     const currentPrompt = userPrompt.trim();
@@ -50,5 +53,21 @@ export class VisualStoryService {
     }
 
     return fullPrompt;
+  }
+
+  getPromptHistory(key: Signal<string>) {
+    return linkedSignal({
+      source: () => key(),
+      computation: (featureId) => this.promptHistoryService.getHistory(featureId)()
+    });
+  }
+
+  clearHistory(key: string): void {
+    this.promptHistoryService.clearHistory(key);
+  }
+
+  addPrompt(key: string, args: VisualStoryGenerateArgs) {
+    const strPrompt = JSON.stringify(args);
+    this.promptHistoryService.addPrompt(key, strPrompt);
   }
 }

@@ -6,7 +6,6 @@ import { ErrorDisplayComponent } from '@/shared/error-display/error-display.comp
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
-import { VisualStoryHistoryService } from './services/visual-story-history.service';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
@@ -36,7 +35,6 @@ const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
 })
 export default class VisualStoryComponent {
   private readonly visualStoryService = inject(VisualStoryService);
-  private readonly visualStoryHistoryService = inject(VisualStoryHistoryService);
   private readonly featureService = inject(FeatureService);
 
   feature = this.featureService.getFeatureDetails('visual-story');
@@ -52,7 +50,7 @@ export default class VisualStoryComponent {
   key = signal('visual-story');
   prompts = signal<string[]>([]);
 
-  promptHistory = this.visualStoryHistoryService.getPromptHistory(this.key);
+  promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;
@@ -75,11 +73,11 @@ export default class VisualStoryComponent {
       return args;
     });
 
-    this.visualStoryHistoryService.addPrompt(this.key(), this.promptArgs());
+    this.visualStoryService.addPrompt(this.key(), this.promptArgs());
   }
 
   onClearHistory(): void {
-    this.visualStoryHistoryService.clearHistory(this.key());
+    this.visualStoryService.clearHistory(this.key());
   }
 
   handleVisualStoryArgs(stringifyPromptArgs: string) {

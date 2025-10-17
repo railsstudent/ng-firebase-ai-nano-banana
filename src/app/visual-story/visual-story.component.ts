@@ -3,16 +3,13 @@ import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
-import { ImageViewerComponent } from '@/shared/image-viewer/image-viewer.component';
-import { ImageActions } from '@/shared/types/actions.type';
+import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { VisualStoryHistoryService } from './services/visual-story-history.service';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
-import { VideoPlayerComponent } from '@/shared/video-player/video-player.component';
-import { LoaderComponent } from '@/shared/loader/loader.component';
 
 const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
   userPrompt: 'A detective who can talk to plants.',
@@ -30,11 +27,9 @@ const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
     CardComponent,
     CardHeaderComponent,
     ErrorDisplayComponent,
-    ImageViewerComponent,
     VisualStoryFormComponent,
     PromptHistoryComponent,
-    VideoPlayerComponent,
-    LoaderComponent
+    GenMediaComponent,
   ],
   templateUrl: './visual-story.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,26 +43,16 @@ export default class VisualStoryComponent {
 
   promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
 
-  error = this.visualStoryService.error;
-  isLoading = this.visualStoryService.isLoading;
+  genmedia = viewChild<GenMediaComponent>('genmedia');
+  isLoading = computed(() =>this.genmedia()?.isLoading() || false);
+  error = computed(() => this.genmedia()?.error() || '');
 
   images = signal<ImageResponse[] | undefined>(undefined);
 
-  videoUrl = this.visualStoryService.videoUrl;
-  videoError = this.visualStoryService.videoError;
-  isGeneratingVideo = this.visualStoryService.isGeneratingVideo;
-
   key = signal('visual-story');
+  prompts = signal<string[]>([]);
+
   promptHistory = this.visualStoryHistoryService.getPromptHistory(this.key);
-
-  private savePromptArgs(trimmedPrompt: string) {
-    this.promptArgs.update(args => {
-      args.userPrompt = trimmedPrompt;
-      return args;
-    });
-
-    this.visualStoryHistoryService.addPrompt(this.key(), this.promptArgs());
-  }
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;
@@ -77,40 +62,20 @@ export default class VisualStoryComponent {
 
     this.savePromptArgs(userPrompt);
 
-    const generatedImages = await this.visualStoryService.handleGenerateSequence(
+    const stepPrompts = await this.visualStoryService.buildStepPrompts(
       this.promptArgs()
     );
 
-    const generatedImagesWithCorrectIndex = generatedImages?.map((image, index) => ({
-      ...image,
-      id: index
-    })) || []
-
-    console.log(generatedImagesWithCorrectIndex)
-    this.images.set(generatedImagesWithCorrectIndex);
+    this.prompts.set(stepPrompts);
   }
 
-  async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {
-    if (action === 'clearImage') {
-      const id = context as number;
-      this.images.update((items) => {
-        if (!items) {
-          return items;
-        }
-        return items.filter((item) => item.id !== id);
-      });
-    } else if (action === 'downloadImage') {
-      const id = context as number;
-      const generatedImage = this.images()?.find((image) => image.id === id);
-      this.visualStoryService.downloadImage(generatedImage?.inlineData || '');
-    } else if (action === 'generateVideo') {
-      const id = context as number;
-      const generatedImage = this.images()?.find((image) => image.id === id);
-      if (generatedImage) {
-        await this.visualStoryService.generateVideo(this.promptArgs().userPrompt,
-      generatedImage);
-      }
-    }
+  private savePromptArgs(trimmedPrompt: string) {
+    this.promptArgs.update(args => {
+      args.userPrompt = trimmedPrompt;
+      return args;
+    });
+
+    this.visualStoryHistoryService.addPrompt(this.key(), this.promptArgs());
   }
 
   onClearHistory(): void {

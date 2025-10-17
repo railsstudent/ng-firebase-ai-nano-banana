@@ -6,11 +6,11 @@ import { CardComponent } from '../shared/card/card.component';
 import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
 import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
-import { ImageActions } from '../shared/image-viewer/types/actions.type';
 import { PromptFormComponent } from '../shared/prompt-form/prompt-form.component';
 import { PromptHistoryComponent } from '../shared/prompt-history/prompt-history.component';
-import { EditorService } from './services/editor.service';
+import { ImageActions } from '../shared/types/actions.type';
 import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
+import { EditorService } from './services/editor.service';
 
 @Component({
   selector: 'app-editor',

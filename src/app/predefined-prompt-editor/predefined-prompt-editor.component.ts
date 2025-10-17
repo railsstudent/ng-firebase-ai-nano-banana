@@ -8,7 +8,7 @@ import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
 import { SpinnerIconComponent } from '../shared/icons/spinner-icon.component';
 import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
-import { ImageActions } from '../shared/image-viewer/types/actions.type';
+import { ImageActions } from '../shared/types/actions.type';
 import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
 import { PredefinedPromptService } from './services/predefined-prompt.service';
 

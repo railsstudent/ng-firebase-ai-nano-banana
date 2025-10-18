@@ -1,52 +1,54 @@
-<form class="flex flex-col sm:flex-row gap-4"
+<form class="flex flex-col sm:flex-row gap-4 px-4"
   id="form"
   name="form"
   (ngSubmit)="onGenerateClick()"
 >
   @let args = promptArgs();
-  <textarea
-    id="promptHistory"
-    name="promptHistory"
-    [(ngModel)]="args.userPrompt"
-    [rows]="4"
-    [placeholder]="placeholderText()"
-    (keydown)="onEnterPress($event)"
-    class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-y placeholder-gray-400">
-  </textarea>
+  <div class="flex-grow">
+    <textarea
+      id="promptHistory"
+      name="promptHistory"
+      [(ngModel)]="args.userPrompt"
+      [rows]="4"
+      [placeholder]="placeholderText()"
+      (keydown)="onEnterPress($event)"
+      class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-y placeholder-gray-400">
+    </textarea>
 
-  @let sequenceArgs = args.args;
-  <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-    <div>
-      <label for="image-count">Number of images</label>
-      <select id="image-count" name="image-count" [(ngModel)]="sequenceArgs.numberOfImages" class="ai-dropdown">
-        @for (count of numOfImagesList(); track count) {
-          <option [ngValue]="count">{{ count }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <label for="types">Type</label>
-      <select id="types" name="type" [(ngModel)]="sequenceArgs.type" class="ai-dropdown">
-        @for (type of types(); track type) {
-          <option [ngValue]="type">{{ type }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <label for="styles">Style</label>
-      <select id="style" name="style" [(ngModel)]="sequenceArgs.style" class="ai-dropdown">
-        @for (style of styleList(); track style) {
-          <option [ngValue]="style">{{ style }}</option>
-        }
-      </select>
-    </div>
-    <div>
-      <label for="transition">Transition</label>
-      <select id="transition" name="transition" [(ngModel)]="sequenceArgs.transition" class="ai-dropdown">
-        @for (transition of transitionList(); track transition) {
-          <option [ngValue]="transition">{{ transition }}</option>
-        }
-      </select>
+    @let sequenceArgs = args.args;
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div class="flex text-left">
+        <label for="image-count" class="mr-[0.5rem] text-[1.1rem]">Image count</label>
+        <select id="image-count" name="image-count" [(ngModel)]="sequenceArgs.numberOfImages" class="ai-dropdown">
+          @for (count of numOfImagesList(); track count) {
+            <option [ngValue]="count">{{ count }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex text-left">
+        <label for="type" class="mr-[0.5rem] text-[1.1rem]">Type</label>
+        <select id="type" name="type" [(ngModel)]="sequenceArgs.type" class="ai-dropdown">
+          @for (type of types(); track type) {
+            <option [ngValue]="type">{{ type }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex text-left">
+        <label for="style" class="mr-[0.5rem] text-[1.1rem]">Style</label>
+        <select id="style" name="style" [(ngModel)]="sequenceArgs.style" class="ai-dropdown">
+          @for (style of styleList(); track style) {
+            <option [ngValue]="style">{{ style }}</option>
+          }
+        </select>
+      </div>
+      <div class="flex text-left">
+        <label for="transition" class="mr-[0.5rem] text-[1.1rem]">Transition</label>
+        <select id="transition" name="transition" [(ngModel)]="sequenceArgs.transition" class="ai-dropdown">
+          @for (transition of transitionList(); track transition) {
+            <option [ngValue]="transition">{{ transition }}</option>
+          }
+        </select>
+      </div>
     </div>
   </div>
   <div>
@@ -58,8 +60,8 @@
       <app-spinner-icon />&nbsp;&nbsp;
       <ng-content select="[loading-text]">Generating...</ng-content>
     } @else {
-        <ng-content select="[button-text]" />
-      }
+      <ng-content select="[button-text]" />
+    }
     </button>
   </div>
 </form>

@@ -10,6 +10,7 @@ import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
     SpinnerIconComponent,
   ],
   templateUrl: './visual-story-form.component.html',
+  styleUrl: '../../shared/tailwind-utilities.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualStoryFormComponent {

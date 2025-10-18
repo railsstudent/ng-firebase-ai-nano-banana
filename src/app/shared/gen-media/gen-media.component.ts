@@ -2,9 +2,9 @@ import { ImageResponse } from '@/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
 import { LoaderComponent } from '../loader/loader.component';
-import { GenMediaService } from '../services/gen-media.service';
 import { ImageActions } from '../types/actions.type';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
+import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 
 @Component({
@@ -110,7 +110,12 @@ export class GenMediaComponent {
     const generatedImage = this.images()?.find((image) => image.id === id);
     if (generatedImage) {
       const { data: imageBytes, mimeType } = generatedImage;
-      await this.genMediaService.generateVideo(this.trimmedUserPrompt(), imageBytes, mimeType);
+      const imageRequest = {
+        prompt: this.trimmedUserPrompt(),
+        imageBytes,
+        mimeType,
+      }
+      await this.genMediaService.generateVideo(imageRequest);
     }
   }
 }

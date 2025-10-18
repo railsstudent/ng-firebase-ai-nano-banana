@@ -11,16 +11,16 @@
     <div class="w-full max-w-2xl mx-auto">
       <app-prompt-form
         [(prompt)]="editedPrompt"
-        [additionalDisabled]="!hasImageFiles()"
-        (generate)="handleGenerate()"
+        [additionalDisabledConditions]="additionalDisabledConditions()"
+        [isLoading]="isLoading()"
+        (generate)="handleGenerate($event)"
       >
         <span button-text>{{ details.buttonText }}</span>
         <span loading-text>{{ details.loadingText }}</span>
       </app-prompt-form>
-
       <app-prompt-history
           [history]="promptHistory()"
-          (promptSelected)=" editedPrompt.set($event)"
+          (promptSelected)="handleSelectPrompt($event)"
           (historyCleared)="onClearHistory()"
       />
     </div>
@@ -29,8 +29,7 @@
 
     <app-gen-media
       [loadingText]="details.loadingText"
-      [userPrompt]="prompt()"
-      [prompts]="[prompt()]"
+      [genMediaInput]="genMediaInput()"
       #genmedia
     >
       <p class="text-sm">{{ details.loadingText }}</p>

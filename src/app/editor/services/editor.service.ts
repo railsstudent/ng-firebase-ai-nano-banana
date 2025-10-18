@@ -1,5 +1,4 @@
 import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
-import { PromptFormService } from '../../shared/services/prompt-form.service';
 import { PromptHistoryService } from '../../shared/services/prompt-history.service';
 
 @Injectable({

@@ -1,31 +1,34 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SpinnerIconComponent } from '../icons/spinner-icon.component';
-import { PromptFormService } from '../services/prompt-form.service';
 
 @Component({
   selector: 'app-prompt-form',
   templateUrl: './prompt-form.component.html',
-  imports: [FormsModule, SpinnerIconComponent],
+  imports: [
+    FormsModule,
+    SpinnerIconComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromptFormComponent {
-  readonly promptFormService = inject(PromptFormService);
-
   prompt = model.required<string>();
   placeholderText = input('e.g., A detective who can talk to plants.');
-  additionalDisabled = input(false);
+  additionalDisabledConditions = input(false);
+  isLoading = input.required<boolean>();
 
-  isLoading = this.promptFormService.isLoading;
   isGenerationDisabled = computed(
-    () => this.promptFormService.isGenerationDisabled() || this.additionalDisabled()
+    () => {
+      const isEmptyInput = !this.prompt() || this.prompt().trim().length <= 0;
+      return this.isLoading() || isEmptyInput || this.additionalDisabledConditions()
+    }
   );
 
-  generate = output<void>();
+  generate = output<string>();
 
   onGenerateClick(): void {
     if (!this.isGenerationDisabled()) {
-      this.generate.emit();
+      this.generate.emit(this.prompt().trim());
     }
   }
 

@@ -4,11 +4,12 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
+import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
-import VisualStoryFormComponent from './visual-story-form/visual-story-form.component';
+import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.component';
 
 const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
   userPrompt: 'A detective who can talk to plants.',
@@ -40,15 +41,17 @@ export default class VisualStoryComponent {
   feature = this.featureService.getFeatureDetails('visual-story');
 
   promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
+  images = signal<ImageResponse[] | undefined>(undefined);
+  key = signal('visual-story');
+  genMediaInput = signal<GenMediaInput>({
+    userPrompt: '',
+    prompts: undefined,
+    imageFiles: [],
+  });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
   isLoading = computed(() =>this.genmedia()?.isLoading() || false);
   error = computed(() => this.genmedia()?.error() || '');
-
-  images = signal<ImageResponse[] | undefined>(undefined);
-
-  key = signal('visual-story');
-  prompts = signal<string[]>([]);
 
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
@@ -64,7 +67,11 @@ export default class VisualStoryComponent {
       this.promptArgs()
     );
 
-    this.prompts.set(stepPrompts);
+    this.genMediaInput.set({
+      userPrompt,
+      prompts: stepPrompts,
+      imageFiles: [],
+    });
   }
 
   private savePromptArgs(trimmedPrompt: string) {

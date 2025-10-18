@@ -11,7 +11,7 @@
   >
     <button
       type="submit"
-      [disabled]="isLoading() || imageFiles().length <= 0"
+      [disabled]="isDisabled()"
       class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200">
       @if (isLoading()) {
         <app-spinner-icon />
@@ -24,17 +24,11 @@
 
   <app-error-display [error]="error()" />
 
-  <app-image-viewer class="block mt-4"
-    [isLoading]="isLoading()"
-    [url]="generatedImage()?.inlineData || ''"
-    [id]="generatedImage()?.id || 0"
+  <app-gen-media class="block mt-4"
     [loadingText]="details.loadingText"
-    (imageAction)="handleAction($event)"
-  />
-
-  <app-video-player
-    style="width: 512px; height: 512px"
-    [isGeneratingVideo]="isGeneratingVideo()"
-    [videoUrl]="videoUrl()"
-  />
+    [genMediaInput]="genMediaInput()"
+    #genmedia
+  >
+    <p class="text-sm">{{ details.loadingText }}</p>
+  </app-gen-media>
 </app-card>

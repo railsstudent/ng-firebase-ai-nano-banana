@@ -5,6 +5,7 @@ import { LoaderComponent } from '../loader/loader.component';
 import { GenMediaService } from '../services/gen-media.service';
 import { ImageActions } from '../types/actions.type';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
+import { GenMediaInput } from './types/gen-media-input.type';
 
 @Component({
   selector: 'app-gen-media',
@@ -45,22 +46,21 @@ export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
 
   loadingText = input('');
-  prompts = input<string[]>([]);
-  imageFiles = input<File[]>([]);
-  userPrompt = input('');
+  genMediaInput = input<GenMediaInput>();
 
   videoUrl = this.genMediaService.videoUrl.asReadonly();
   isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
 
-  trimmedUserPrompt = computed(() => this.userPrompt()?.trim().length ? this.userPrompt().trim() : '');
+  trimmedUserPrompt = computed(() => this.genMediaInput()?.userPrompt.trim() || '');
 
   downloadImageError = signal('');
 
   imagesResource = resource({
-    params: () => ({ prompts: this.prompts(), imageFiles: this.imageFiles() }),
+    params: () => this.genMediaInput(),
     loader: ({ params }) => {
-      const { prompts, imageFiles } = params;
-      return this.genMediaService.generateImages(prompts, imageFiles);
+      const { userPrompt, prompts = [], imageFiles = [] } = params;
+      const multiPrompts = prompts.length ? prompts : [userPrompt];
+      return this.genMediaService.generateImages(multiPrompts, imageFiles);
     },
     defaultValue: [] as ImageResponse[],
   });
@@ -70,7 +70,8 @@ export class GenMediaComponent {
   error = computed(() =>
     this.#resourceError() ||
     this.genMediaService.imageGenerationError() ||
-    this.downloadImageError()
+    this.downloadImageError() ||
+    this.genMediaService.videoError()
   );
   isLoading = this.imagesResource.isLoading;
 
@@ -101,7 +102,8 @@ export class GenMediaComponent {
         this.downloadImageError.set('No image to download.');
         return;
       }
-      this.genMediaService.downloadImage('visual_story', generatedImage?.inlineData);
+      const filename = this.trimmedUserPrompt() || 'generated_image';
+      this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
   }
 
   private async generateVideoById(id: number) {

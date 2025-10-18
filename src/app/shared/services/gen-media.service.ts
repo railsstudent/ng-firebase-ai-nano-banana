@@ -48,6 +48,7 @@ export class GenMediaService {
         }
       }
 
+      this.videoError.set('');
       this.isGeneratingVideo.set(true);
       const videoUrl = await this.geminiService.generateVideo(request);
       this.videoUrl.set(videoUrl);

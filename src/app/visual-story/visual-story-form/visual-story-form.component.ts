@@ -12,7 +12,7 @@ import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
   templateUrl: './visual-story-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class VisualStoryFormComponent {
+export class VisualStoryFormComponent {
   placeholderText = input('e.g., A detective who can talk to plants.');
   promptArgs = model.required<VisualStoryGenerateArgs>();
 

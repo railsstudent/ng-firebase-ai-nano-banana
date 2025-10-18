@@ -1,16 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { FeatureDetails } from '@/feature/types/feature-details.type';
+import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
+import { CardComponent } from '@/shared/card/card.component';
+import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
+import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
+import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
+import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
+import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
+import { ChangeDetectionStrategy, Component, computed, input, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ImageResponse } from '../ai/types/image-response.type';
-import { FeatureDetails } from '../feature/types/feature-details.type';
-import { CardHeaderComponent } from '../shared/card/card-header/card-header.component';
-import { CardComponent } from '../shared/card/card.component';
-import { DropzoneComponent } from '../shared/dropzone/dropzone.component';
-import { ErrorDisplayComponent } from '../shared/error-display/error-display.component';
-import { SpinnerIconComponent } from '../shared/icons/spinner-icon.component';
-import { ImageViewerComponent } from '../shared/image-viewer/image-viewer.component';
-import { ImageActions } from '../shared/types/actions.type';
-import { VideoPlayerComponent } from '../shared/video-player/video-player.component';
-import { PredefinedPromptService } from './services/predefined-prompt.service';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -19,10 +16,9 @@ import { PredefinedPromptService } from './services/predefined-prompt.service';
     CardHeaderComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    ImageViewerComponent,
     FormsModule,
     SpinnerIconComponent,
-    VideoPlayerComponent,
+    GenMediaComponent,
   ],
   templateUrl: './predefined-prompt-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,41 +27,30 @@ export default class PredefinedPromptComponent {
   featureId = input.required<string>();
   feature = input.required<FeatureDetails>();
 
-  private readonly predefinedPromptService = inject(PredefinedPromptService);
-
-  error = this.predefinedPromptService.error;
-  isLoading = this.predefinedPromptService.isLoading;
-
-  generatedImage = signal<ImageResponse | undefined>(undefined);
   imageFiles = signal<File[]>([]);
 
   customPrompt = computed(() => this.feature().customPrompt || '');
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
-  videoUrl = this.predefinedPromptService.videoUrl;
-  videoError = this.predefinedPromptService.videoError;
-  isGeneratingVideo = this.predefinedPromptService.isGeneratingVideo;
+  genMediaInput = signal<GenMediaInput>({
+    userPrompt: '',
+    prompts: undefined,
+    imageFiles: [],
+  });
+
+  genmedia = viewChild<GenMediaComponent>('genmedia');
+  isLoading = computed(() => this.genmedia()?.isLoading() || false);
+  isDisabled = computed(() =>{
+    const isGeneratingVideo = this.genmedia()?.isGeneratingVideo() || false;
+    return this.isLoading() || !this.imageFiles().length || isGeneratingVideo;
+  })
+  error = computed(() => this.genmedia()?.error() || '');
 
   async handleGenerate(): Promise<void> {
-    const imageUrl = await this.predefinedPromptService.handleGenerate(
-      this.customPrompt(),
-      this.imageFiles()
-    );
-    this.generatedImage.set(imageUrl);
-  }
-
-  async handleAction({ action }: { action: ImageActions }) {
-    if (action === 'clearImage') {
-      this.generatedImage.set(undefined);
-      this.predefinedPromptService.removeVideo();
-    } else if (action === 'downloadImage') {
-      this.predefinedPromptService.downloadImage(
-        this.generatedImage()?.inlineData || '',
-        this.feature().name
-      );
-    } else if (action === 'generateVideo') {
-      await this.predefinedPromptService.generateVideo(this.customPrompt(),
-      this.generatedImage());
-    }
+    this.genMediaInput.set({
+      userPrompt: this.customPrompt(),
+      prompts: undefined,
+      imageFiles: this.imageFiles(),
+    });
   }
 }

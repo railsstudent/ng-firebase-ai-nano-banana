@@ -22,8 +22,7 @@
 
   <app-gen-media
     [loadingText]="feature.loadingText"
-    [userPrompt]="promptArgs().userPrompt"
-    [prompts]="prompts()"
+    [genMediaInput]="genMediaInput()"
     #genmedia
   >
     <p class="text-sm">Your generated {{ promptArgs().args.type}} will appear here. Please be patient.</p>

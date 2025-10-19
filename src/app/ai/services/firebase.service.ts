@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { GenerativeModel, InlineDataPart, Part } from 'firebase/ai';
-import { NANO_BANANA_MODEL, STORY_NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImageResponse } from '../types/image-response.type';
 
 async function fileToGenerativePart(file: File) {
@@ -34,7 +34,6 @@ async function resolveImageParts(imageFiles: File[]) {
 })
 export class FirebaseService  {
     private readonly geminiModel = inject(NANO_BANANA_MODEL);
-    private readonly storyGeminiModel = inject(STORY_NANO_BANANA_MODEL);
 
     private async getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageResponse[]> {
       const result = await model.generateContent(parts);
@@ -74,20 +73,4 @@ export class FirebaseService  {
           throw new Error('Error in generating the image.');
         }
     }
-
-    async generateStory(prompt: string): Promise<ImageResponse[]> {
-      try {
-        if (!prompt) {
-          throw Error('Prompt is required to generate an image.');
-        }
-
-        return await this.getBase64Images(this.storyGeminiModel, [prompt]);
-      } catch (err) {
-        console.error('Prompt or candidate was blocked:', err);
-        if (err instanceof Error) {
-          throw err;
-        }
-        throw new Error('Error in generating the image.');
-      }
-  }
 }

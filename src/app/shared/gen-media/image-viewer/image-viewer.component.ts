@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { DownloadIconComponent } from '../icons/download-icon.component';
-import { TrashIconComponent } from '../icons/trash-icon.component';
-import { VideoIconComponent } from '../icons/video-icon.component';
-import { LoaderComponent } from '../loader/loader.component';
-import { ImageActions } from '../types/actions.type';
+import { DownloadIconComponent } from '@/shared/icons/download-icon.component';
+import { TrashIconComponent } from '@/shared/icons/trash-icon.component';
+import { VideoIconComponent } from '@/shared/icons/video-icon.component';
+import { LoaderComponent } from '@/shared/loader/loader.component';
+import { ImageActions } from '@/shared/types/actions.type';
 
 @Component({
   selector: 'app-image-viewer',

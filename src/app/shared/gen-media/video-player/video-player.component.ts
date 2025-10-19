@@ -1,5 +1,5 @@
+import { LoaderComponent } from '@/shared/loader/loader.component';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { LoaderComponent } from '../loader/loader.component';
 
 @Component({
   selector: 'app-video-player',
@@ -17,7 +17,7 @@ import { LoaderComponent } from '../loader/loader.component';
   </div>
 }
   `,
-  styleUrl: '../tailwind-utilities.css',
+  styleUrl: '../../tailwind-utilities.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VideoPlayerComponent {

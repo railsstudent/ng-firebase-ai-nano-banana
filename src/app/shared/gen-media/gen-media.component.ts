@@ -24,7 +24,10 @@ import { GenMediaInput } from './types/gen-media-input.type';
       </div>
     } @else {
       @if (imageResponses && imageResponses.length > 0) {
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        @let responsiveLayout = (imageResponses && imageResponses.length === 1) ?
+          'flex justify-center items-center' :
+          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+        <div [class]="responsiveLayout">
           @for (imageResponse of imageResponses; track imageResponse.id; let i=$index) {
             <app-image-viewer class="block mt-4"
               [url]="imageResponse.inlineData"

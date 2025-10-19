@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
+  ChatIconComponent,
   CubeIconComponent,
   DomeIconComponent,
   GlassBottleIconComponent,
@@ -38,6 +39,7 @@ function buildPhotoEditNavigationMap(): Feature[] {
     restoration: HistoryIconComponent,
     fuse: ScissorsIconComponent,
     'visual-story': HistoryIconComponent,
+    conversation: ChatIconComponent,
   };
 
   return buildNavigationMap(features, iconMap);

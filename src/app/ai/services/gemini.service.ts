@@ -62,4 +62,10 @@ export class GeminiService {
 
     return await firstValueFrom(blobUrl$);
   }
+
+  createChat() {
+    return this.ai.chats.create({
+      model: firebaseConfig.geminiModelName,
+    });
+  }
 }

@@ -38,6 +38,13 @@
       "buttonText": "Write your story",
       "loadingText": "Generating your visual story...",
       "description": "Fuel your creativity and ignite your visual story with vivid imagination!"
+    },
+    "conversation": {
+      "name": "Conversational Editing",
+      "path": "/conversation",
+      "buttonText": "Send",
+      "loadingText": "Create image interatively....",
+      "description": "Converse your creations, articulate your vision, and visually refine your imagination with every spoken detail!"
     }
   },
   "modeling": {

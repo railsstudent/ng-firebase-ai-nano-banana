@@ -8,6 +8,11 @@ export const routes: Routes = [
     title: 'Home'
   },
   {
+    path: 'conversation',
+    loadComponent: () => import('./conversation/conversation-edit.component'),
+    title: 'Conversation Editing',
+  },
+  {
     path: 'visual-story',
     loadComponent: () => import('./visual-story/visual-story.component'),
     title: 'Visual Story',

@@ -1,24 +1,24 @@
+import { GeminiService } from '@/ai/services/gemini.service';
 import { inject, Injectable, signal } from '@angular/core';
 import { Chat, Part, PartListUnion } from '@google/genai';
-import { GeminiService } from '../ai/services/gemini.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
+export class ConversationEditService {
   chat = signal<Chat | undefined>(undefined);
 
   geminiService = inject(GeminiService);
 
-  startChat(): void {
+  startEdit(): void {
     const chatInstance = this.geminiService.createChat();
     this.chat.set(chatInstance);
   }
 
-  async sendMessage(prompt: string, inlineData?: { data: string, mimeType: string }): Promise<string> {
+  async editImage(prompt: string, inlineData?: { data: string, mimeType: string }): Promise<string> {
     try {
       if (!this.chat()) {
-        this.startChat();
+        this.startEdit();
       }
 
       const currentChat = this.chat();
@@ -48,7 +48,7 @@ export class ChatService {
     }
   }
 
-  endChat(): void {
+  endEdit(): void {
     this.chat.set(undefined);
   }
 }

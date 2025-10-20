@@ -30,12 +30,13 @@ export class ConversationEditService {
         });
 
         const image = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-        const { data = '', mimeType = '' } = image || {}
-        if (data && mimeType) {
-          return `data:${mimeType};base64,${data}`
-        } else {
-          throw new Error('Send message completed but image is not generated.');
+        if (image) {
+          const { data = '', mimeType = '' } = image;
+          if (data && mimeType) {
+            return `data:${mimeType};base64,${data}`
+          }
         }
+        throw new Error('Send message completed but image is not generated.');
       } else {
         throw new Error('Failed to create a chat to edit image in a conversation');
       }

@@ -1,33 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { GenerativeModel, InlineDataPart, Part } from 'firebase/ai';
+import { GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImageResponse } from '../types/image-response.type';
-
-async function fileToGenerativePart(file: File) {
-  return await new Promise<InlineDataPart>((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve({
-      inlineData: {
-        data: (reader.result! as string).split(',')[1],
-        mimeType: file.type
-      }
-    });
-    reader.readAsDataURL(file);
-  });
-}
-
-async function resolveImageParts(imageFiles: File[]) {
-  if (!imageFiles.length) {
-    return [];
-  }
-
-  const imagePartResults = await Promise.allSettled(
-    imageFiles.map(file => fileToGenerativePart(file))
-  );
-  return imagePartResults
-    .filter((result) => result.status === 'fulfilled')
-    .map((result) => result.value);
-}
+import { resolveImageParts } from '../utils/inline-image-data.util';
 
 @Injectable({
   providedIn: 'root'

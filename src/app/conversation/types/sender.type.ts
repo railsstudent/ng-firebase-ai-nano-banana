@@ -1,1 +1,1 @@
-export type sender = 'AI' | 'User';
+export type Sender = 'AI' | 'User';

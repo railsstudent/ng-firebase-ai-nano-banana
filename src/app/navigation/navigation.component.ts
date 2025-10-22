@@ -31,10 +31,16 @@ export class NavigationComponent {
 
   togglePhotoDropdown(): void {
     this.isPhotoDropdownOpen.update(v => !v);
+    if (this.isPhotoDropdownOpen()) {
+      this.isModelingDropdownOpen.set(false);
+    }
   }
 
   toggleModelingDropdown(): void {
     this.isModelingDropdownOpen.update(v => !v);
+    if (this.isModelingDropdownOpen()) {
+      this.isPhotoDropdownOpen.set(false);
+    }
   }
 
   onDocumentClick(event: MouseEvent): void {

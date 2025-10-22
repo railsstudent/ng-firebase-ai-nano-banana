@@ -3,16 +3,21 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import ConversationInputFormComponent from './conversation-input-form/conversation-input-form.component';
 import { ConversationEditService } from './services/conversation-edit.service';
+import { ChatMessage } from './types/chat-message.type';
 
 @Component({
-  selector: 'app-visual-story',
+  selector: 'app-conversation-edit',
   imports: [
     CardComponent,
     CardHeaderComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
+    FormsModule,
+    ConversationInputFormComponent
   ],
   templateUrl: './conversation-edit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,9 +37,119 @@ export default class ConversationEditComponent {
     return `${action} Conversation`;
   });
 
+  isConversationDisabled = computed(() => this.imageFiles().length === 0);
+
   error = signal('');
+
+  messages = signal<ChatMessage[]>([]);
+  isLoading = signal(false);
+  prompt = signal('');
+  private messageContainer = viewChild<ElementRef<HTMLDivElement>>('messageContainer');
+  private currentImageFile = signal<File | null>(null);
 
   toggleConversation() {
     this.isEditing.update((prev) => !prev);
+  }
+
+  constructor() {
+    // effect(() => {
+    //   this.processInitialImageFile(this.initialImageFile());
+    // }, { allowSignalWrites: true });
+
+    // effect(() => {
+    //   // Scroll to bottom when messages change
+    //   if (this.messages() && this.messageContainer()) {
+    //     this.scrollToBottom();
+    //   }
+    // });
+  }
+
+  // private processInitialImageFile(file: File): void {
+  //   this.currentImageFile.set(file);
+  //   const reader = new FileReader();
+  //   reader.onload = (e: ProgressEvent<FileReader>) => {
+  //     const url = e.target?.result as string;
+  //     this.messages.set([
+  //       {
+  //         id: this.messageIdCounter++,
+  //         sender: 'AI',
+  //         text: 'Image loaded! How can I edit it for you?',
+  //         imageUrl: url,
+  //       },
+  //     ]);
+  //   };
+  //   reader.readAsDataURL(file);
+  // }
+
+  async handleSendPrompt(prompt: string): Promise<void> {
+    console.log(prompt);
+
+    this.messages.update(messages => {
+      const newId = messages.length + 1;
+
+      return [
+        ...messages,
+        { id: newId, sender: 'User', text: prompt }
+      ]
+    });
+
+    // Add user message
+    // this.messages.update(m => [...m, { id: this.messageIdCounter++, sender: 'user', text }]);
+    // this.prompt.set('');
+
+    // // Add AI loading message
+    // const loadingMessageId = this.messageIdCounter++;
+    // this.messages.update(m => [...m, { id: loadingMessageId, sender: 'ai', isLoading: true }]);
+    // this.isLoading.set(true);
+    // this.error.set('');
+    // this.scrollToBottom();
+
+    // try {
+    //   const newImageUrl = await this.geminiService.generateImage(text, [this.currentImageFile()!]);
+
+    //   const newFile = await this.dataUrlToFile(newImageUrl, `edited-${Date.now()}.png`);
+    //   this.currentImageFile.set(newFile);
+
+    //   // Replace loading message with the actual response
+    //   this.messages.update(messages =>
+    //     messages.map(m =>
+    //       m.id === loadingMessageId
+    //         ? { ...m, isLoading: false, imageUrl: newImageUrl, text: `Here is the edited image based on your request: "${text}"` }
+    //         : m
+    //     )
+    //   );
+    // } catch (e) {
+    //   const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred.';
+    //   this.error.set(errorMessage);
+    //   this.messages.update(messages =>
+    //     messages.map(m =>
+    //       m.id === loadingMessageId
+    //         ? { ...m, isLoading: false, text: `Sorry, I couldn't process that. ${errorMessage}` }
+    //         : m
+    //     )
+    //   );
+    // } finally {
+    //   this.isLoading.set(false);
+    // }
+  }
+
+  private async dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], fileName, { type: blob.type });
+  }
+
+  private scrollToBottom(): void {
+    // Using setTimeout to make sure the element is in the DOM and rendered before scrolling.
+    setTimeout(() => {
+        try {
+            const el = this.messageContainer()?.nativeElement;
+            if (el) {
+                el.scrollTop = el.scrollHeight;
+            }
+        } catch (err) {
+            console.error('Could not scroll to bottom:', err);
+        }
+    }, 0);
   }
 }

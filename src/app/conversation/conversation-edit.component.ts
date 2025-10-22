@@ -5,7 +5,7 @@ import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import ConversationInputFormComponent from './conversation-input-form/conversation-input-form.component';
+import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationEditService } from './services/conversation-edit.service';
 import { ChatMessage } from './types/chat-message.type';
 

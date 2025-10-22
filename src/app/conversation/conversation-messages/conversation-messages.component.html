@@ -1,0 +1,37 @@
+<div class="flex-grow p-6 space-y-6 overflow-y-auto">
+  @for (message of messages(); track message.id) {
+    @let isSentByUser = message.sender === 'User';
+    @let isSentByAI = message.sender === 'AI';
+    <div class="flex" [class.justify-end]="isSentByUser">
+      <div
+        class="flex flex-col max-w-lg"
+        [class.items-end]="isSentByUser"
+        [class.items-start]="isSentByAI">
+        <div
+          class="px-4 py-3 rounded-2xl animate-scale-in-up"
+          [class.bg-indigo-600]="isSentByUser"
+          [class.text-white]="isSentByUser"
+          [class.bg-gray-700]="isSentByAI"
+          [class.text-gray-200]="isSentByAI"
+          [class.rounded-br-lg]="isSentByUser"
+          [class.rounded-bl-lg]="isSentByAI">
+
+          @if (message.isLoading) {
+            <div class="flex items-center space-x-2">
+              <app-spinner-icon />
+              <span>Thinking...</span>
+            </div>
+          } @else {
+            @if (message.text) {
+              <p class="text-base">{{ message.text }}</p>
+            }
+            @if (message.imageUrl) {
+              <img [src]="message.imageUrl" alt="Chat image" class="mt-3 rounded-lg max-w-xs h-auto shadow-lg border-2 border-gray-600" />
+            }
+          }
+        </div>
+      </div>
+    </div>
+}
+</div>
+

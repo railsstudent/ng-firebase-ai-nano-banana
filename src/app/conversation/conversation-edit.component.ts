@@ -4,8 +4,8 @@ import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
+import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { ConversationEditService } from './services/conversation-edit.service';
 import { ChatMessage } from './types/chat-message.type';
 
@@ -16,7 +16,7 @@ import { ChatMessage } from './types/chat-message.type';
     CardHeaderComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    FormsModule,
+    ConversationMessagesComponent,
     ConversationInputFormComponent
   ],
   templateUrl: './conversation-edit.component.html',
@@ -47,8 +47,14 @@ export default class ConversationEditComponent {
   private messageContainer = viewChild<ElementRef<HTMLDivElement>>('messageContainer');
   private currentImageFile = signal<File | null>(null);
 
+  dropzone = viewChild.required<DropzoneComponent>('dropzone');
+
   toggleConversation() {
     this.isEditing.update((prev) => !prev);
+    if (!this.isEditing()) {
+      this.messages.set([]);
+      this.dropzone().clearAllFiles();
+    }
   }
 
   constructor() {
@@ -90,8 +96,33 @@ export default class ConversationEditComponent {
       return [
         ...messages,
         { id: newId, sender: 'User', text: prompt }
-      ]
+      ];
     });
+
+    const aiMessageId = this.messages().length + 1;
+    this.messages.update(messages => {
+      return [
+        ...messages,
+        { id: aiMessageId, sender: 'AI', isLoading: true }
+      ];
+    });
+
+    try {
+      this.isLoading.set(true);
+      this.error.set('');
+
+      await new Promise((resolve) => {
+        setTimeout(() => resolve(
+          this.messages.update(messages => {
+            return messages.map(message => message.id !== aiMessageId  ?
+              message : { ...message, isLoading: false, text: `Here is the edited image based on your request: "${prompt}"` }
+            );
+          })
+        ), 5000);
+      })
+    } finally {
+      this.isLoading.set(false);
+    }
 
     // Add user message
     // this.messages.update(m => [...m, { id: this.messageIdCounter++, sender: 'user', text }]);
@@ -133,23 +164,23 @@ export default class ConversationEditComponent {
     // }
   }
 
-  private async dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
-    return new File([blob], fileName, { type: blob.type });
-  }
+  // private async dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+  //   const res = await fetch(dataUrl);
+  //   const blob = await res.blob();
+  //   return new File([blob], fileName, { type: blob.type });
+  // }
 
-  private scrollToBottom(): void {
-    // Using setTimeout to make sure the element is in the DOM and rendered before scrolling.
-    setTimeout(() => {
-        try {
-            const el = this.messageContainer()?.nativeElement;
-            if (el) {
-                el.scrollTop = el.scrollHeight;
-            }
-        } catch (err) {
-            console.error('Could not scroll to bottom:', err);
-        }
-    }, 0);
-  }
+  // private scrollToBottom(): void {
+  //   // Using setTimeout to make sure the element is in the DOM and rendered before scrolling.
+  //   setTimeout(() => {
+  //       try {
+  //           const el = this.messageContainer()?.nativeElement;
+  //           if (el) {
+  //               el.scrollTop = el.scrollHeight;
+  //           }
+  //       } catch (err) {
+  //           console.error('Could not scroll to bottom:', err);
+  //       }
+  //   }, 0);
+  // }
 }

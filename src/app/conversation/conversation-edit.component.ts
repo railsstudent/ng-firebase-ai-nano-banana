@@ -2,7 +2,6 @@ import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
-import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
@@ -40,7 +39,6 @@ export default class ConversationEditComponent {
 
   messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
-  prompt = signal('');
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
@@ -113,8 +111,8 @@ export default class ConversationEditComponent {
               message : {
                 ...message,
                 isLoading: false,
-                isError: true,
-                text: `Here is the edited image based on your request: "${prompt}"`,
+                isError: false,
+                text: 'New image generated based on your edit request.',
                 imageUrl: 'https://placehold.co/600x400'
               }
             );
@@ -128,9 +126,9 @@ export default class ConversationEditComponent {
           ({
             ...message,
             isLoading: false,
+            isError: true,
             text: errorMessage,
             imageUrl: undefined,
-            isError: true,
           }));
       });
     } finally {

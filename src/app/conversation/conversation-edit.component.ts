@@ -3,7 +3,7 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { ConversationEditService } from './services/conversation-edit.service';
@@ -15,7 +15,6 @@ import { ChatMessage } from './types/chat-message.type';
     CardComponent,
     CardHeaderComponent,
     DropzoneComponent,
-    ErrorDisplayComponent,
     ConversationMessagesComponent,
     ConversationInputFormComponent
   ],
@@ -39,13 +38,9 @@ export default class ConversationEditComponent {
 
   isConversationDisabled = computed(() => this.imageFiles().length === 0);
 
-  error = signal('');
-
   messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
   prompt = signal('');
-  private messageContainer = viewChild<ElementRef<HTMLDivElement>>('messageContainer');
-  private currentImageFile = signal<File | null>(null);
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
@@ -99,6 +94,8 @@ export default class ConversationEditComponent {
       ];
     });
 
+    this.isLoading.set(true);
+
     const aiMessageId = this.messages().length + 1;
     this.messages.update(messages => {
       return [
@@ -108,33 +105,37 @@ export default class ConversationEditComponent {
     });
 
     try {
-      this.isLoading.set(true);
-      this.error.set('');
-
+      // this.conversationEditService.editImage(prompt, this.imageFiles()[0] ? {
       await new Promise((resolve) => {
         setTimeout(() => resolve(
           this.messages.update(messages => {
             return messages.map(message => message.id !== aiMessageId  ?
-              message : { ...message, isLoading: false, text: `Here is the edited image based on your request: "${prompt}"` }
+              message : {
+                ...message,
+                isLoading: false,
+                isError: true,
+                text: `Here is the edited image based on your request: "${prompt}"`,
+                imageUrl: 'https://placehold.co/600x400'
+              }
             );
           })
         ), 5000);
       })
+    } catch (e) {
+      const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in image editing.';
+      this.messages.update(messages => {
+        return messages.map(message => message.id !== aiMessageId ? message:
+          ({
+            ...message,
+            isLoading: false,
+            text: errorMessage,
+            imageUrl: undefined,
+            isError: true,
+          }));
+      });
     } finally {
       this.isLoading.set(false);
     }
-
-    // Add user message
-    // this.messages.update(m => [...m, { id: this.messageIdCounter++, sender: 'user', text }]);
-    // this.prompt.set('');
-
-    // // Add AI loading message
-    // const loadingMessageId = this.messageIdCounter++;
-    // this.messages.update(m => [...m, { id: loadingMessageId, sender: 'ai', isLoading: true }]);
-    // this.isLoading.set(true);
-    // this.error.set('');
-    // this.scrollToBottom();
-
     // try {
     //   const newImageUrl = await this.geminiService.generateImage(text, [this.currentImageFile()!]);
 

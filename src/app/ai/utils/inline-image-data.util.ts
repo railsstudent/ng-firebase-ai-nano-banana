@@ -13,8 +13,8 @@ async function fileToGenerativePart(file: File): Promise<InlineDataPart> {
   });
 }
 
-export async function resolveImageParts(imageFiles: File[]): Promise<InlineDataPart[]> {
-  if (!imageFiles.length) {
+export async function resolveImageParts(imageFiles?: File[]): Promise<InlineDataPart[]> {
+  if (!imageFiles || !imageFiles.length) {
     return [];
   }
 

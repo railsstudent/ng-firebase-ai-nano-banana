@@ -3,13 +3,15 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatMessage } from '../types/chat-message.type';
 import { Sender } from '../types/sender.type';
+import { ChatErrorIconComponent } from '../icons/chat-error-icon.component';
 
 @Component({
   selector: 'app-conversation-messages',
   imports: [
     FormsModule,
     SpinnerIconComponent,
-  ],
+    ChatErrorIconComponent,
+],
   template: `
 @for (message of messages(); track message.id) {
   <div class="flex" [class]="getJustifyEndClasses(message.sender)">
@@ -27,7 +29,13 @@ import { Sender } from '../types/sender.type';
           </div>
         } @else {
           @if (message.text) {
-            <p class="text-base text-left">{{ message.text }}</p>
+            @let paragraphClasses = message.isError ? 'flex items-center' : '';
+            <p class="text-base text-left" [class]="paragraphClasses">
+              @if (message.isError) {
+                <app-chat-error-icon class="mr-2" />
+              }
+              {{ message.text }}
+            </p>
           }
           @if (message.imageUrl) {
             <img [src]="message.imageUrl" alt="Chat image" class="mt-3 rounded-lg max-w-xs h-auto shadow-lg border-2 border-gray-600" />

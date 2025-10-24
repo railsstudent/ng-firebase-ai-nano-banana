@@ -6,4 +6,5 @@ export type ChatMessage = {
   text?: string;
   imageUrl?: string;
   isLoading?: boolean;
+  isError?: boolean;
 };

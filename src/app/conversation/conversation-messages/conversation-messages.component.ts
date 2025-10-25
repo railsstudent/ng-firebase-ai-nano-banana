@@ -13,7 +13,8 @@ import { Sender } from '../types/sender.type';
     SpinnerIconComponent,
     ChatErrorIconComponent,
     NgOptimizedImage,
-],
+  ],
+  styleUrl: './conversation-messages.component.css',
   templateUrl: './conversation-messages.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

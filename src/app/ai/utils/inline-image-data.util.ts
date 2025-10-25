@@ -25,3 +25,11 @@ export async function resolveImageParts(imageFiles?: File[]): Promise<InlineData
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 }
+
+export async function getBase64InlineData(imageFiles?: File[]) : Promise<string[]> {
+  const parts = await resolveImageParts(imageFiles);
+
+  const inlineDataList = parts.map((part ) => part.inlineData);
+
+  return inlineDataList.map(({ mimeType, data }) => `data:${mimeType};base64,${data}`);
+}

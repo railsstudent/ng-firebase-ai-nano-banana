@@ -1,8 +1,9 @@
+import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
-import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, resource, signal, viewChild } from '@angular/core';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { ConversationEditService } from './services/conversation-edit.service';
@@ -24,8 +25,7 @@ export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
   private readonly featureService = inject(FeatureService);
 
-  key = signal('conversation');
-  feature = computed(() => this.featureService.getFeatureDetails(this.key()));
+  feature = computed(() => this.featureService.getFeatureDetails('conversation'));
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
   imageFiles = signal<File[]>([]);
 
@@ -36,8 +36,6 @@ export default class ConversationEditComponent {
   });
 
   isConversationDisabled = computed(() => this.imageFiles().length === 0);
-
-  messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
@@ -50,35 +48,39 @@ export default class ConversationEditComponent {
     }
   }
 
-  constructor() {
-    // effect(() => {
-    //   this.processInitialImageFile(this.initialImageFile());
-    // }, { allowSignalWrites: true });
+  #originalImageResource = resource<string, File[]>(
+    {
+      params: () => this.imageFiles(),
+      loader: async ({ params }) => {
+        const result = await getBase64InlineData(params);
+        return result.length > 0 ? result[0] : '';
+      },
+      defaultValue: ''
+    }
+  );
 
-    // effect(() => {
-    //   // Scroll to bottom when messages change
-    //   if (this.messages() && this.messageContainer()) {
-    //     this.scrollToBottom();
-    //   }
-    // });
-  }
+  #originalImage = computed(() => this.#originalImageResource.hasValue() ? this.#originalImageResource.value() : '');
 
-  // private processInitialImageFile(file: File): void {
-  //   this.currentImageFile.set(file);
-  //   const reader = new FileReader();
-  //   reader.onload = (e: ProgressEvent<FileReader>) => {
-  //     const url = e.target?.result as string;
-  //     this.messages.set([
-  //       {
-  //         id: this.messageIdCounter++,
-  //         sender: 'AI',
-  //         text: 'Image loaded! How can I edit it for you?',
-  //         imageUrl: url,
-  //       },
-  //     ]);
-  //   };
-  //   reader.readAsDataURL(file);
-  // }
+  messages = linkedSignal<{ originalImage: string, isEditing: boolean }, ChatMessage[]>({
+    source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
+    computation: ({ originalImage, isEditing }, previous) => {
+      // The conversation has already started, preserve previous messages
+      if (isEditing || !originalImage) {
+        const previousChatMessages = previous?.value ?? [];
+        return previousChatMessages;
+      }
+
+      return [
+        {
+          id: 1,
+          sender: 'AI',
+          text: 'Here is the original image you uploaded. How would you like to edit it?',
+          imageUrl: originalImage,
+          isError: false,
+        }
+      ];
+    },
+  })
 
   async handleSendPrompt(prompt: string): Promise<void> {
     console.log(prompt);
@@ -162,24 +164,4 @@ export default class ConversationEditComponent {
     //   this.isLoading.set(false);
     // }
   }
-
-  // private async dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
-  //   const res = await fetch(dataUrl);
-  //   const blob = await res.blob();
-  //   return new File([blob], fileName, { type: blob.type });
-  // }
-
-  // private scrollToBottom(): void {
-  //   // Using setTimeout to make sure the element is in the DOM and rendered before scrolling.
-  //   setTimeout(() => {
-  //       try {
-  //           const el = this.messageContainer()?.nativeElement;
-  //           if (el) {
-  //               el.scrollTop = el.scrollHeight;
-  //           }
-  //       } catch (err) {
-  //           console.error('Could not scroll to bottom:', err);
-  //       }
-  //   }, 0);
-  // }
 }

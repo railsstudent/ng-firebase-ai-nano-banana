@@ -2,9 +2,11 @@
   @let details = feature();
   <app-card-header [name]="details?.name || ''" [description]="details?.description || ''"  />
 
-  <div class="w-full max-w-2xl mx-auto mb-8">
-    <app-dropzone #dropzone mode='single' (filesChanged)="imageFiles.set($event)" />
-  </div>
+  @if (!isEditing()) {
+    <div class="w-full max-w-2xl mx-auto mb-8">
+      <app-dropzone #dropzone mode='single' (filesChanged)="imageFiles.set($event)" />
+    </div>
+  }
 
   <div class="w-full max-w-2xl mx-auto mb-8 flex justify-end">
     <button

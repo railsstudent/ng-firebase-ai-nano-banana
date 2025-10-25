@@ -45,4 +45,18 @@ export class ConversationMessagesComponent {
   getJustifyEndClasses(sender: Sender): string {
     return sender === 'User' ? 'justify-end' : '';
   }
+
+  // private scrollToBottom(): void {
+  //   // Using setTimeout to make sure the element is in the DOM and rendered before scrolling.
+  //   setTimeout(() => {
+  //       try {
+  //           const el = this.messageContainer()?.nativeElement;
+  //           if (el) {
+  //               el.scrollTop = el.scrollHeight;
+  //           }
+  //       } catch (err) {
+  //           console.error('Could not scroll to bottom:', err);
+  //       }
+  //   }, 0);
+  // }
 }

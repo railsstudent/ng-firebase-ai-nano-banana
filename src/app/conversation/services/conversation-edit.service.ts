@@ -1,7 +1,9 @@
 import { GeminiService } from '@/ai/services/gemini.service';
-import { resolveImageParts } from '@/ai/utils/inline-image-data.util';
+import { getBase64EncodedString } from '@/ai/utils/inline-image-data.util';
 import { inject, Injectable, signal } from '@angular/core';
 import { Chat, Part, PartListUnion } from '@google/genai';
+import { GenerativeContentBlob } from 'firebase/ai';
+import { Base64InlineData } from '../types/base64-inline-data.type';
 
 @Injectable({
   providedIn: 'root'
@@ -16,28 +18,43 @@ export class ConversationEditService {
     this.chat.set(chatInstance);
   }
 
-  async editImage(prompt: string, imageFiles?: File[]): Promise<string> {
+  async editImage(prompt: string, inlineData: GenerativeContentBlob): Promise<Base64InlineData> {
     try {
       if (!this.chat()) {
         this.startEdit();
       }
 
-      const inlineData = await resolveImageParts(imageFiles);
-
       const currentChat = this.chat();
       if (currentChat) {
-        const inlineDataPart: Part | undefined = inlineData.length ? inlineData[0] : undefined;
+        const inlineDataPart: Part | undefined = inlineData.data && inlineData.mimeType ? { inlineData } : undefined;
         const message: PartListUnion = inlineDataPart ? [prompt, inlineDataPart] : [prompt];
         const response = await currentChat.sendMessage({
           message
         });
 
-        const image = response.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-        if (image) {
-          const { data = '', mimeType = '' } = image;
-          if (data && mimeType) {
-            return `data:${mimeType};base64,${data}`
+        const contentParts = response.candidates?.[0]?.content?.parts || [];
+
+        let base64InlineData: Base64InlineData | undefined = undefined;
+        let partText = '';
+        for (const part of contentParts) {
+          if (part.text) {
+            partText = part.text;
+          } else if (part.inlineData) {
+            const { data = '', mimeType = '' } = part.inlineData;
+            if (data && mimeType) {
+              base64InlineData =  {
+                inlineData: { data, mimeType },
+                base64: getBase64EncodedString({ data, mimeType })
+              };
+            }
           }
+        }
+
+        if (base64InlineData) {
+          return {
+            ...base64InlineData,
+            text: partText,
+          };
         }
         throw new Error('Send message completed but image is not generated.');
       } else {

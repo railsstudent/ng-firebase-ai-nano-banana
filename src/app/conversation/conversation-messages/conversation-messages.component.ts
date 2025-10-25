@@ -1,5 +1,4 @@
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
-import { NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatErrorIconComponent } from '../icons/chat-error-icon.component';
@@ -12,7 +11,6 @@ import { Sender } from '../types/sender.type';
     FormsModule,
     SpinnerIconComponent,
     ChatErrorIconComponent,
-    NgOptimizedImage,
   ],
   styleUrl: './conversation-messages.component.css',
   templateUrl: './conversation-messages.component.html',

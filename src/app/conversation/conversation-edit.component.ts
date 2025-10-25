@@ -8,6 +8,9 @@ import { ConversationInputFormComponent } from './conversation-input-form/conver
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { ConversationEditService } from './services/conversation-edit.service';
 import { ChatMessage } from './types/chat-message.type';
+import { Base64InlineData } from './types/base64-inline-data.type';
+import { GenerativeContentBlob } from 'firebase/ai';
+import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 
 @Component({
   selector: 'app-conversation-edit',
@@ -42,26 +45,36 @@ export default class ConversationEditComponent {
 
   toggleConversation() {
     this.isEditing.update((prev) => !prev);
-    if (!this.isEditing()) {
+    if (this.isEditing()) {
+      this.conversationEditService.startEdit();
+    } else {
+      this.conversationEditService.endEdit();
       this.messages.set([]);
       this.dropzone().clearAllFiles();
     }
   }
 
-  #originalImageResource = resource<string, File[]>(
+  #originalImageResource = resource<Base64InlineData, File[]>(
     {
       params: () => this.imageFiles(),
       loader: async ({ params }) => {
         const result = await getBase64InlineData(params);
-        return result.length > 0 ? result[0] : '';
+        return result.length > 0 ?
+          {
+            ...result[0],
+            text: 'Here is the original image you uploaded. How would you like to edit it?'
+          }
+          : DEFAULT_BASE64_INLINE_DATA;
       },
-      defaultValue: ''
+      defaultValue: DEFAULT_BASE64_INLINE_DATA,
     }
   );
 
-  #originalImage = computed(() => this.#originalImageResource.hasValue() ? this.#originalImageResource.value() : '');
+  #originalImage = computed(() => this.#originalImageResource.hasValue() ?
+    this.#originalImageResource.value() : DEFAULT_BASE64_INLINE_DATA
+  );
 
-  messages = linkedSignal<{ originalImage: string, isEditing: boolean }, ChatMessage[]>({
+  messages = linkedSignal<{ originalImage: Base64InlineData, isEditing: boolean }, ChatMessage[]>({
     source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
     computation: ({ originalImage, isEditing }, previous) => {
       // The conversation has already started, preserve previous messages
@@ -74,57 +87,51 @@ export default class ConversationEditComponent {
         {
           id: 1,
           sender: 'AI',
-          text: 'Here is the original image you uploaded. How would you like to edit it?',
-          imageUrl: originalImage,
+          text: originalImage.text ?? 'Here is the original image you uploaded. How would you like to edit it?',
+          imageUrl: originalImage.base64,
           isError: false,
         }
       ];
     },
-  })
+  });
+
+  lastEditedImage = linkedSignal<GenerativeContentBlob>(() => this.#originalImage().inlineData);
 
   async handleSendPrompt(prompt: string): Promise<void> {
-    console.log(prompt);
-
-    this.messages.update(messages => {
-      const newId = messages.length + 1;
-
-      return [
+    this.messages.update(messages => ([
         ...messages,
-        { id: newId, sender: 'User', text: prompt }
-      ];
-    });
+        { id: messages.length + 1, sender: 'User', text: prompt }
+      ])
+    );
 
     this.isLoading.set(true);
 
     const aiMessageId = this.messages().length + 1;
-    this.messages.update(messages => {
-      return [
+    this.messages.update(messages => ([
         ...messages,
         { id: aiMessageId, sender: 'AI', isLoading: true }
-      ];
-    });
+      ])
+    );
 
     try {
-      // this.conversationEditService.editImage(prompt, this.imageFiles()[0] ? {
-      await new Promise((resolve) => {
-        setTimeout(() => resolve(
-          this.messages.update(messages => {
-            return messages.map(message => message.id !== aiMessageId  ?
-              message : {
-                ...message,
-                isLoading: false,
-                isError: false,
-                text: 'New image generated based on your edit request.',
-                imageUrl: 'https://placehold.co/600x400'
-              }
-            );
-          })
-        ), 5000);
-      })
-    } catch (e) {
-      const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in image editing.';
+      const { inlineData, base64, text = 'New image generated based on your edit request.' }
+        = await this.conversationEditService.editImage(prompt, this.lastEditedImage());
       this.messages.update(messages => {
-        return messages.map(message => message.id !== aiMessageId ? message:
+        return messages.map(message => message.id !== aiMessageId  ?
+          message : {
+            ...message,
+            isLoading: false,
+            isError: false,
+            text,
+            imageUrl: base64
+          }
+        );
+      });
+      this.lastEditedImage.set(inlineData);
+    } catch (e) {
+      const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in converational image editing.';
+      this.messages.update(messages => {
+        return messages.map(message => message.id !== aiMessageId ? message :
           ({
             ...message,
             isLoading: false,
@@ -136,32 +143,5 @@ export default class ConversationEditComponent {
     } finally {
       this.isLoading.set(false);
     }
-    // try {
-    //   const newImageUrl = await this.geminiService.generateImage(text, [this.currentImageFile()!]);
-
-    //   const newFile = await this.dataUrlToFile(newImageUrl, `edited-${Date.now()}.png`);
-    //   this.currentImageFile.set(newFile);
-
-    //   // Replace loading message with the actual response
-    //   this.messages.update(messages =>
-    //     messages.map(m =>
-    //       m.id === loadingMessageId
-    //         ? { ...m, isLoading: false, imageUrl: newImageUrl, text: `Here is the edited image based on your request: "${text}"` }
-    //         : m
-    //     )
-    //   );
-    // } catch (e) {
-    //   const errorMessage = e instanceof Error ? e.message : 'An unexpected error occurred.';
-    //   this.error.set(errorMessage);
-    //   this.messages.update(messages =>
-    //     messages.map(m =>
-    //       m.id === loadingMessageId
-    //         ? { ...m, isLoading: false, text: `Sorry, I couldn't process that. ${errorMessage}` }
-    //         : m
-    //     )
-    //   );
-    // } finally {
-    //   this.isLoading.set(false);
-    // }
   }
 }

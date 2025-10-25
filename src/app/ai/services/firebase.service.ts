@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImageResponse } from '../types/image-response.type';
-import { resolveImageParts } from '../utils/inline-image-data.util';
+import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class FirebaseService  {
             id: index,
             mimeType,
             data,
-            inlineData: `data:${mimeType};base64,${data}`
+            inlineData: getBase64EncodedString(inlineData)
           };
         });
       }

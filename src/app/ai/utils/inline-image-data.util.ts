@@ -1,4 +1,5 @@
-import { InlineDataPart } from 'firebase/ai';
+import { Base64InlineData } from '@/conversation/types/base64-inline-data.type';
+import { GenerativeContentBlob, InlineDataPart } from 'firebase/ai';
 
 async function fileToGenerativePart(file: File): Promise<InlineDataPart> {
   return await new Promise<InlineDataPart>((resolve) => {
@@ -21,15 +22,30 @@ export async function resolveImageParts(imageFiles?: File[]): Promise<InlineData
   const imagePartResults = await Promise.allSettled(
     imageFiles.map(file => fileToGenerativePart(file))
   );
+
   return imagePartResults
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 }
 
-export async function getBase64InlineData(imageFiles?: File[]) : Promise<string[]> {
+export async function getInlineData(imageFiles?: File[]) : Promise<GenerativeContentBlob[]> {
   const parts = await resolveImageParts(imageFiles);
 
-  const inlineDataList = parts.map((part ) => part.inlineData);
+  return parts.map((part ) => part.inlineData);
+}
 
-  return inlineDataList.map(({ mimeType, data }) => `data:${mimeType};base64,${data}`);
+export async function getBase64InlineData(imageFiles?: File[]) : Promise<Base64InlineData[]> {
+  const parts = await resolveImageParts(imageFiles);
+
+  return parts.map((part) => {
+    const inlineData = part.inlineData;
+    return {
+      inlineData,
+      base64: getBase64EncodedString(inlineData)
+    }
+  });
+}
+
+export function getBase64EncodedString({mimeType, data}: GenerativeContentBlob) {
+  return `data:${mimeType};base64,${data}`;
 }

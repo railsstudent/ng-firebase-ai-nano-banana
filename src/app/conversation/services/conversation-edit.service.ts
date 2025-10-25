@@ -4,6 +4,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Chat, Part, PartListUnion } from '@google/genai';
 import { GenerativeContentBlob } from 'firebase/ai';
 import { Base64InlineData } from '../types/base64-inline-data.type';
+import { ChatMessage, MessagesSignalState, PreviousMessagesState } from '../types/chat-message.type';
 
 @Injectable({
   providedIn: 'root'
@@ -71,5 +72,28 @@ export class ConversationEditService {
 
   endEdit(): void {
     this.chat.set(undefined);
+  }
+
+  computeInitialMessages({ originalImage, isEditing }: MessagesSignalState, previous: PreviousMessagesState) {
+      const {
+        base64,
+        text = 'Here is the original image you uploaded. How would you like to edit it?'
+      } = originalImage;
+
+      // The conversation has already started, preserve previous messages
+      if (isEditing || !base64) {
+        const previousChatMessages = previous?.value ?? [];
+        return previousChatMessages;
+      }
+
+      return [
+        {
+          id: 1,
+          sender: 'AI',
+          text,
+          base64,
+          isError: false,
+        } as ChatMessage
+      ];
   }
 }

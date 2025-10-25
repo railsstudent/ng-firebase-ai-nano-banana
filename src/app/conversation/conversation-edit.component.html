@@ -3,12 +3,12 @@
   <app-card-header [name]="details?.name || ''" [description]="details?.description || ''"  />
 
   @if (!isEditing()) {
-    <div class="w-full max-w-2xl mx-auto mb-8">
+    <div class="w-full max-w-2xl mx-auto mb-4">
       <app-dropzone #dropzone mode='single' (filesChanged)="imageFiles.set($event)" />
     </div>
   }
 
-  <div class="w-full max-w-2xl mx-auto mb-8 flex justify-end">
+  <div class="w-full max-w-2xl mx-auto mb-4 flex justify-end">
     <button
         type="button"
         [disabled]="isConversationDisabled()"

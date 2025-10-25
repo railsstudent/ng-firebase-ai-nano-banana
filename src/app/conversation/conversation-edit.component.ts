@@ -4,13 +4,13 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, resource, signal, viewChild } from '@angular/core';
+import { GenerativeContentBlob } from 'firebase/ai';
+import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { ConversationEditService } from './services/conversation-edit.service';
-import { ChatMessage } from './types/chat-message.type';
 import { Base64InlineData } from './types/base64-inline-data.type';
-import { GenerativeContentBlob } from 'firebase/ai';
-import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
+import { ChatMessage } from './types/chat-message.type';
 
 @Component({
   selector: 'app-conversation-edit',
@@ -43,17 +43,6 @@ export default class ConversationEditComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  toggleConversation() {
-    this.isEditing.update((prev) => !prev);
-    if (this.isEditing()) {
-      this.conversationEditService.startEdit();
-    } else {
-      this.conversationEditService.endEdit();
-      this.messages.set([]);
-      this.dropzone().clearAllFiles();
-    }
-  }
-
   #originalImageResource = resource<Base64InlineData, File[]>(
     {
       params: () => this.imageFiles(),
@@ -76,28 +65,7 @@ export default class ConversationEditComponent {
 
   messages = linkedSignal<{ originalImage: Base64InlineData, isEditing: boolean }, ChatMessage[]>({
     source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
-    computation: ({ originalImage, isEditing }, previous) => {
-      const {
-        base64,
-        text = 'Here is the original image you uploaded. How would you like to edit it?'
-      } = originalImage;
-
-      // The conversation has already started, preserve previous messages
-      if (isEditing || !base64) {
-        const previousChatMessages = previous?.value ?? [];
-        return previousChatMessages;
-      }
-
-      return [
-        {
-          id: 1,
-          sender: 'AI',
-          text,
-          base64,
-          isError: false,
-        }
-      ];
-    },
+    computation: (source, previous) => this.conversationEditService.computeInitialMessages(source, previous),
   });
 
   lastEditedImage = linkedSignal<GenerativeContentBlob>(() => this.#originalImage().inlineData);
@@ -132,6 +100,7 @@ export default class ConversationEditComponent {
           }
         );
       });
+
       this.lastEditedImage.set(inlineData);
     } catch (e) {
       const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in converational image editing.';
@@ -147,6 +116,17 @@ export default class ConversationEditComponent {
       });
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+   toggleConversation() {
+    this.isEditing.update((prev) => !prev);
+    if (this.isEditing()) {
+      this.conversationEditService.startEdit();
+    } else {
+      this.conversationEditService.endEdit();
+      this.messages.set([]);
+      this.dropzone().clearAllFiles();
     }
   }
 }

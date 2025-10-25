@@ -1,10 +1,21 @@
 import { GeminiService } from '@/ai/services/gemini.service';
-import { getBase64EncodedString } from '@/ai/utils/inline-image-data.util';
-import { inject, Injectable, signal } from '@angular/core';
-import { Chat, Part, PartListUnion } from '@google/genai';
+import { getBase64EncodedString, getBase64InlineData } from '@/ai/utils/inline-image-data.util';
+import { inject, Injectable, resource, Signal, signal } from '@angular/core';
+import { Chat } from '@google/genai';
 import { GenerativeContentBlob } from 'firebase/ai';
+import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { Base64InlineData } from '../types/base64-inline-data.type';
-import { ChatMessage, MessagesSignalState, PreviousMessagesState } from '../types/chat-message.type';
+import { ChatMessage, MessagesState, PreviousMessagesState } from '../types/chat-message.type';
+
+async function originalImageLoader(params: NoInfer<File[]>) {
+  const result = await getBase64InlineData(params);
+  return result.length > 0 ?
+    {
+      ...result[0],
+      text: 'Here is the original image you uploaded. How would you like to edit it?'
+    }
+    : DEFAULT_BASE64_INLINE_DATA;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -27,13 +38,7 @@ export class ConversationEditService {
 
       const currentChat = this.chat();
       if (currentChat) {
-        const inlineDataPart: Part | undefined = inlineData.data && inlineData.mimeType ? { inlineData } : undefined;
-        const message: PartListUnion = inlineDataPart ? [prompt, inlineDataPart] : [prompt];
-        const response = await currentChat.sendMessage({
-          message
-        });
-
-        const contentParts = response.candidates?.[0]?.content?.parts || [];
+        const contentParts = await this.getGeneratedParts(inlineData, prompt, currentChat);
 
         let base64InlineData: Base64InlineData | undefined = undefined;
         let partText = '';
@@ -70,11 +75,21 @@ export class ConversationEditService {
     }
   }
 
+  private async getGeneratedParts(inlineData: GenerativeContentBlob, prompt: string, currentChat: Chat) {
+    const inlineDataPart = inlineData.data && inlineData.mimeType ? { inlineData } : undefined;
+    const message = inlineDataPart ? [prompt, inlineDataPart] : [prompt];
+    const response = await currentChat.sendMessage({
+      message
+    });
+
+    return response.candidates?.[0]?.content?.parts || [];
+  }
+
   endEdit(): void {
     this.chat.set(undefined);
   }
 
-  computeInitialMessages({ originalImage, isEditing }: MessagesSignalState, previous: PreviousMessagesState) {
+  computeInitialMessages({ originalImage, isEditing }: MessagesState, previous: PreviousMessagesState) {
       const {
         base64,
         text = 'Here is the original image you uploaded. How would you like to edit it?'
@@ -95,5 +110,15 @@ export class ConversationEditService {
           isError: false,
         } as ChatMessage
       ];
+  }
+
+  getInitialMessageResource(imageFiles: Signal<File[]>) {
+    return resource<Base64InlineData, File[]>(
+      {
+        params: () => imageFiles(),
+        loader: ({ params }) => originalImageLoader(params),
+        defaultValue: DEFAULT_BASE64_INLINE_DATA,
+      }
+    )
   }
 }

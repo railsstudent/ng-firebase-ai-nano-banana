@@ -16,10 +16,10 @@ import { FormsModule } from '@angular/forms';
         <textarea
           [(ngModel)]="prompt"
           name="prompt"
-          rows="1"
+          rows="3"
           placeholder="e.g., make the sky purple"
           (keydown.enter)="handleSendPrompt()"
-          class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-3 px-5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-none placeholder-gray-400"
+          class="flex-grow bg-gray-700 text-gray-200 border border-gray-600 rounded-xl py-3 px-5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-none placeholder-gray-400"
           [disabled]="pauseSendPrompt()"></textarea>
         <button
           type="submit"

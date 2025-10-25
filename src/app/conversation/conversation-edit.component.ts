@@ -1,13 +1,12 @@
-import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
-import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, resource, signal, viewChild } from '@angular/core';
-import { GenerativeContentBlob } from 'firebase/ai';
+import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
+import { makeAIResponsePair, makeErrorMessage, makeSuccessMessage } from './helpers/message.helper';
 import { ConversationEditService } from './services/conversation-edit.service';
 import { Base64InlineData } from './types/base64-inline-data.type';
 import { ChatMessage } from './types/chat-message.type';
@@ -43,21 +42,7 @@ export default class ConversationEditComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  #originalImageResource = resource<Base64InlineData, File[]>(
-    {
-      params: () => this.imageFiles(),
-      loader: async ({ params }) => {
-        const result = await getBase64InlineData(params);
-        return result.length > 0 ?
-          {
-            ...result[0],
-            text: 'Here is the original image you uploaded. How would you like to edit it?'
-          }
-          : DEFAULT_BASE64_INLINE_DATA;
-      },
-      defaultValue: DEFAULT_BASE64_INLINE_DATA,
-    }
-  );
+  #originalImageResource = this.conversationEditService.getInitialMessageResource(this.imageFiles);
 
   #originalImage = computed(() => this.#originalImageResource.hasValue() ?
     this.#originalImageResource.value() : DEFAULT_BASE64_INLINE_DATA
@@ -68,36 +53,20 @@ export default class ConversationEditComponent {
     computation: (source, previous) => this.conversationEditService.computeInitialMessages(source, previous),
   });
 
-  lastEditedImage = linkedSignal<GenerativeContentBlob>(() => this.#originalImage().inlineData);
+  lastEditedImage = linkedSignal(() => this.#originalImage().inlineData);
 
   async handleSendPrompt(prompt: string): Promise<void> {
-    this.messages.update(messages => ([
-        ...messages,
-        { id: messages.length + 1, sender: 'User', text: prompt }
-      ])
-    );
-
     this.isLoading.set(true);
 
-    const aiMessageId = this.messages().length + 1;
-    this.messages.update(messages => ([
-        ...messages,
-        { id: aiMessageId, sender: 'AI', isLoading: true }
-      ])
-    );
+    const { aiMessageId, pair } = makeAIResponsePair(prompt, this.messages()[this.messages().length - 1].id);
+    this.messages.update(messages => ([...messages, ...pair]));
 
     try {
       const { inlineData, base64, text }
         = await this.conversationEditService.editImage(prompt, this.lastEditedImage());
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId  ?
-          message : {
-            ...message,
-            isLoading: false,
-            isError: false,
-            text: text || 'New image generated based on your edit request.',
-            base64
-          }
+          message : makeSuccessMessage(message, base64, text)
         );
       });
 
@@ -106,13 +75,7 @@ export default class ConversationEditComponent {
       const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in converational image editing.';
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId ? message :
-          ({
-            ...message,
-            isLoading: false,
-            isError: true,
-            text: errorMessage,
-            base64: undefined,
-          }));
+          makeErrorMessage(message, errorMessage));
       });
     } finally {
       this.isLoading.set(false);
@@ -120,13 +83,13 @@ export default class ConversationEditComponent {
   }
 
    toggleConversation() {
-    this.isEditing.update((prev) => !prev);
-    if (this.isEditing()) {
-      this.conversationEditService.startEdit();
-    } else {
-      this.conversationEditService.endEdit();
-      this.messages.set([]);
-      this.dropzone().clearAllFiles();
-    }
+      this.isEditing.update((prev) => !prev);
+      if (this.isEditing()) {
+        this.conversationEditService.startEdit();
+      } else {
+        this.conversationEditService.endEdit();
+        this.messages.set([]);
+        this.dropzone().clearAllFiles();
+      }
   }
 }

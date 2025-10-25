@@ -24,8 +24,8 @@
                 {{ message.text }}
               </p>
             }
-            @if (message.imageUrl) {
-              <img [src]="message.imageUrl"
+            @if (message.base64) {
+              <img [src]="message.base64"
                 alt="Chat image"
                 width="300"
                 height="200"

@@ -77,8 +77,13 @@ export default class ConversationEditComponent {
   messages = linkedSignal<{ originalImage: Base64InlineData, isEditing: boolean }, ChatMessage[]>({
     source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
     computation: ({ originalImage, isEditing }, previous) => {
+      const {
+        base64,
+        text = 'Here is the original image you uploaded. How would you like to edit it?'
+      } = originalImage;
+
       // The conversation has already started, preserve previous messages
-      if (isEditing || !originalImage) {
+      if (isEditing || !base64) {
         const previousChatMessages = previous?.value ?? [];
         return previousChatMessages;
       }
@@ -87,8 +92,8 @@ export default class ConversationEditComponent {
         {
           id: 1,
           sender: 'AI',
-          text: originalImage.text ?? 'Here is the original image you uploaded. How would you like to edit it?',
-          imageUrl: originalImage.base64,
+          text,
+          base64,
           isError: false,
         }
       ];
@@ -114,7 +119,7 @@ export default class ConversationEditComponent {
     );
 
     try {
-      const { inlineData, base64, text = 'New image generated based on your edit request.' }
+      const { inlineData, base64, text }
         = await this.conversationEditService.editImage(prompt, this.lastEditedImage());
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId  ?
@@ -122,8 +127,8 @@ export default class ConversationEditComponent {
             ...message,
             isLoading: false,
             isError: false,
-            text,
-            imageUrl: base64
+            text: text || 'New image generated based on your edit request.',
+            base64
           }
         );
       });
@@ -137,7 +142,7 @@ export default class ConversationEditComponent {
             isLoading: false,
             isError: true,
             text: errorMessage,
-            imageUrl: undefined,
+            base64: undefined,
           }));
       });
     } finally {

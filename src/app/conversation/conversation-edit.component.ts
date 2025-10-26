@@ -85,14 +85,17 @@ export default class ConversationEditComponent {
   }
 
    toggleConversation() {
-      this.isEditing.update((prev) => !prev);
-      if (this.isEditing()) {
+      const currentEditing = this.isEditing();
+      // not editing to editing
+      if (!currentEditing) {
         this.conversationEditService.startEdit();
       } else {
+        // editing to not editing
         this.conversationEditService.endEdit();
         this.messages.set([]);
         this.dropzone().clearAllFiles();
       }
+      this.isEditing.update((prev) => !prev);
   }
 
   handleDownloadImage(event: { base64: string, filename: string }) {

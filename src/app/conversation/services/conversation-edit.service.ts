@@ -1,8 +1,7 @@
-import { GeminiService } from '@/ai/services/gemini.service';
+import { FirebaseService } from '@/ai/services/firebase.service';
 import { getBase64EncodedString, getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { inject, Injectable, resource, Signal, signal } from '@angular/core';
-import { Chat } from '@google/genai';
-import { GenerativeContentBlob } from 'firebase/ai';
+import { ChatSession, GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 import { ChatMessage, MessagesState, PreviousMessagesState } from '../types/chat-message.type';
@@ -21,12 +20,12 @@ async function originalImageLoader(params: NoInfer<File[]>) {
   providedIn: 'root'
 })
 export class ConversationEditService {
-  chat = signal<Chat | undefined>(undefined);
+  chat = signal<ChatSession | undefined>(undefined);
 
-  geminiService = inject(GeminiService);
+  firebaseService = inject(FirebaseService);
 
   startEdit(): void {
-    const chatInstance = this.geminiService.createChat();
+    const chatInstance = this.firebaseService.createChat();
     this.chat.set(chatInstance);
   }
 
@@ -75,14 +74,12 @@ export class ConversationEditService {
     }
   }
 
-  private async getGeneratedParts(inlineData: GenerativeContentBlob, prompt: string, currentChat: Chat) {
+  private async getGeneratedParts(inlineData: GenerativeContentBlob, prompt: string, currentChat: ChatSession) {
     const inlineDataPart = inlineData.data && inlineData.mimeType ? { inlineData } : undefined;
     const message = inlineDataPart ? [prompt, inlineDataPart] : [prompt];
-    const response = await currentChat.sendMessage({
-      message
-    });
+    const response = await currentChat.sendMessage(message);
 
-    return response.candidates?.[0]?.content?.parts || [];
+    return response.response.inlineDataParts() || [];
   }
 
   endEdit(): void {

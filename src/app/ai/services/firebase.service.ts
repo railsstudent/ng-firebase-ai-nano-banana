@@ -48,4 +48,8 @@ export class FirebaseService  {
           throw new Error('Error in generating the image.');
         }
     }
+
+    createChat() {
+      return this.geminiModel.startChat();
+    }
 }

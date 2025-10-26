@@ -25,11 +25,13 @@
               </p>
             }
             @if (message.base64) {
-              <img [src]="message.base64"
-                alt="Chat image"
-                width="300"
-                height="200"
-                class="mt-3 rounded-lg max-w-xs h-auto shadow-lg border-2 border-gray-600"
+              <app-image-viewer
+                [id]="message.id"
+                [url]="message.base64"
+                (imageAction)="handleImageAction($event)"
+                [capabilities]="{ download: true, video: false, clearImage: false }"
+                [width]="300"
+                [height]="200"
               />
             }
           }

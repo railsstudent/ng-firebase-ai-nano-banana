@@ -1,5 +1,7 @@
+import { ImageViewerComponent } from '@/shared/gen-media/image-viewer/image-viewer.component';
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ImageActions } from '@/shared/types/actions.type';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatErrorIconComponent } from '../icons/chat-error-icon.component';
 import { ChatMessage } from '../types/chat-message.type';
@@ -11,6 +13,7 @@ import { Sender } from '../types/sender.type';
     FormsModule,
     SpinnerIconComponent,
     ChatErrorIconComponent,
+    ImageViewerComponent,
   ],
   styleUrl: './conversation-messages.component.css',
   templateUrl: './conversation-messages.component.html',
@@ -19,6 +22,8 @@ import { Sender } from '../types/sender.type';
 export class ConversationMessagesComponent {
   messages = input.required<ChatMessage[]>();
   isLoading = input.required<boolean>();
+
+  downloadImage = output<{ base64: string, filename: string }>();
 
   getItemClasses(sender: Sender): string {
     if (sender === 'User') {
@@ -57,4 +62,15 @@ export class ConversationMessagesComponent {
   //       }
   //   }, 0);
   // }
+
+  handleImageAction(event: { action: ImageActions; context?: unknown }): void {
+    if (event.action === 'downloadImage' && event.context) {
+      const messageId = +event.context;
+
+      const message = this.messages().find((msg) => msg.id === messageId);
+      if (message?.base64) {
+        this.downloadImage.emit({ base64: message.base64, filename: 'conversation' });
+      }
+    }
+  }
 }

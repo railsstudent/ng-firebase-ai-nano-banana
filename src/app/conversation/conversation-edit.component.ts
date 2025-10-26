@@ -2,6 +2,7 @@ import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
+import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
@@ -26,6 +27,7 @@ import { ChatMessage } from './types/chat-message.type';
 export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
   private readonly featureService = inject(FeatureService);
+  private readonly genMediaService = inject(GenMediaService);
 
   feature = computed(() => this.featureService.getFeatureDetails('conversation'));
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
@@ -91,5 +93,9 @@ export default class ConversationEditComponent {
         this.messages.set([]);
         this.dropzone().clearAllFiles();
       }
+  }
+
+  handleDownloadImage(event: { base64: string, filename: string }) {
+    this.genMediaService.downloadImage(event.filename, event.base64);
   }
 }

@@ -43,7 +43,7 @@
       "name": "Conversational Editing",
       "path": "/conversation",
       "buttonText": "Send",
-      "loadingText": "Create image interatively....",
+      "loadingText": "Creating your image....",
       "description": "Converse your creations, articulate your vision, and visually refine your imagination with every spoken detail!"
     }
   },

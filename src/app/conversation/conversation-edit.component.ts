@@ -14,6 +14,7 @@ import { ConversationEditService } from './services/conversation-edit.service';
 import { ConversationMessagesService } from './services/conversation-messages.service';
 import { Base64InlineData } from './types/base64-inline-data.type';
 import { ChatMessage } from './types/chat-message.type';
+import { FirebaseService } from '@/ai/services/firebase.service';
 
 @Component({
   selector: 'app-conversation-edit',
@@ -35,6 +36,7 @@ export default class ConversationEditComponent {
   private readonly conversationMessagesService = inject(ConversationMessagesService);
   private readonly featureService = inject(FeatureService);
   private readonly genMediaService = inject(GenMediaService);
+  private readonly firebaseService = inject(FirebaseService);
 
   feature = computed(() => this.featureService.getFeatureDetails('conversation'));
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
@@ -46,7 +48,7 @@ export default class ConversationEditComponent {
     return `${action} Conversation`;
   });
 
-  isConversationDisabled = computed(() => this.imageFiles().length === 0);
+  isConversationDisabled = computed(() => this.messages().length === 0);
   isLoading = signal(false);
 
   conversationMode = signal('edit');
@@ -67,8 +69,26 @@ export default class ConversationEditComponent {
 
   lastEditedImage = linkedSignal(() => this.#originalImage().inlineData);
 
-  handleGenerate(prompt: string) {
-    console.log('prompt', prompt);
+  async handleGenerate(prompt: string) {
+    try {
+      this.isLoading.set(true);
+      const imageResponse = await this.firebaseService.generateImage(prompt, []);
+
+      const { data, mimeType, inlineData } = imageResponse;
+
+      this.messages.set([
+        {
+          id: 1,
+          sender: 'AI',
+          text: 'Here is the new image. How would you like to edit it?',
+          base64: inlineData,
+          isError: false,
+        } as ChatMessage
+      ])
+      this.lastEditedImage.set({ data, mimeType });
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   async handleSendPrompt(prompt: string): Promise<void> {
@@ -110,6 +130,8 @@ export default class ConversationEditComponent {
 
         if (this.conversationMode() === 'edit') {
           this.imageFiles.set([]);
+        } else if (this.conversationMode()) {
+          this.editedPrompt.set('');
         }
       }
       this.isEditing.update((prev) => !prev);

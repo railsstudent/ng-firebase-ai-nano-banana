@@ -3,7 +3,9 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
+import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
@@ -20,9 +22,12 @@ import { ChatMessage } from './types/chat-message.type';
     CardHeaderComponent,
     DropzoneComponent,
     ConversationMessagesComponent,
-    ConversationInputFormComponent
+    ConversationInputFormComponent,
+    FormsModule,
+    PromptFormComponent,
   ],
   templateUrl: './conversation-edit.component.html',
+  styleUrl: './conversation-edit.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ConversationEditComponent {
@@ -44,6 +49,9 @@ export default class ConversationEditComponent {
   isConversationDisabled = computed(() => this.imageFiles().length === 0);
   isLoading = signal(false);
 
+  conversationMode = signal('edit');
+  editedPrompt = signal('');
+
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
   #originalImageResource = this.conversationMessagesService.getInitialMessageResource(this.imageFiles);
@@ -58,6 +66,10 @@ export default class ConversationEditComponent {
   });
 
   lastEditedImage = linkedSignal(() => this.#originalImage().inlineData);
+
+  handleGenerate(prompt: string) {
+    console.log('prompt', prompt);
+  }
 
   async handleSendPrompt(prompt: string): Promise<void> {
     this.isLoading.set(true);
@@ -95,7 +107,10 @@ export default class ConversationEditComponent {
         // editing to not editing
         this.conversationEditService.endEdit();
         this.messages.set([]);
-        this.dropzone().clearAllFiles();
+
+        if (this.conversationMode() === 'edit') {
+          this.imageFiles.set([]);
+        }
       }
       this.isEditing.update((prev) => !prev);
   }

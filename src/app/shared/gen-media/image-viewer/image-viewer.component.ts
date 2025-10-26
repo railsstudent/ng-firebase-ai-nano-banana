@@ -22,8 +22,7 @@ export class ImageViewerComponent {
     video: true,
     clearImage: true
   });
-  width = input(512);
-  height = input(512);
+  imageSize = input({ width: 512, height: 512 });
 
   imageAction = output<{ action: ImageActions, context?: unknown }>();
 }

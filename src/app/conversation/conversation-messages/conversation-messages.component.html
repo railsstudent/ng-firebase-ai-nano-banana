@@ -30,8 +30,7 @@
                 [url]="message.base64"
                 (imageAction)="handleImageAction($event)"
                 [capabilities]="{ download: true, video: false, clearImage: false }"
-                [width]="300"
-                [height]="200"
+                [imageSize]="{ width: 300, height: 200 }"
               />
             }
           }

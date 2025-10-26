@@ -9,6 +9,7 @@ import { ConversationInputFormComponent } from './conversation-input-form/conver
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
 import { makeAIResponsePair, makeErrorMessage, makeSuccessMessage } from './helpers/message.helper';
 import { ConversationEditService } from './services/conversation-edit.service';
+import { ConversationMessagesService } from './services/conversation-messages.service';
 import { Base64InlineData } from './types/base64-inline-data.type';
 import { ChatMessage } from './types/chat-message.type';
 
@@ -26,6 +27,7 @@ import { ChatMessage } from './types/chat-message.type';
 })
 export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
+  private readonly conversationMessagesService = inject(ConversationMessagesService);
   private readonly featureService = inject(FeatureService);
   private readonly genMediaService = inject(GenMediaService);
 
@@ -44,7 +46,7 @@ export default class ConversationEditComponent {
 
   dropzone = viewChild.required<DropzoneComponent>('dropzone');
 
-  #originalImageResource = this.conversationEditService.getInitialMessageResource(this.imageFiles);
+  #originalImageResource = this.conversationMessagesService.getInitialMessageResource(this.imageFiles);
 
   #originalImage = computed(() => this.#originalImageResource.hasValue() ?
     this.#originalImageResource.value() : DEFAULT_BASE64_INLINE_DATA
@@ -52,7 +54,7 @@ export default class ConversationEditComponent {
 
   messages = linkedSignal<{ originalImage: Base64InlineData, isEditing: boolean }, ChatMessage[]>({
     source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
-    computation: (source, previous) => this.conversationEditService.computeInitialMessages(source, previous),
+    computation: (source, previous) => this.conversationMessagesService.computeInitialMessages(source, previous),
   });
 
   lastEditedImage = linkedSignal(() => this.#originalImage().inlineData);

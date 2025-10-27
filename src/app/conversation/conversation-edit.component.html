@@ -4,32 +4,10 @@
 
   @if (!isEditing()) {
     <div class="w-full max-w-2xl mx-auto mb-4">
-      <ul class="mode-radio-group">
-        <li class="mode-item">
-          <div class="mode-block">
-            <input id="horizontal-list-radio-license" type="radio" value="create" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
-            <label for="horizontal-list-radio-license" class="mode-label">Create </label>
-          </div>
-        </li>
-        <li class="mode-item">
-          <div class="mode-block">
-            <input id="horizontal-list-radio-id" type="radio" value="edit" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
-            <label for="horizontal-list-radio-id" class="mode-label">Edit </label>
-          </div>
-        </li>
-      </ul>
-      @if (conversationMode() === 'create') {
-        <app-prompt-form
-          [(prompt)]="editedPrompt"
-          [isLoading]="isLoading()"
-          (generate)="handleGenerate($event)"
-        >
-          <span button-text>{{ details.buttonText }}</span>
-          <span loading-text>{{ details.loadingText }}</span>
-        </app-prompt-form>
-      } @else {
-        <app-dropzone #dropzone mode='single' (filesChanged)="imageFiles.set($event)" />
-      }
+      <app-conversation-mode [feature]="feature()"
+        (lastEditedBlob)="lastEditedImage.set($event)"
+        (originalImageMessage)="messages.set([$event])"
+      />
     </div>
   }
 

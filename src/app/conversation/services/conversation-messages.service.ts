@@ -2,7 +2,7 @@ import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { Injectable, resource, Signal } from '@angular/core';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { Base64InlineData } from '../types/base64-inline-data.type';
-import { ChatMessage, MessagesState, PreviousMessagesState } from '../types/chat-message.type';
+import { ChatMessage, PreviousMessagesState } from '../types/chat-message.type';
 
 async function originalImageLoader(params: NoInfer<File[]>) {
   const result = await getBase64InlineData(params);
@@ -18,27 +18,27 @@ async function originalImageLoader(params: NoInfer<File[]>) {
   providedIn: 'root'
 })
 export class ConversationMessagesService {
-  computeInitialMessages({ originalImage, isEditing }: MessagesState, previous: PreviousMessagesState) {
+  computeInitialMessage(source: Base64InlineData, previous: PreviousMessagesState) {
+      if (previous?.value) {
+        return  previous.value;
+      }
+
       const {
         base64,
         text = 'Here is the original image you uploaded. How would you like to edit it?'
-      } = originalImage;
+      } = source;
 
-      // The conversation has already started, preserve previous messages
-      if (isEditing || !base64) {
-        const previousChatMessages = previous?.value ?? [];
-        return previousChatMessages;
+      if (!base64) {
+        return previous?.value ?? undefined;
       }
 
-      return [
-        {
-          id: 1,
-          sender: 'AI',
-          text,
-          base64,
-          isError: false,
-        } as ChatMessage
-      ];
+      return {
+        id: 1,
+        sender: 'AI',
+        text,
+        base64,
+        isError: false,
+      } as ChatMessage;
   }
 
   getInitialMessageResource(imageFiles: Signal<File[]>) {

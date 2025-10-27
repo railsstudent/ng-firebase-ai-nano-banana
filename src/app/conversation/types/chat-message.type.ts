@@ -10,8 +10,7 @@ export type ChatMessage = {
   isError?: boolean;
 };
 
-export type MessagesState = NoInfer<{ originalImage: Base64InlineData, isEditing: boolean }>;
 export type PreviousMessagesState = {
-  source: NoInfer<{ originalImage: Base64InlineData, isEditing: boolean }>
-  value: NoInfer<ChatMessage[]>;
+  source: NoInfer<Base64InlineData>
+  value: NoInfer<ChatMessage | undefined>;
 } | undefined;

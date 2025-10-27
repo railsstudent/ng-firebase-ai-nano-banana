@@ -1,46 +1,35 @@
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
-import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
-import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
-import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';
+import { ConversationModeComponent } from './conversation-mode/conversation-mode.component';
 import { makeAIResponsePair, makeErrorMessage, makeSuccessMessage } from './helpers/message.helper';
 import { ConversationEditService } from './services/conversation-edit.service';
-import { ConversationMessagesService } from './services/conversation-messages.service';
-import { Base64InlineData } from './types/base64-inline-data.type';
 import { ChatMessage } from './types/chat-message.type';
-import { FirebaseService } from '@/ai/services/firebase.service';
 
 @Component({
   selector: 'app-conversation-edit',
   imports: [
     CardComponent,
     CardHeaderComponent,
-    DropzoneComponent,
     ConversationMessagesComponent,
     ConversationInputFormComponent,
-    FormsModule,
-    PromptFormComponent,
+    ConversationModeComponent,
   ],
   templateUrl: './conversation-edit.component.html',
-  styleUrl: './conversation-edit.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
-  private readonly conversationMessagesService = inject(ConversationMessagesService);
   private readonly featureService = inject(FeatureService);
   private readonly genMediaService = inject(GenMediaService);
-  private readonly firebaseService = inject(FirebaseService);
 
   feature = computed(() => this.featureService.getFeatureDetails('conversation'));
-  dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
-  imageFiles = signal<File[]>([]);
 
   isEditing = signal(false);
   btnConversationText = computed(() => {
@@ -51,45 +40,8 @@ export default class ConversationEditComponent {
   isConversationDisabled = computed(() => this.messages().length === 0);
   isLoading = signal(false);
 
-  conversationMode = signal('edit');
-  editedPrompt = signal('');
-
-  dropzone = viewChild.required<DropzoneComponent>('dropzone');
-
-  #originalImageResource = this.conversationMessagesService.getInitialMessageResource(this.imageFiles);
-
-  #originalImage = computed(() => this.#originalImageResource.hasValue() ?
-    this.#originalImageResource.value() : DEFAULT_BASE64_INLINE_DATA
-  );
-
-  messages = linkedSignal<{ originalImage: Base64InlineData, isEditing: boolean }, ChatMessage[]>({
-    source: () => ({ originalImage: this.#originalImage(), isEditing: this.isEditing() }),
-    computation: (source, previous) => this.conversationMessagesService.computeInitialMessages(source, previous),
-  });
-
-  lastEditedImage = linkedSignal(() => this.#originalImage().inlineData);
-
-  async handleGenerate(prompt: string) {
-    try {
-      this.isLoading.set(true);
-      const imageResponse = await this.firebaseService.generateImage(prompt, []);
-
-      const { data, mimeType, inlineData } = imageResponse;
-
-      this.messages.set([
-        {
-          id: 1,
-          sender: 'AI',
-          text: 'Here is the new image. How would you like to edit it?',
-          base64: inlineData,
-          isError: false,
-        } as ChatMessage
-      ])
-      this.lastEditedImage.set({ data, mimeType });
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
+  messages = signal<ChatMessage[]>([]);
+  lastEditedImage = signal<GenerativeContentBlob>(DEFAULT_BASE64_INLINE_DATA.inlineData);
 
   async handleSendPrompt(prompt: string): Promise<void> {
     this.isLoading.set(true);
@@ -127,12 +79,6 @@ export default class ConversationEditComponent {
         // editing to not editing
         this.conversationEditService.endEdit();
         this.messages.set([]);
-
-        if (this.conversationMode() === 'edit') {
-          this.imageFiles.set([]);
-        } else if (this.conversationMode()) {
-          this.editedPrompt.set('');
-        }
       }
       this.isEditing.update((prev) => !prev);
   }

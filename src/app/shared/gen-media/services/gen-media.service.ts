@@ -50,7 +50,7 @@ export class GenMediaService {
         }
       });
       this.videoUrl.set(videoUrl);
-    } catch (e: unknown) {
+    } catch (e) {
       console.error(e);
       const firstError = this.videoErrorHandler(firstVideoError, e);
       try {
@@ -97,7 +97,7 @@ export class GenMediaService {
 
     try {
       return await this.firebaseService.generateImage(trimmedPrompt, imageFiles);
-    } catch (e: unknown) {
+    } catch (e) {
       console.error(e);
       if (e instanceof Error) {
         throw e;
@@ -123,7 +123,7 @@ export class GenMediaService {
         if (imageResponse) {
           imageResponses.push(imageResponse);
         }
-      } catch (e: unknown) {
+      } catch (e) {
         if (!isFirstError) {
           if (e instanceof Error) {
             this.imageGenerationError.set(e.message);

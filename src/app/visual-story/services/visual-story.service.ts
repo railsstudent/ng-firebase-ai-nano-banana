@@ -1,12 +1,15 @@
+import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
+import { GenerateVideoFromFramesRequest } from '@/shared/gen-media/types/video-params.type';
+import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
 import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
-import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VisualStoryService {
   private readonly promptHistoryService = inject(PromptHistoryService);
+  private readonly genMediaService = inject(GenMediaService);
 
   buildStepPrompts(genArgs: VisualStoryGenerateArgs): string[] {
     const { userPrompt, args } = genArgs;
@@ -69,5 +72,14 @@ export class VisualStoryService {
   addPrompt(key: string, args: VisualStoryGenerateArgs) {
     const strPrompt = JSON.stringify(args);
     this.promptHistoryService.addPrompt(key, strPrompt);
+  }
+
+  generateVideoFromFrames(request: GenerateVideoFromFramesRequest): Promise<string> {
+    try {
+      return this.genMediaService.generateVideoFromFrames(request);
+    } catch (e) {
+      console.error(e);
+      return Promise.resolve('');
+    }
   }
 }

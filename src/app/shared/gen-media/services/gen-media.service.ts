@@ -2,7 +2,7 @@ import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
-import { GenerateVideoRequestImageParams } from '../types/video-params.type';
+import { GenerateVideoFromFramesRequest, GenerateVideoRequestImageParams } from '../types/video-params.type';
 
 @Injectable({
   providedIn: 'root'
@@ -54,14 +54,7 @@ export class GenMediaService {
       console.error(e);
       const firstError = this.videoErrorHandler(firstVideoError, e);
       try {
-        // maybe an older Veo model used, remove configurations that Veo 3 and Veo 3.1 have
-        const fallbackVideoUrl = await this.geminiService.generateVideo({
-          ...imageParams,
-          config: {
-            aspectRatio: '16:9',
-          }
-        });
-        this.videoUrl.set(fallbackVideoUrl);
+        this.videoUrl.set(await this.getFallbackVideoUrl(imageParams));
       } catch (error: unknown) {
         const secondError = this.videoErrorHandler(firstError.firstVideoError, error);
         this.videoError.set(firstError.msg || secondError.msg);
@@ -139,5 +132,45 @@ export class GenMediaService {
       ...imageResponse,
       id: index,
     }));
+  }
+
+  async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<string> {
+    let firstVideoError = false;
+    try {
+      const videoUrl = await this.geminiService.generateVideo({
+        ...imageParams,
+        config: {
+          aspectRatio: '16:9',
+          resolution: "720p",
+          lastFrame: {
+            imageBytes: imageParams.lastFrameImageBytes,
+            mimeType: imageParams.lastFrameMimeType
+          }
+        }
+      });
+      return videoUrl;
+    } catch (e) {
+      console.error(e);
+      const firstError = this.videoErrorHandler(firstVideoError, e);
+      try {
+        // maybe an older Veo model used, remove configurations that Veo 3 and Veo 3.1 have
+        return await this.getFallbackVideoUrl(imageParams);
+      } catch (error: unknown) {
+        const secondError = this.videoErrorHandler(firstError.firstVideoError, error);
+        throw new Error(firstError.msg || secondError.msg);
+      }
+    }
+  }
+
+  private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams) {
+    const fallbackVideoUrl = await this.geminiService.generateVideo({
+      prompt: imageParams.prompt,
+      imageBytes: imageParams.imageBytes,
+      mimeType: imageParams.mimeType,
+      config: {
+        aspectRatio: '16:9',
+      }
+    });
+    return fallbackVideoUrl;
   }
 }

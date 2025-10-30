@@ -4,7 +4,7 @@ import { GenerateVideosParameters } from '@google/genai';
 import { catchError, firstValueFrom, map, retry, throwError } from 'rxjs';
 import firebaseConfig from '../../firebase-ai.json';
 import { GEMINI_AI } from '../constants/gemini.constant';
-import { GenerateVideoRequest } from '../types/generate-video..type';
+import { GenerateVideoRequest } from '../types/generate-video.type';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,7 @@ export class GeminiService {
   private readonly http = inject(HttpClient);
 
   async generateVideo(request: GenerateVideoRequest): Promise<string> {
-    const genVidoesParams: GenerateVideosParameters = {
+    const genVideosParams: GenerateVideosParameters = {
       model: firebaseConfig.geminiVideoModelName,
       prompt: request.prompt,
       config: {
@@ -27,12 +27,12 @@ export class GeminiService {
       }
     };
 
-    const downloadLink = await this.generateDownloadLink(genVidoesParams);
-    return this.downloadVideo(downloadLink);
+    const videoLink = await this.generateDownloadLink(genVideosParams);
+    return this.downloadVideo(videoLink);
   }
 
-  private async generateDownloadLink(genVidoesParams: GenerateVideosParameters): Promise<string> {
-    let operation = await this.ai.models.generateVideos(genVidoesParams);
+  private async generateDownloadLink(genVideosParams: GenerateVideosParameters): Promise<string> {
+    let operation = await this.ai.models.generateVideos(genVideosParams);
     while (!operation.done) {
       await new Promise(resolve => setTimeout(resolve, firebaseConfig.poillingPeriod));
       operation = await this.ai.operations.getVideosOperation({ operation });

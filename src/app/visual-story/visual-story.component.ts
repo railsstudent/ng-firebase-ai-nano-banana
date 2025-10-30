@@ -1,3 +1,4 @@
+import { FIRST_LAST_FRAMES_VIDEO_ENABLED } from '@/ai/constants/gemini.constant';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
@@ -5,21 +6,14 @@ import { CardComponent } from '@/shared/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
+import { VideoPlayerComponent } from '@/shared/gen-media/video-player/video-player.component';
+import { LoaderComponent } from '@/shared/loader/loader.component';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
+import { DEFAULT_PROMPT_ARGS } from './constants/default_prompt_args.const';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.component';
-
-const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
-  userPrompt: 'A detective who can talk to plants.',
-  args: {
-    style: 'consistent',
-    transition: 'smooth',
-    numberOfImages: 2,
-    type: 'story'
-  }
-}
 
 @Component({
   selector: 'app-visual-story',
@@ -30,6 +24,8 @@ const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
     VisualStoryFormComponent,
     PromptHistoryComponent,
     GenMediaComponent,
+    LoaderComponent,
+    VideoPlayerComponent,
   ],
   templateUrl: './visual-story.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +33,7 @@ const DEFAULT_PROMPT_ARGS: VisualStoryGenerateArgs = {
 export default class VisualStoryComponent {
   private readonly visualStoryService = inject(VisualStoryService);
   private readonly featureService = inject(FeatureService);
+  private readonly isFirstLastFramesGenerationEnabled = inject(FIRST_LAST_FRAMES_VIDEO_ENABLED);
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
@@ -54,6 +51,11 @@ export default class VisualStoryComponent {
   error = computed(() => this.genmedia()?.error() || '');
 
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
+
+  canGenerateVideoFromFirstLastFrames = computed(() => {
+    const numImages = this.genmedia()?.images()?.length || 0;
+    return this.isFirstLastFramesGenerationEnabled && numImages >= 2;
+  });
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;
@@ -93,6 +95,33 @@ export default class VisualStoryComponent {
     } catch (e) {
       console.error(e);
       this.promptArgs.set(DEFAULT_PROMPT_ARGS);
+    }
+  }
+
+  isLoadingFromFrames = signal(false);
+  videoUrlFromFrames = signal('');
+  async generateVideoFromFrames(): Promise<void> {
+    try {
+      this.isLoadingFromFrames.set(true);
+      this.videoUrlFromFrames.set('');
+
+      const numImages = this.genmedia()?.images()?.length || 0;
+      if (numImages < 2) {
+        return;
+      }
+
+      const firstImage = this.genmedia()?.images()?.[0];
+      const lastImage = this.genmedia()?.images()?.[numImages - 1];
+      const url = await this.visualStoryService.generateVideoFromFrames({
+        prompt: this.promptArgs().userPrompt,
+        imageBytes: firstImage?.data || '',
+        mimeType: firstImage?.mimeType || '',
+        lastFrameImageBytes: lastImage?.data || '',
+        lastFrameMimeType: lastImage?.mimeType || '',
+      });
+      this.videoUrlFromFrames.set(url);
+    } finally {
+      this.isLoadingFromFrames.set(false);
     }
   }
 }

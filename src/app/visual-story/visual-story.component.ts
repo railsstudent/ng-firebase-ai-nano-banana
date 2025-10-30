@@ -6,14 +6,13 @@ import { CardComponent } from '@/shared/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
-import { VideoPlayerComponent } from '@/shared/gen-media/video-player/video-player.component';
-import { LoaderComponent } from '@/shared/loader/loader.component';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { DEFAULT_PROMPT_ARGS } from './constants/default_prompt_args.const';
 import { VisualStoryService } from './services/visual-story.service';
 import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
 import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.component';
+import VisualStoryVideoComponent from './visual-story-video/visual-story-video.component';
 
 @Component({
   selector: 'app-visual-story',
@@ -24,8 +23,7 @@ import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.
     VisualStoryFormComponent,
     PromptHistoryComponent,
     GenMediaComponent,
-    LoaderComponent,
-    VideoPlayerComponent,
+    VisualStoryVideoComponent,
   ],
   templateUrl: './visual-story.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,10 +51,6 @@ export default class VisualStoryComponent {
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
   numImages = computed(() => this.genmedia()?.images()?.length || 0);
-
-  canGenerateVideoFromFirstLastFrames = computed(() =>
-    this.isVeo31Used && this.numImages() >= 2
-  );
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;
@@ -96,33 +90,6 @@ export default class VisualStoryComponent {
     } catch (e) {
       console.error(e);
       this.promptArgs.set(DEFAULT_PROMPT_ARGS);
-    }
-  }
-
-  isLoadingFromFrames = signal(false);
-  videoUrlFromFrames = signal('');
-  async generateVideoFromFrames(): Promise<void> {
-    try {
-      this.isLoadingFromFrames.set(true);
-      this.videoUrlFromFrames.set('');
-
-      if (this.numImages() < 2) {
-        return;
-      }
-
-      const firstImage = this.genmedia()?.images()?.[0];
-      const lastImage = this.genmedia()?.images()?.[this.numImages() - 1];
-      const url = await this.visualStoryService.generateVideoFromFrames({
-        prompt: this.promptArgs().userPrompt,
-        imageBytes: firstImage?.data || '',
-        mimeType: firstImage?.mimeType || '',
-        lastFrameImageBytes: lastImage?.data || '',
-        lastFrameMimeType: lastImage?.mimeType || '',
-        isVeo31Used: this.isVeo31Used
-      });
-      this.videoUrlFromFrames.set(url);
-    } finally {
-      this.isLoadingFromFrames.set(false);
     }
   }
 }

@@ -29,7 +29,13 @@
     <p class="text-sm">Your generated {{ promptArgs().args.type}} will appear here. Please be patient.</p>
   </app-gen-media>
 
-  @if (canGenerateVideoFromFirstLastFrames()) {
+  <app-visual-story-video
+    [firstImage]="this.genmedia()?.images()?.[0]"
+    [lastImage]="this.genmedia()?.images()?.[this.numImages() - 1]"
+    [userPrompt]="this.promptArgs().userPrompt"
+  />
+
+  <!-- @if (canGenerateVideoFromFirstLastFrames()) {
     <button
       type="button"
       (click)="generateVideoFromFrames()"
@@ -42,5 +48,5 @@
     } @else if (videoUrlFromFrames()) {
       <app-video-player class="block" [videoUrl]="videoUrlFromFrames()" />
     }
-  }
+  } -->
 </app-card>

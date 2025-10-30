@@ -39,7 +39,7 @@ const jsonString = JSON.stringify({
   geminiAPIKey,
   geminiVideoModelName,
   poillingPeriod: +(process.env.VIDEO_POLLING_PERIOD || '10000'),
-  first_last_frames_video_enabled: process.env.FIRST_LAST_FRAMES_VIDEO_ENABLED === 'true',
+  is_veo31_used: process.env.IS_VEO31_USED === 'true',
 }, null, 2);
 
 // Define output file path

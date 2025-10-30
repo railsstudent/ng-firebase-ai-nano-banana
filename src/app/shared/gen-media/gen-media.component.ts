@@ -1,11 +1,12 @@
+import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
-import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { LoaderComponent } from '../loader/loader.component';
 import { ImageActions } from '../types/actions.type';
-import { VideoPlayerComponent } from './video-player/video-player.component';
+import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 
 @Component({
   selector: 'app-gen-media',
@@ -47,6 +48,7 @@ import { GenMediaInput } from './types/gen-media-input.type';
 })
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
+  private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   loadingText = input('');
   genMediaInput = input<GenMediaInput>();
@@ -117,6 +119,7 @@ export class GenMediaComponent {
         prompt: this.trimmedUserPrompt(),
         imageBytes,
         mimeType,
+        isVeo31Used: this.isVeo31Used
       }
       await this.genMediaService.generateVideo(imageRequest);
     }

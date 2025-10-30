@@ -15,7 +15,6 @@ export class GenMediaService {
   videoError = signal('');
   videoUrl = signal('');
   isGeneratingVideo = signal(false);
-
   imageGenerationError = signal('');
 
   downloadImage(filename: string, imageUrl: string): void {
@@ -38,46 +37,27 @@ export class GenMediaService {
   }
 
   async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
-    let firstVideoError = false;
     try {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
-      const videoUrl = await this.geminiService.generateVideo({
+      const isVeo31Used = imageParams.isVeo31Used || false;
+      const videoUrl = isVeo31Used ? await this.geminiService.generateVideo({
         ...imageParams,
         config: {
           aspectRatio: '16:9',
           resolution: "720p"
         }
-      });
+      }) : await this.getFallbackVideoUrl(imageParams);
       this.videoUrl.set(videoUrl);
     } catch (e) {
       console.error(e);
-      const firstError = this.videoErrorHandler(firstVideoError, e);
-      try {
-        this.videoUrl.set(await this.getFallbackVideoUrl(imageParams));
-      } catch (error: unknown) {
-        const secondError = this.videoErrorHandler(firstError.firstVideoError, error);
-        this.videoError.set(firstError.msg || secondError.msg);
-      }
+      const errMsg = e instanceof Error ?
+        e.message :
+        'An unexpected error occurred in video generation using the first and last frames.'
+      this.videoError.set(errMsg);
     } finally {
       this.isGeneratingVideo.set(false);
     }
-  }
-
-  private videoErrorHandler(firstVideoError: boolean, error: unknown) {
-    if (!firstVideoError) {
-      if (error instanceof Error) {
-        try {
-          const parsed = JSON.parse(error.message);
-          return { msg: parsed.error.message, firstVideoError: true };
-        } catch {
-          return { msg: error.message, firstVideoError: true };
-        }
-      }
-      return { msg: 'An unexpected error occurred.', firstVideoError: true };
-    }
-
-    return { msg: '', firstVideoError };
   }
 
   private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageResponse | undefined> {
@@ -135,30 +115,23 @@ export class GenMediaService {
   }
 
   async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<string> {
-    let firstVideoError = false;
+    const isVeo31Used = imageParams.isVeo31Used || false;
     try {
-      const videoUrl = await this.geminiService.generateVideo({
-        ...imageParams,
-        config: {
-          aspectRatio: '16:9',
-          resolution: "720p",
-          lastFrame: {
-            imageBytes: imageParams.lastFrameImageBytes,
-            mimeType: imageParams.lastFrameMimeType
+      return isVeo31Used ? await this.geminiService.generateVideo({
+          ...imageParams,
+          config: {
+            aspectRatio: '16:9',
+            resolution: "720p",
+            lastFrame: {
+              imageBytes: imageParams.lastFrameImageBytes,
+              mimeType: imageParams.lastFrameMimeType
+            }
           }
-        }
-      });
-      return videoUrl;
+        }) : await this.getFallbackVideoUrl(imageParams);
     } catch (e) {
-      console.error(e);
-      const firstError = this.videoErrorHandler(firstVideoError, e);
-      try {
-        // maybe an older Veo model used, remove configurations that Veo 3 and Veo 3.1 have
-        return await this.getFallbackVideoUrl(imageParams);
-      } catch (error: unknown) {
-        const secondError = this.videoErrorHandler(firstError.firstVideoError, error);
-        throw new Error(firstError.msg || secondError.msg);
-      }
+      throw e instanceof Error ?
+        e :
+        new Error('An unexpected error occurred in video generation using the first and last frames.');
     }
   }
 

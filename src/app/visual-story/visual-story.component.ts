@@ -1,4 +1,4 @@
-import { FIRST_LAST_FRAMES_VIDEO_ENABLED } from '@/ai/constants/gemini.constant';
+import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
@@ -33,7 +33,7 @@ import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.
 export default class VisualStoryComponent {
   private readonly visualStoryService = inject(VisualStoryService);
   private readonly featureService = inject(FeatureService);
-  private readonly isFirstLastFramesGenerationEnabled = inject(FIRST_LAST_FRAMES_VIDEO_ENABLED);
+  private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
@@ -52,10 +52,11 @@ export default class VisualStoryComponent {
 
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
-  canGenerateVideoFromFirstLastFrames = computed(() => {
-    const numImages = this.genmedia()?.images()?.length || 0;
-    return this.isFirstLastFramesGenerationEnabled && numImages >= 2;
-  });
+  numImages = computed(() => this.genmedia()?.images()?.length || 0);
+
+  canGenerateVideoFromFirstLastFrames = computed(() =>
+    this.isVeo31Used && this.numImages() >= 2
+  );
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;
@@ -105,19 +106,19 @@ export default class VisualStoryComponent {
       this.isLoadingFromFrames.set(true);
       this.videoUrlFromFrames.set('');
 
-      const numImages = this.genmedia()?.images()?.length || 0;
-      if (numImages < 2) {
+      if (this.numImages() < 2) {
         return;
       }
 
       const firstImage = this.genmedia()?.images()?.[0];
-      const lastImage = this.genmedia()?.images()?.[numImages - 1];
+      const lastImage = this.genmedia()?.images()?.[this.numImages() - 1];
       const url = await this.visualStoryService.generateVideoFromFrames({
         prompt: this.promptArgs().userPrompt,
         imageBytes: firstImage?.data || '',
         mimeType: firstImage?.mimeType || '',
         lastFrameImageBytes: lastImage?.data || '',
         lastFrameMimeType: lastImage?.mimeType || '',
+        isVeo31Used: this.isVeo31Used
       });
       this.videoUrlFromFrames.set(url);
     } finally {

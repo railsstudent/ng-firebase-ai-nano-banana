@@ -1,4 +1,3 @@
-import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
@@ -31,7 +30,6 @@ import VisualStoryVideoComponent from './visual-story-video/visual-story-video.c
 export default class VisualStoryComponent {
   private readonly visualStoryService = inject(VisualStoryService);
   private readonly featureService = inject(FeatureService);
-  private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   feature = this.featureService.getFeatureDetails('visual-story');
 

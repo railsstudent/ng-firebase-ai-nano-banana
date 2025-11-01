@@ -30,8 +30,7 @@
   </app-gen-media>
 
   <app-visual-story-video
-    [firstImage]="this.genmedia()?.images()?.[0]"
-    [lastImage]="this.genmedia()?.images()?.[this.numImages() - 1]"
     [userPrompt]="this.promptArgs().userPrompt"
+    [images]="this.genmedia()?.images()"
   />
 </app-card>

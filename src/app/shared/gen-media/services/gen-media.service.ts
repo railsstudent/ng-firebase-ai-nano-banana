@@ -1,6 +1,7 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
 import { ImageResponse } from '@/ai/types/image-response.type';
+import { VideoResponse } from '@/ai/types/video-response.type';
 import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
 import { GenerateVideoFromFramesRequest, GenerateVideoRequestImageParams } from '../types/video-params.type';
 
@@ -40,14 +41,20 @@ export class GenMediaService {
     try {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
+
       const isVeo31Used = imageParams.isVeo31Used || false;
-      const videoUrl = isVeo31Used ? await this.geminiService.generateVideo({
-        ...imageParams,
-        config: {
-          aspectRatio: '16:9',
-          resolution: "720p"
-        }
-      }) : await this.getFallbackVideoUrl(imageParams);
+
+      const loadVideoPromise = isVeo31Used ?
+        this.geminiService.generateVideo({
+          ...imageParams,
+          config: {
+            aspectRatio: '16:9',
+            resolution: "720p"
+          }
+        }) :
+        this.getFallbackVideoUrl(imageParams);
+
+      const videoUrl = (await loadVideoPromise).videoUrl;
       this.videoUrl.set(videoUrl);
     } catch (e) {
       console.error(e);
@@ -114,10 +121,11 @@ export class GenMediaService {
     }));
   }
 
-  async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<string> {
+  async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
     const isVeo31Used = imageParams.isVeo31Used || false;
     try {
-      return isVeo31Used ? await this.geminiService.generateVideo({
+      const loadVideoPromise = isVeo31Used ?
+        this.geminiService.generateVideo({
           ...imageParams,
           config: {
             aspectRatio: '16:9',
@@ -127,7 +135,10 @@ export class GenMediaService {
               mimeType: imageParams.lastFrameMimeType
             }
           }
-        }) : await this.getFallbackVideoUrl(imageParams);
+      }) :
+        this.getFallbackVideoUrl(imageParams);
+
+      return await loadVideoPromise;
     } catch (e) {
       throw e instanceof Error ?
         e :
@@ -135,8 +146,8 @@ export class GenMediaService {
     }
   }
 
-  private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams) {
-    const fallbackVideoUrl = await this.geminiService.generateVideo({
+  private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams): Promise<VideoResponse> {
+    return this.geminiService.generateVideo({
       prompt: imageParams.prompt,
       imageBytes: imageParams.imageBytes,
       mimeType: imageParams.mimeType,
@@ -144,6 +155,5 @@ export class GenMediaService {
         aspectRatio: '16:9',
       }
     });
-    return fallbackVideoUrl;
   }
 }

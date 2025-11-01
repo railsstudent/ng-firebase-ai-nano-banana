@@ -1,3 +1,4 @@
+import { VideoResponse } from '@/ai/types/video-response.type';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
 import { GenerateVideoFromFramesRequest } from '@/shared/gen-media/types/video-params.type';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
@@ -74,12 +75,12 @@ export class VisualStoryService {
     this.promptHistoryService.addPrompt(key, strPrompt);
   }
 
-  generateVideoFromFrames(request: GenerateVideoFromFramesRequest): Promise<string> {
+  interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
     try {
       return this.genMediaService.generateVideoFromFrames(request);
     } catch (e) {
       console.error(e);
-      return Promise.resolve('');
+      return Promise.resolve({ uri: '', videoUrl: '' });
     }
   }
 }

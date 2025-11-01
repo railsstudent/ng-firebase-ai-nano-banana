@@ -5,6 +5,7 @@ import { catchError, firstValueFrom, map, retry, throwError } from 'rxjs';
 import firebaseConfig from '../../firebase-ai.json';
 import { GEMINI_AI } from '../constants/gemini.constant';
 import { GenerateVideoRequest } from '../types/generate-video.type';
+import { VideoResponse } from '../types/video-response.type';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class GeminiService {
   private readonly ai = inject(GEMINI_AI);
   private readonly http = inject(HttpClient);
 
-  async generateVideo(request: GenerateVideoRequest): Promise<string> {
+  async generateVideo(request: GenerateVideoRequest): Promise<VideoResponse> {
     const genVideosParams: GenerateVideosParameters = {
       model: firebaseConfig.geminiVideoModelName,
       prompt: request.prompt,
@@ -27,8 +28,13 @@ export class GeminiService {
       }
     };
 
-    const videoLink = await this.generateDownloadLink(genVideosParams);
-    return this.downloadVideo(videoLink);
+    const uri = await this.generateDownloadLink(genVideosParams);
+    const videoUrl = await this.downloadVideo(uri);
+
+    return {
+      uri,
+      videoUrl,
+    }
   }
 
   private async generateDownloadLink(genVideosParams: GenerateVideosParameters): Promise<string> {

@@ -28,12 +28,6 @@ export async function resolveImageParts(imageFiles?: File[]): Promise<InlineData
     .map((result) => result.value);
 }
 
-export async function getInlineData(imageFiles?: File[]) : Promise<GenerativeContentBlob[]> {
-  const parts = await resolveImageParts(imageFiles);
-
-  return parts.map((part ) => part.inlineData);
-}
-
 export async function getBase64InlineData(imageFiles?: File[]) : Promise<Base64InlineData[]> {
   const parts = await resolveImageParts(imageFiles);
 

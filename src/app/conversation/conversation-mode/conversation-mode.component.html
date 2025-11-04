@@ -1,16 +1,13 @@
 <ul class="mode-radio-group">
-  <li class="mode-item">
-    <div class="mode-block">
-      <input id="horizontal-list-radio-license" type="radio" value="create" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
-      <label for="horizontal-list-radio-license" class="mode-label">Create </label>
-    </div>
-  </li>
-  <li class="mode-item">
-    <div class="mode-block">
-      <input id="horizontal-list-radio-id" type="radio" value="edit" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
-      <label for="horizontal-list-radio-id" class="mode-label">Edit </label>
-    </div>
-  </li>
+  @for (source of sources; track source) {
+    @let displayValue = source.charAt(0).toUpperCase() + source.slice(1);
+    <li class="mode-item">
+      <div class="mode-block">
+        <input id="horizontal-list-radio-license" type="radio" [value]="source" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
+        <label for="horizontal-list-radio-license" class="mode-label">{{ displayValue }} </label>
+      </div>
+    </li>
+  }
 </ul>
 
 @let details = feature();

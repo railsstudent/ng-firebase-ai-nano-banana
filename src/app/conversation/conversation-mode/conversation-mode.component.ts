@@ -9,6 +9,7 @@ import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.cons
 import { ConversationMessagesService } from '../services/conversation-messages.service';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 import { ChatMessage } from '../types/chat-message.type';
+import { SOURCES } from '../constants/source.const';
 
 @Component({
   selector: 'app-conversation-mode',
@@ -24,6 +25,7 @@ import { ChatMessage } from '../types/chat-message.type';
 export class ConversationModeComponent {
   feature = input.required<FeatureDetails>();
 
+  readonly sources = SOURCES;
   conversationMode = signal('edit');
   editedPrompt = signal('');
   imageFiles = signal<File[]>([]);

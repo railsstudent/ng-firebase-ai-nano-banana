@@ -29,26 +29,26 @@
     "@angular/forms": "^20.3.9",
     "@angular/platform-browser": "^20.3.9",
     "@angular/router": "^20.3.9",
-    "@google/genai": "1.24.0",
-    "@tailwindcss/postcss": "4.1.13",
-    "dotenv": "17.2.2",
-    "firebase": "12.3.0",
+    "@google/genai": "1.28.0",
+    "@tailwindcss/postcss": "4.1.16",
+    "dotenv": "17.2.3",
+    "firebase": "12.5.0",
     "postcss": "8.5.6",
-    "rxjs": "~7.8.0",
-    "tailwindcss": "4.1.13",
-    "tslib": "^2.3.0"
+    "rxjs": "~7.8.2",
+    "tailwindcss": "4.1.16",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@angular/build": "^20.3.8",
     "@angular/cli": "^20.3.8",
     "@angular/compiler-cli": "^20.3.9",
-    "@types/jasmine": "~5.1.0",
-    "jasmine-core": "~5.9.0",
-    "karma": "~6.4.0",
+    "@types/jasmine": "~5.1.12",
+    "jasmine-core": "~5.12.1",
+    "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
+    "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.3"
   }
 }

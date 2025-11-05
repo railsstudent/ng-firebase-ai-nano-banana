@@ -29,6 +29,11 @@ export class NavigationComponent {
   features = this.navigationService.getPhotoEditItems();
   modelingFeatures = this.navigationService.getModelingItems();
 
+  readonly navbars = [
+    this.navigationService.getPhotoEditItems(),
+    this.navigationService.getModelingItems()
+  ];
+
   togglePhotoDropdown(): void {
     this.isPhotoDropdownOpen.update(v => !v);
     if (this.isPhotoDropdownOpen()) {

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { GenerativeModel, Part } from 'firebase/ai';
+import { GenerativeModel, Part } from '@angular/fire/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImageResponse } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';

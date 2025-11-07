@@ -1,5 +1,5 @@
 import { Base64InlineData } from '@/conversation/types/base64-inline-data.type';
-import { GenerativeContentBlob, InlineDataPart } from 'firebase/ai';
+import { GenerativeContentBlob, InlineDataPart } from '@angular/fire/ai';
 
 async function fileToGenerativePart(file: File): Promise<InlineDataPart> {
   return await new Promise<InlineDataPart>((resolve) => {

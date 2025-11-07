@@ -3,7 +3,7 @@ import { CardHeaderComponent } from '@/shared/card/card-header/card-header.compo
 import { CardComponent } from '@/shared/card/card.component';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { GenerativeContentBlob } from 'firebase/ai';
+import { GenerativeContentBlob } from '@angular/fire/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
 import { ConversationMessagesComponent } from './conversation-messages/conversation-messages.component';

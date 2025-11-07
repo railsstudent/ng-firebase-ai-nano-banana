@@ -1,7 +1,7 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { getBase64EncodedString } from '@/ai/utils/inline-image-data.util';
 import { inject, Injectable, signal } from '@angular/core';
-import { ChatSession, GenerativeContentBlob } from 'firebase/ai';
+import { ChatSession, GenerativeContentBlob } from '@angular/fire/ai';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 
 @Injectable({

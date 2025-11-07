@@ -1,6 +1,6 @@
 import { makeEnvironmentProviders } from '@angular/core';
-import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from 'firebase/ai';
-import { initializeApp } from "firebase/app";
+import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from '@angular/fire/ai';
+import { initializeApp } from "@angular/fire/app";
 import firebaseConfig from '@/firebase-ai.json';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 

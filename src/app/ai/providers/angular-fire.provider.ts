@@ -1,7 +1,7 @@
 import firebaseConfig from '@/firebase-ai.json';
 import { makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from '@angular/fire/ai';
-import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 
 const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;

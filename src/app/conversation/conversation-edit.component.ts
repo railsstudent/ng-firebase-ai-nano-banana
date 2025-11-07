@@ -52,11 +52,11 @@ export default class ConversationEditComponent {
     this.messages.update(messages => ([...messages, ...pair]));
 
     try {
-      const { inlineData, base64, text }
+      const { inlineData, base64 }
         = await this.conversationEditService.editImage(prompt, this.lastEditedImage());
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId  ?
-          message : makeSuccessMessage(message, base64, text)
+          message : makeSuccessMessage(message, base64)
         );
       });
 

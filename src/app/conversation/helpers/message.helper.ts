@@ -10,7 +10,7 @@ export function makeErrorMessage(oldMessage: ChatMessage, errorMessage: string):
   }
 }
 
-export function makeSuccessMessage(oldMessage: ChatMessage, base64: string, text: string | undefined): ChatMessage {
+export function makeSuccessMessage(oldMessage: ChatMessage, base64: string, text?: string): ChatMessage {
   return {
     ...oldMessage,
     isLoading: false,

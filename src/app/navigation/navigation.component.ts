@@ -24,34 +24,33 @@ export class NavigationComponent {
   private readonly elementRef = inject(ElementRef);
   private readonly navigationService = inject(FeatureService);
 
-  isPhotoDropdownOpen = signal(false);
-  isModelingDropdownOpen = signal(false);
-  features = this.navigationService.getPhotoEditItems();
-  modelingFeatures = this.navigationService.getModelingItems();
+  navMenuState = signal([{ id: 1, state: false }, { id: 2, state: false }]);
 
-  readonly navbars = [
-    this.navigationService.getPhotoEditItems(),
-    this.navigationService.getModelingItems()
-  ];
+  readonly navbars = this.navigationService.getNavBars();
 
-  togglePhotoDropdown(): void {
-    this.isPhotoDropdownOpen.update(v => !v);
-    if (this.isPhotoDropdownOpen()) {
-      this.isModelingDropdownOpen.set(false);
-    }
+  getNavMenuState(id: number) {
+    return this.navMenuState().find((item) => item.id === id)?.state || false;
   }
 
-  toggleModelingDropdown(): void {
-    this.isModelingDropdownOpen.update(v => !v);
-    if (this.isModelingDropdownOpen()) {
-      this.isPhotoDropdownOpen.set(false);
+  toggleDropdown(id: number): void {
+    const state = this.getNavMenuState(id);
+    this.navMenuState.update((items) => items.map((item) =>
+      item.id === id ? ({ ...item, state: !state }) : item
+    ));
+
+    const newState = this.getNavMenuState(id);
+    if (newState) {
+      this.navMenuState.update((items) => items.map((item) => //{
+        item.id !== id ? ({ ...item, state: false }) : item
+      ));
     }
   }
 
   onDocumentClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.isPhotoDropdownOpen.set(false);
-      this.isModelingDropdownOpen.set(false);
+      this.navMenuState.update((items) => items.map((item) =>
+        ({ ...item, state: false })
+      ));
     }
   }
 }

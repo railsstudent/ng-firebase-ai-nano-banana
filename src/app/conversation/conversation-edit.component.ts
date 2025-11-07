@@ -2,7 +2,7 @@ import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
 import { ConversationInputFormComponent } from './conversation-input-form/conversation-input-form.component';
@@ -28,6 +28,8 @@ export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
   private readonly featureService = inject(FeatureService);
   private readonly genMediaService = inject(GenMediaService);
+
+  sources = input.required<string[]>();
 
   feature = computed(() => this.featureService.getFeatureDetails('conversation'));
 

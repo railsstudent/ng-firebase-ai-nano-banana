@@ -1,5 +1,5 @@
 <ul class="mode-radio-group">
-  @for (source of sources; track source) {
+  @for (source of sources(); track source) {
     @let displayValue = source.charAt(0).toUpperCase() + source.slice(1);
     <li class="mode-item">
       <div class="mode-block">

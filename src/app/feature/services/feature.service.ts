@@ -63,12 +63,19 @@ const MODELING_ITEMS = buildModelingNavigationMap();
   providedIn: 'root'
 })
 export class FeatureService {
-  getPhotoEditItems(): Feature[] {
-    return PHOTO_EDIT_ITEMS;
-  }
-
-  getModelingItems(): Feature[] {
-    return MODELING_ITEMS;
+  getNavBars() {
+    return [
+      {
+        id: 1,
+        navName: 'Editor',
+        menu: PHOTO_EDIT_ITEMS,
+      },
+      {
+        id: 2,
+        navName: 'Modeling',
+        menu: MODELING_ITEMS,
+      }
+    ];
   }
 
   getFeatureName(featureId: string) {

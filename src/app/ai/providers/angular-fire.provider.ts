@@ -1,7 +1,7 @@
+import firebaseConfig from '@/firebase-ai.json';
 import { makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from '@angular/fire/ai';
-import { initializeApp } from "@angular/fire/app";
-import firebaseConfig from '@/firebase-ai.json';
+import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 
 const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
@@ -16,8 +16,9 @@ const DEFAULT_CONFIG: ModelParams = {
   }
 };
 
-export function provideFirebase() {
+export function provideAngularFire() {
     return makeEnvironmentProviders([
+        provideFirebaseApp(() => firebaseApp),
         {
             provide: NANO_BANANA_MODEL,
             useFactory: () => getGenerativeModel(ai, DEFAULT_CONFIG),

@@ -12,7 +12,7 @@ export const routes: Routes = [
     loadComponent: () => import('./conversation/conversation-edit.component'),
     title: 'Conversation Editing',
     data: {
-      sources: ['create', 'edit', 'camera']
+      sources: ['edit', 'create', 'camera']
     }
   },
   {

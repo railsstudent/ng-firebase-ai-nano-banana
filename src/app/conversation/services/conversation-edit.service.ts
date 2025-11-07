@@ -21,27 +21,14 @@ export class ConversationEditService {
     try {
       const contentParts = await this.getGeneratedParts(inlineData, prompt);
 
-      let base64InlineData: Base64InlineData | undefined = undefined;
-      let partText = '';
-      for (const part of contentParts) {
-        if (part.text) {
-          partText = part.text;
-        } else if (part.inlineData) {
-          const { data = '', mimeType = '' } = part.inlineData;
-          if (data && mimeType) {
-            base64InlineData =  {
-              inlineData: { data, mimeType },
-              base64: getBase64EncodedString({ data, mimeType })
-            };
-          }
+      if (contentParts.length > 0) {
+        const { data = '', mimeType = '' } = contentParts[0].inlineData;
+        if (data && mimeType) {
+          return {
+            inlineData: { data, mimeType },
+            base64: getBase64EncodedString({ data, mimeType })
+          };
         }
-      }
-
-      if (base64InlineData) {
-        return {
-          ...base64InlineData,
-          text: partText,
-        };
       }
       throw new Error('Send message completed but image is not generated.');
     } catch (error) {

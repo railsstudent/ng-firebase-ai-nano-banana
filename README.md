@@ -4,8 +4,10 @@
 
 - Set up a new project in Firebase Console [https://console.firebase.google.com/](https://console.firebase.google.com/)  
 
+- Enable Gemini API and Vertex AI
+- Enable AI Monitoring
 - Add Firebase AI Logic Web App to the project.
-- Copy the configuraiton of the app.
+- Copy the configuration of the firebase app to the `.env` file.
 
 ## Environment Setup
 

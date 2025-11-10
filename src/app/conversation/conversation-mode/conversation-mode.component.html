@@ -3,7 +3,7 @@
     @let displayValue = source.charAt(0).toUpperCase() + source.slice(1);
     <li class="mode-item">
       <div class="mode-block">
-        <input id="horizontal-list-radio-license" type="radio" [value]="source" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
+        <input type="radio" [value]="source" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
         <label for="horizontal-list-radio-license" class="mode-label">{{ displayValue }} </label>
       </div>
     </li>

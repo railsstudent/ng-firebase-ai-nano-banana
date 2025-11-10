@@ -9,7 +9,7 @@ import {
   MapIconComponent,
   ScissorsIconComponent,
   SparklesIconComponent
-} from '../../navigation/icons/icons.component';
+} from '@/navigation/icons/icons.component';
 import featureConfigs from '../features.json';
 import { FeatureDetails } from '../types/feature-details.type';
 import { Feature } from '../types/feature.type';

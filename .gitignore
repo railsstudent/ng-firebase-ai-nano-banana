@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 .env
-firebase-ai.json
+firebase.json

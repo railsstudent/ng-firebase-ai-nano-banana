@@ -1,4 +1,4 @@
-import firebaseConfig from '@/firebase-ai.json';
+import firebaseConfig from '@/firebase.json';
 import { makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from '@angular/fire/ai';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';

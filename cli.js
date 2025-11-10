@@ -37,6 +37,6 @@ const jsonString = JSON.stringify({
   is_veo31_used: process.env.IS_VEO31_USED === 'true',
 }, null, 2);
 
-const outputPath = path.join('src','app', 'firebase-ai.json');
+const outputPath = path.join('src','app', 'firebase.json');
 fs.writeFileSync(outputPath, jsonString);
 console.log(`JSON file has been saved to ${outputPath}`);

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { GenerateVideosParameters } from '@google/genai';
 import { catchError, firstValueFrom, map, retry, throwError } from 'rxjs';
-import firebaseConfig from '../../firebase-ai.json';
+import firebaseConfig from '@/firebase.json';
 import { GEMINI_AI } from '../constants/gemini.constant';
 import { GenerateVideoRequest } from '../types/generate-video.type';
 import { VideoResponse } from '../types/video-response.type';

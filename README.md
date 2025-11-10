@@ -21,7 +21,7 @@ chmod a+x ./cli.js
 npm start
 ```
 
-- Run the script to generate the Firebase configuration object in the `src/app/firebase-ai.json` file.
+- Run the script to generate the Firebase configuration object in the `src/app/firebase.json` file.
 - The server runs at `http://localhost:4200/`. 
 
 - Start the server

@@ -6,6 +6,10 @@ import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image
 
 async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageResponse[]> {
   const result = await model.generateContent(parts);
+
+  const totalTokenCount = result.response.usageMetadata?.totalTokenCount || 0;
+  console.log(totalTokenCount);
+
   const inlineDataParts = result.response.inlineDataParts();
 
   if (inlineDataParts?.length) {

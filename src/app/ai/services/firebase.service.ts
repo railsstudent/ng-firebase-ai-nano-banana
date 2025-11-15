@@ -7,8 +7,15 @@ import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image
 async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageResponse[]> {
   const result = await model.generateContent(parts);
 
-  const totalTokenCount = result.response.usageMetadata?.totalTokenCount || 0;
-  console.log(totalTokenCount);
+  const usageMetadata = result.response.usageMetadata;
+  const totalTokenCount = usageMetadata?.totalTokenCount || 0;
+  const promptTokenCount = usageMetadata?.promptTokenCount || 0;
+  const outputTokenCount = usageMetadata?.candidatesTokenCount || 0;
+
+  console.log("Input tokens", promptTokenCount,
+      "Output tokens", outputTokenCount,
+     "Total tokens", totalTokenCount,
+    );
 
   const inlineDataParts = result.response.inlineDataParts();
 

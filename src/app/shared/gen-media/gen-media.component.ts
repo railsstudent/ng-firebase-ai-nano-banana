@@ -1,5 +1,6 @@
 import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ImageTokenUsage } from '@/ai/types/image-response.type';
+import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
 import { TokenUsageComponent } from '../token-usage/token-usage.component';
@@ -8,7 +9,6 @@ import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
-import { TokenUsage } from '@/ai/types/token-usage.type';
 
 @Component({
   selector: 'app-gen-media',

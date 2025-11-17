@@ -1,6 +1,6 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
-import { ImageResponse } from '@/ai/types/image-response.type';
+import { ImageResponse, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { VideoResponse } from '@/ai/types/video-response.type';
 import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
 import { GenerateVideoFromFramesRequest, GenerateVideoRequestImageParams } from '../types/video-params.type';
@@ -67,7 +67,7 @@ export class GenMediaService {
     }
   }
 
-  private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageResponse | undefined> {
+  private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage | undefined> {
     if (!prompt || !prompt.trim()) {
       return undefined;
     }
@@ -87,21 +87,21 @@ export class GenMediaService {
     }
   }
 
-  async generateImages(prompts: string[], imageFiles: File[]): Promise<ImageResponse[]> {
+  async generateImages(prompts: string[], imageFiles: File[]): Promise<ImageTokenUsage[]> {
     if (!prompts?.length) {
       return [];
     }
 
     let isFirstError = false;
-    const imageResponses: ImageResponse[] = [];
+    const imageTokenUsages: ImageTokenUsage[] = [];
     this.imageGenerationError.set('');
     this.videoUrl.set('');
 
     for (let i = 0; i < prompts.length; i=i+1) {
       try {
-        const imageResponse = await this.generateImage(prompts[i], imageFiles);
-        if (imageResponse) {
-          imageResponses.push(imageResponse);
+        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
+        if (imageTokenUsage) {
+          imageTokenUsages.push(imageTokenUsage);
         }
       } catch (e) {
         if (!isFirstError) {
@@ -115,10 +115,15 @@ export class GenMediaService {
       }
     }
 
-    return imageResponses.map((imageResponse, index) => ({
-      ...imageResponse,
-      id: index,
-    }));
+    return imageTokenUsages.map(({ image, tokenUsage }, index) => {
+      return {
+        image: {
+          ...image,
+          id: index
+        } as ImageResponse,
+        tokenUsage
+      }
+    });
   }
 
   async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {

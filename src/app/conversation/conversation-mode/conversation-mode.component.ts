@@ -63,9 +63,9 @@ export class ConversationModeComponent {
   async handleGenerate(prompt: string) {
     try {
       this.isLoading.set(true);
-      const imageResponse = await this.firebaseService.generateImage(prompt, []);
+      const { image } = await this.firebaseService.generateImage(prompt, []);
 
-      const { data, mimeType, inlineData } = imageResponse;
+      const { data, mimeType, inlineData } = image;
 
       this.originalImageMessage.emit(
         {

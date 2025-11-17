@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { ChatSession, GenerativeModel, Part } from '@angular/fire/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
-import { ImageResponse } from '../types/image-response.type';
+import { ImagesWithTokenUsage, ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
 
-async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageResponse[]> {
+async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImagesWithTokenUsage> {
   const result = await model.generateContent(parts);
 
   const usageMetadata = result.response.usageMetadata;
@@ -20,7 +20,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
   const inlineDataParts = result.response.inlineDataParts();
 
   if (inlineDataParts?.length) {
-    return inlineDataParts.map(({inlineData}, index) => {
+    const images = inlineDataParts.map(({inlineData}, index) => {
       const { data, mimeType } = inlineData;
       return {
         id: index,
@@ -29,6 +29,15 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
         inlineData: getBase64EncodedString(inlineData)
       };
     });
+
+    return {
+      images,
+      tokenUsage: {
+        totalTokenCount,
+        promptTokenCount,
+        outputTokenCount
+      }
+    };
   }
 
   throw new Error('Error in generating the image.');
@@ -40,7 +49,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
 export class FirebaseService  {
     private readonly geminiModel = inject(NANO_BANANA_MODEL);
 
-    async generateImage(prompt: string, imageFiles: File[]): Promise<ImageResponse> {
+    async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage> {
         try {
           if (!prompt) {
             throw Error('Prompt is required to generate an image.');
@@ -48,9 +57,12 @@ export class FirebaseService  {
 
           const imageParts = await resolveImageParts(imageFiles);
           const parts = [prompt, ...imageParts];
-          const [firstImage] = await getBase64Images(this.geminiModel, parts);
+          const { images, tokenUsage } = await getBase64Images(this.geminiModel, parts);
 
-          return firstImage;
+          return {
+            image: images[0],
+            tokenUsage
+          };
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);
           if (err instanceof Error) {

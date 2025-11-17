@@ -1,3 +1,5 @@
+import { TokenUsage } from './token-usage.type';
+
 export type ImageResponseWithoutId = {
   data: string;
   mimeType: string;
@@ -8,3 +10,14 @@ export type ImageResponseWithoutId = {
 export type ImageResponse = ImageResponseWithoutId & {
   id: number;
 }
+
+export type ImagesWithTokenUsage = {
+  images: ImageResponse[],
+  tokenUsage: TokenUsage
+}
+
+export type ImageTokenUsage = {
+  image: ImageResponse,
+  tokenUsage: TokenUsage
+}
+

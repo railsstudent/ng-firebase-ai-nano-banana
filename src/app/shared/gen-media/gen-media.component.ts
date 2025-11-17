@@ -1,22 +1,25 @@
 import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
-import { ImageResponse } from '@/ai/types/image-response.type';
+import { ImageTokenUsage } from '@/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
+import { TokenUsageComponent } from '../token-usage/token-usage.component';
 import { ImageActions } from '../types/actions.type';
 import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
+import { TokenUsage } from '@/ai/types/token-usage.type';
 
 @Component({
   selector: 'app-gen-media',
   imports: [
     ImageViewerComponent,
     LoaderComponent,
-    VideoPlayerComponent
+    VideoPlayerComponent,
+    TokenUsageComponent
   ],
   template: `
-    @let imageResponses = images();
+    @let imageTokenUsages = images();
     @if (isLoading()) {
       <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
         <app-loader [loadingText]="loadingText()">
@@ -24,19 +27,22 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
         </app-loader>
       </div>
     } @else {
-      @if (imageResponses && imageResponses.length > 0) {
-        @let responsiveLayout = (imageResponses && imageResponses.length === 1) ?
+      @if (imageTokenUsages && imageTokenUsages.length > 0) {
+        @let responsiveLayout = (imageTokenUsages && imageTokenUsages.length === 1) ?
           'flex justify-center items-center' :
           'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
         <div [class]="responsiveLayout">
-          @for (imageResponse of imageResponses; track imageResponse.id; let i=$index) {
+          @for (imageTokenUsage of imageTokenUsages; track imageTokenUsage.image.id; let i=$index) {
             <app-image-viewer class="block mt-4"
-              [url]="imageResponse.inlineData"
-              [id]="imageResponse.id"
+              [url]="imageTokenUsage.image.inlineData"
+              [id]="imageTokenUsage.image.id"
               (imageAction)="handleAction($event)"
             />
           }
         </div>
+        @if (totalTokenUsage()) {
+          <app-token-usage [tokenUsage]="totalTokenUsage()" />
+        }
       }
       <app-video-player
         [isGeneratingVideo]="isGeneratingVideo()"
@@ -67,7 +73,7 @@ export class GenMediaComponent {
       const multiPrompts = prompts.length ? prompts : [userPrompt];
       return this.genMediaService.generateImages(multiPrompts, imageFiles);
     },
-    defaultValue: [] as ImageResponse[],
+    defaultValue: [] as ImageTokenUsage[],
   });
 
   images = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): []);
@@ -80,6 +86,27 @@ export class GenMediaComponent {
   );
   isLoading = this.imagesResource.isLoading;
 
+  totalTokenUsage = computed<TokenUsage | undefined>(() => {
+    const imageTokenUsages = this.images();
+
+    if (!imageTokenUsages || imageTokenUsages.length === 0) {
+      return undefined;
+    }
+
+    return imageTokenUsages.reduce((acc, item) => {
+      const tokenUsage = item.tokenUsage;
+      return {
+        totalTokenCount: acc.totalTokenCount + tokenUsage.totalTokenCount,
+        promptTokenCount: acc.promptTokenCount + tokenUsage.promptTokenCount,
+        outputTokenCount: acc.outputTokenCount + tokenUsage.outputTokenCount,
+      };
+    }, {
+      totalTokenCount: 0,
+      promptTokenCount: 0,
+      outputTokenCount: 0,
+    } as TokenUsage)
+  });
+
   async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {
     const id = context as number;
     if (action === 'clearImage') {
@@ -87,7 +114,7 @@ export class GenMediaComponent {
         if (!items) {
           return items;
         }
-        return items.filter((item) => item.id !== id);
+        return items.filter((item) => item.image.id !== id);
       });
 
       if (this.images.length === 0) {
@@ -100,21 +127,26 @@ export class GenMediaComponent {
     }
   }
 
+  private findImageTokenUsage(id: number) {
+    return this.images()?.find((item) => item?.image?.id === id);
+  }
+
   private downloadImageById(id: number) {
     this.downloadImageError.set('');
-    const generatedImage = this.images()?.find((image) => image.id === id);
-      if (!generatedImage?.inlineData) {
-        this.downloadImageError.set('No image to download.');
-        return;
-      }
-      const filename = this.trimmedUserPrompt() || 'generated_image';
-      this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
+    const generatedImage = this.findImageTokenUsage(id)?.image;
+    if (!generatedImage?.inlineData) {
+      this.downloadImageError.set('No image to download.');
+      return;
+    }
+    const filename = this.trimmedUserPrompt() || 'generated_image';
+    this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
   }
 
   private async generateVideoById(id: number) {
-    const generatedImage = this.images()?.find((image) => image.id === id);
-    if (generatedImage) {
-      const { data: imageBytes, mimeType } = generatedImage;
+    const imageTokenUsage = this.findImageTokenUsage(id);
+    if (imageTokenUsage) {
+      const { image } = imageTokenUsage;
+      const { data: imageBytes, mimeType } = image;
       const imageRequest = {
         prompt: this.trimmedUserPrompt(),
         imageBytes,

@@ -1,0 +1,15 @@
+@let tokenStat = tokenUsage();
+@if (tokenStat) {
+  <div class="animate-fade-in w-full flex flex-col items-center">
+    <div>Token Usage</div>
+    <div>
+      <span>Input token:</span>{{ tokenStat.promptTokenCount }}
+    </div>
+    <div>
+      <span>Output token:</span>{{ tokenStat.outputTokenCount }}
+    </div>
+    <div>
+      <span>Total token:</span>{{ tokenStat.totalTokenCount }}
+    </div>
+</div>
+}

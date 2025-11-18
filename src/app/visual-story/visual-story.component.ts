@@ -34,7 +34,6 @@ export default class VisualStoryComponent {
   feature = this.featureService.getFeatureDetails('visual-story');
 
   promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
-  // images = signal<ImageResponse[] | undefined>(undefined);
 
   key = signal('visual-story');
   genMediaInput = signal<GenMediaInput>({

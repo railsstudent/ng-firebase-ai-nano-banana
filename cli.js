@@ -35,6 +35,7 @@ const jsonString = JSON.stringify({
   geminiVideoModelName,
   poillingPeriod: +(process.env.VIDEO_POLLING_PERIOD || '10000'),
   is_veo31_used: process.env.IS_VEO31_USED === 'true',
+  recaptchaEnterpriseSiteKey: process.env.RECAPTCHA_ENTERPRISE_SITE_KEY || ''
 }, null, 2);
 
 const outputPath = path.join('src','app', 'firebase.json');

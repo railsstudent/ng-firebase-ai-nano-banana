@@ -3,10 +3,20 @@ import { makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, GoogleAIBackend, ModelParams, ResponseModality } from '@angular/fire/ai';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "@angular/fire/app-check";
 
 const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
 const firebaseApp = initializeApp(app);
-const ai = getAI(firebaseApp, { backend: new GoogleAIBackend() });
+
+// Initialize Firebase App Check
+initializeAppCheck(firebaseApp, {
+  provider: new ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaEnterpriseSiteKey),
+  isTokenAutoRefreshEnabled: true,
+});
+
+const ai = getAI(firebaseApp, {
+  backend: new GoogleAIBackend()
+});
 
 const DEFAULT_CONFIG: ModelParams = {
   model: geminiModelName,

@@ -58,6 +58,12 @@ export default class EditorComponent {
   });
 
   async handleGenerate(currentPrompt: string): Promise<void> {
+    if (!this.featureNeedsImage()) {
+      if (this.imageFiles().length > 0) {
+        this.imageFiles.set([]);
+      }
+    }
+
     const canGenerateImage = !!currentPrompt
       && (this.featureNeedsImage() ? this.imageFiles().length > 0 : this.imageFiles().length === 0);
 

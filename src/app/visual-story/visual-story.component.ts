@@ -34,7 +34,8 @@ export default class VisualStoryComponent {
   feature = this.featureService.getFeatureDetails('visual-story');
 
   promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
-  images = signal<ImageResponse[] | undefined>(undefined);
+  // images = signal<ImageResponse[] | undefined>(undefined);
+
   key = signal('visual-story');
   genMediaInput = signal<GenMediaInput>({
     userPrompt: '',
@@ -43,6 +44,8 @@ export default class VisualStoryComponent {
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
+  images = computed(() => this.genmedia()?.images()?.map((item) => item.image));
+
   isLoading = computed(() =>this.genmedia()?.isLoading() || false);
   error = computed(() => this.genmedia()?.error() || '');
 

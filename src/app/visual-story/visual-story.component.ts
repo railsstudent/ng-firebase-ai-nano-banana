@@ -1,4 +1,3 @@
-import { ImageResponse } from '@/ai/types/image-response.type';
 import { FeatureService } from '@/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';

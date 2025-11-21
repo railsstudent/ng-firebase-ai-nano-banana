@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:cli": "node ./cli.js"
+    "build:cli": "./cli.js"
   },
   "prettier": {
     "printWidth": 100,

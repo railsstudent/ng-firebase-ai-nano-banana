@@ -3,7 +3,7 @@ import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { GenerativeContentBlob } from '@angular/fire/ai';
+import { GenerativeContentBlob } from 'firebase/ai';
 import { FormsModule } from '@angular/forms';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { ConversationMessagesService } from '../services/conversation-messages.service';

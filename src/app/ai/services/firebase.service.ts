@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ChatSession, GenerativeModel, Part } from '@angular/fire/ai';
+import { ChatSession, GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';

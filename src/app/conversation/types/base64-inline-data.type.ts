@@ -1,4 +1,4 @@
-import { GenerativeContentBlob } from '@angular/fire/ai'
+import { GenerativeContentBlob } from 'firebase/ai'
 
 export type Base64InlineData = {
   inlineData: GenerativeContentBlob;

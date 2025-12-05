@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 
-dotenv.config();
+// dotenv.config();
+
+process.loadEnvFile()
 
 const geminiModelName = process.env.GEMINI_MODEL_NAME;
 if (!geminiModelName) {

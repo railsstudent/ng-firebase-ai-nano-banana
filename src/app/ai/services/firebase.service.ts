@@ -11,11 +11,10 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
   const response = result.response;
   const tokenUsage = getTokenUsage(response.usageMetadata);
   const inlineDataParts = response.inlineDataParts();
-  const thinkingSummary = response.thoughtSummary();
+  const thinkingSummary = response.thoughtSummary() || '';
   const inlineCitations = constructCitations(response.candidates?.[0]?.groundingMetadata);
 
   console.log('Inline citations', inlineCitations);
-  console.log('thinkingSummary', thinkingSummary);
 
   if (inlineDataParts?.length) {
     const images = inlineDataParts.map(({inlineData}, index) => {
@@ -31,6 +30,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
     return {
       images,
       tokenUsage,
+      thinkingSummary,
     };
   }
 
@@ -51,11 +51,12 @@ export class FirebaseService  {
 
           const imageParts = await resolveImageParts(imageFiles);
           const parts = [prompt, ...imageParts];
-          const { images, tokenUsage } = await getBase64Images(this.geminiModel, parts);
+          const { images, tokenUsage, thinkingSummary } = await getBase64Images(this.geminiModel, parts);
 
           return {
             image: images[0],
-            tokenUsage
+            tokenUsage,
+            thinkingSummary
           };
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);

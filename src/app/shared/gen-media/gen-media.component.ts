@@ -59,13 +59,16 @@ export class GenMediaComponent {
   });
 
   images = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): []);
+
   #resourceError = computed(() => this.imagesResource.error() ? this.imagesResource.error()?.message : '');
+
   error = computed(() =>
     this.#resourceError() ||
     this.genMediaService.imageGenerationError() ||
     this.downloadImageError() ||
     this.genMediaService.videoError()
   );
+
   isLoading = this.imagesResource.isLoading;
 
   totalTokenUsage = computed<TokenUsage | undefined>(() => {

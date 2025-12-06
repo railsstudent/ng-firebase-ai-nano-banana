@@ -12,12 +12,14 @@ export type ImageResponse = ImageResponseWithoutId & {
 }
 
 export type ImagesWithTokenUsage = {
-  images: ImageResponse[],
-  tokenUsage: TokenUsage
+  images: ImageResponse[];
+  tokenUsage: TokenUsage;
+  thinkingSummary: string;
 }
 
 export type ImageTokenUsage = {
   image: ImageResponse,
   tokenUsage: TokenUsage
+  thinkingSummary: string;
 }
 

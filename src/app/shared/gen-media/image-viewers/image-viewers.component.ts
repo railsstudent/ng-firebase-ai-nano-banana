@@ -1,13 +1,13 @@
 import { ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
-import { TokenUsageComponent } from '@/shared/token-usage/token-usage.component';
 import { ImageActions } from '@/shared/types/actions.type';
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
+import { ThoughtSummaryComponent } from './thought-summary/thought-summary.component';
 
 @Component({
   selector: 'app-image-viewers',
-  imports: [ImageViewerComponent, TokenUsageComponent],
+  imports: [ImageViewerComponent, ThoughtSummaryComponent],
   template: `
 @let imageTokenUsages = images();
 @if (imageTokenUsages && imageTokenUsages.length > 0) {
@@ -23,9 +23,10 @@ import { ImageViewerComponent } from '../image-viewer/image-viewer.component';
       />
     }
   </div>
-  @if (totalTokenUsage()) {
-    <app-token-usage [tokenUsage]="totalTokenUsage()" />
-  }
+  <app-thought-summary
+    [tokenUsage]="totalTokenUsage()"
+    [thoughtSummaries]="thoughtSummaries()"
+  />
 }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,6 +34,10 @@ export class ImageViewersComponent {
   images = input<ImageTokenUsage[]>([]);
   totalTokenUsage = input<TokenUsage | undefined>(undefined);
   handleMediaAction = output<{ action: string, id: number }>();
+
+  thoughtSummaries = computed(() =>
+    this.images().map((image) => image.thinkingSummary)
+  );
 
   async handleActions({ action, context }: { action: ImageActions, context?: unknown }) {
     const id = context as number;

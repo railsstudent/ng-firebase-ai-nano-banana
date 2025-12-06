@@ -12,11 +12,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     <div class="flex flex-wrap items-center justify-around">
       <span>Input tokens</span>
       <span>Output tokens</span>
+      <span>Thought tokens</span>
       <span>Total tokens</span>
     </div>
     <div class="flex flex-wrap items-center justify-around">
       <span>{{ tokenStat.promptTokenCount }}</span>
       <span>{{ tokenStat.outputTokenCount }}</span>
+      <span>{{ tokenStat.thoughtTokenCount }}</span>
       <span>{{ tokenStat.totalTokenCount }}</span>
     </div>
 </div>

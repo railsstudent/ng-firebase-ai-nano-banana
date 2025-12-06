@@ -5,20 +5,20 @@ import { initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 
-const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
-const firebaseApp = initializeApp(app);
-
-// Initialize Firebase App Check
-initializeAppCheck(firebaseApp, {
-  provider: new ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaEnterpriseSiteKey),
-  isTokenAutoRefreshEnabled: true,
-});
-
 export function provideFirebase() {
     return makeEnvironmentProviders([
         {
             provide: NANO_BANANA_MODEL,
             useFactory: () => {
+              const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
+              const firebaseApp = initializeApp(app);
+
+              // Initialize Firebase App Check
+              initializeAppCheck(firebaseApp, {
+                provider: new ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaEnterpriseSiteKey),
+                isTokenAutoRefreshEnabled: true,
+              });
+
               const ai = getAI(firebaseApp, {
                 backend: new VertexAIBackend(firebaseConfig.vertexAILocation)
               });
@@ -28,6 +28,10 @@ export function provideFirebase() {
                 generationConfig: {
                     responseModalities: [ResponseModality.IMAGE],
                     candidateCount: 1,
+                    thinkingConfig: {
+                      includeThoughts: true,
+                      thinkingBudget: 512,
+                    }
                 }
               };
               return getGenerativeModel(ai, DEFAULT_CONFIG);

@@ -10,6 +10,13 @@ import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 
+const DEFAULT_TOKEN_USAGE = {
+  totalTokenCount: 0,
+  promptTokenCount: 0,
+  outputTokenCount: 0,
+  thoughtTokenCount: 0,
+}
+
 @Component({
   selector: 'app-gen-media',
   imports: [
@@ -99,12 +106,9 @@ export class GenMediaComponent {
         totalTokenCount: acc.totalTokenCount + tokenUsage.totalTokenCount,
         promptTokenCount: acc.promptTokenCount + tokenUsage.promptTokenCount,
         outputTokenCount: acc.outputTokenCount + tokenUsage.outputTokenCount,
+        thoughtTokenCount: acc.thoughtTokenCount + tokenUsage.thoughtTokenCount,
       };
-    }, {
-      totalTokenCount: 0,
-      promptTokenCount: 0,
-      outputTokenCount: 0,
-    } as TokenUsage)
+    }, DEFAULT_TOKEN_USAGE as TokenUsage)
   });
 
   async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {

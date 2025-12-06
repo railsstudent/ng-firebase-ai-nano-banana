@@ -11,10 +11,12 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
   const totalTokenCount = usageMetadata?.totalTokenCount || 0;
   const promptTokenCount = usageMetadata?.promptTokenCount || 0;
   const outputTokenCount = usageMetadata?.candidatesTokenCount || 0;
+  const thoughtTokenCount = usageMetadata?.thoughtsTokenCount || 0;
 
-  console.log("Input tokens", promptTokenCount,
-      "Output tokens", outputTokenCount,
-     "Total tokens", totalTokenCount,
+  console.log('Input tokens', promptTokenCount,
+      'Output tokens', outputTokenCount,
+     'Total tokens', totalTokenCount,
+     'Thought tokens', thoughtTokenCount
     );
 
   const inlineDataParts = result.response.inlineDataParts();
@@ -35,7 +37,8 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
       tokenUsage: {
         totalTokenCount,
         promptTokenCount,
-        outputTokenCount
+        outputTokenCount,
+        thoughtTokenCount,
       }
     };
   }

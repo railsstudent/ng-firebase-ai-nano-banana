@@ -1,12 +1,9 @@
 import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
-import { ImageTokenUsage } from '@/ai/types/image-response.type';
-import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
+import { DEFAULT_IMAGES_TOKEN_USAGE } from './constants/images-token-usage.const';
 import { ImageViewersComponent } from './image-viewers/image-viewers.component';
 import { GenMediaService } from './services/gen-media.service';
-import { GroundingMetadataService } from './services/grounding-metadata.service';
-import { TokenUsageService } from './services/token-usage.service copy';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 
@@ -26,9 +23,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
   </div>
 } @else {
   <app-image-viewers
-    [images]="images()"
-    [totalTokenUsage]="totalTokenUsage()"
-    [groundingMetadata]="groundingMetadata()"
+    [imagesWithTokenUsage]="imagesWithTokenUsage()"
     (handleMediaAction)="handleAction($event)"
   />
   <app-video-player
@@ -39,8 +34,6 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 })
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
-  private readonly tokenUsageService = inject(TokenUsageService);
-  private readonly groundingMetadataService = inject(GroundingMetadataService);
   private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   loadingText = input('');
@@ -60,10 +53,10 @@ export class GenMediaComponent {
       const multiPrompts = prompts.length ? prompts : [userPrompt];
       return this.genMediaService.generateImages(multiPrompts, imageFiles);
     },
-    defaultValue: [] as ImageTokenUsage[],
+    defaultValue: DEFAULT_IMAGES_TOKEN_USAGE,
   });
 
-  images = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): []);
+  imagesWithTokenUsage = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): DEFAULT_IMAGES_TOKEN_USAGE);
 
   #resourceError = computed(() => this.imagesResource.error() ? this.imagesResource.error()?.message : '');
 
@@ -76,26 +69,20 @@ export class GenMediaComponent {
 
   isLoading = this.imagesResource.isLoading;
 
-  totalTokenUsage = computed<TokenUsage | undefined>(() => {
-    const imageTokenUsages = this.images();
-    return this.tokenUsageService.calculateTokenUage(imageTokenUsages);
-  });
-
-  groundingMetadata = computed(() => {
-    const imageTokenUsages = this.images();
-    return this.groundingMetadataService.mergeGroundingMetadata(imageTokenUsages);
-  });
-
   async handleAction({ action, id }: { action: string, id: number }) {
     if (action === 'clearImage') {
       this.imagesResource.update((items) => {
         if (!items) {
           return items;
         }
-        return items.filter((item) => item.image.id !== id);
+        const filteredImages = items.images.filter((image) => image.id !== id);
+        return {
+          ...items,
+          images: filteredImages,
+        };
       });
 
-      if (this.images.length === 0) {
+      if (this.imagesWithTokenUsage().images.length === 0) {
         this.genMediaService.videoUrl.set('');
       }
     } else if (action === 'downloadImage') {
@@ -106,12 +93,12 @@ export class GenMediaComponent {
   }
 
   private findImageTokenUsage(id: number) {
-    return this.images()?.find((item) => item?.image?.id === id);
+    return this.imagesWithTokenUsage()?.images?.find((item) => item?.id === id);
   }
 
   private downloadImageById(id: number) {
     this.downloadImageError.set('');
-    const generatedImage = this.findImageTokenUsage(id)?.image;
+    const generatedImage = this.findImageTokenUsage(id);
     if (!generatedImage?.inlineData) {
       this.downloadImageError.set('No image to download.');
       return;

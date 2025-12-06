@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { ChatSession, GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
-import { ImagesWithTokenUsage, ImageTokenUsage } from '../types/image-response.type';
+import { ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
 import { constructCitations, getTokenUsage } from '../utils/reponse-metadata.util';
 
-async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImagesWithTokenUsage> {
+async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageTokenUsage> {
   const result = await model.generateContent(parts);
 
   const response = result.response;
@@ -26,7 +26,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
     });
 
     return {
-      images,
+      image: images[0],
       tokenUsage,
       thinkingSummary,
       metadata: citations,
@@ -50,12 +50,7 @@ export class FirebaseService  {
 
           const imageParts = await resolveImageParts(imageFiles);
           const parts = [prompt, ...imageParts];
-          const { images, ...rest } = await getBase64Images(this.geminiModel, parts);
-
-          return {
-            image: images[0],
-            ...rest,
-          };
+          return await getBase64Images(this.geminiModel, parts);
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);
           if (err instanceof Error) {

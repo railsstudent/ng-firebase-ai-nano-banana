@@ -1,9 +1,8 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
-import { ImageResponse, ImageTokenUsage } from '@/ai/types/image-response.type';
-import { VideoResponse } from '@/ai/types/video-response.type';
-import { DOCUMENT, Injectable, inject, signal } from '@angular/core';
-import { GenerateVideoFromFramesRequest, GenerateVideoRequestImageParams } from '../types/video-params.type';
+import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
+import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
+import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
 @Injectable({
   providedIn: 'root'
@@ -87,9 +86,9 @@ export class GenMediaService {
     }
   }
 
-  async generateImages(prompts: string[], imageFiles: File[]): Promise<ImageTokenUsage[]> {
+  async generateImages(prompts: string[], imageFiles: File[]): Promise<ImagesWithTokenUsage> {
     if (!prompts?.length) {
-      return [];
+      return DEFAULT_IMAGES_TOKEN_USAGE
     }
 
     let isFirstError = false;
@@ -115,15 +114,27 @@ export class GenMediaService {
       }
     }
 
-    return imageTokenUsages.map(({ image, ...rest }, index) => {
+    return imageTokenUsages.reduce((acc, { image, ...rest }, index) => {
+      const { tokenUsage, metadata, thinkingSummary } = rest;
       return {
-        image: {
+        images: acc.images.concat({
           ...image,
           id: index
-        } as ImageResponse,
-        ...rest,
-      }
-    });
+        }),
+        tokenUsage: {
+          outputTokenCount: acc.tokenUsage.outputTokenCount + tokenUsage.outputTokenCount,
+          promptTokenCount: acc.tokenUsage.promptTokenCount + tokenUsage.promptTokenCount,
+          thoughtTokenCount: acc.tokenUsage.thoughtTokenCount + tokenUsage.thoughtTokenCount,
+          totalTokenCount: acc.tokenUsage.totalTokenCount + tokenUsage.totalTokenCount,
+        },
+        groundingMetadata: {
+          searchQueries: acc.groundingMetadata.searchQueries.concat(metadata.searchQueries),
+          citations: acc.groundingMetadata.citations.concat(metadata.citations),
+          renderedContents: metadata.renderedContent ? acc.groundingMetadata.renderedContents.concat(metadata.renderedContent) : acc.groundingMetadata.renderedContents,
+        },
+        thinkingSummaries: acc.thinkingSummaries.concat(thinkingSummary),
+      };
+    }, DEFAULT_IMAGES_TOKEN_USAGE)
   }
 
   // async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {

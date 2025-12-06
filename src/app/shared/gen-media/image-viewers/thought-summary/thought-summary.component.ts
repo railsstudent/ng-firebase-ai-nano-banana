@@ -1,10 +1,10 @@
+import { MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { marked } from 'marked';
 import { GroundingComponent } from '../grounding/grounding.component';
 import { TokenUsageComponent } from './token-usage/token-usage.component';
-import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 
 @Component({
   selector: 'app-thought-summary',

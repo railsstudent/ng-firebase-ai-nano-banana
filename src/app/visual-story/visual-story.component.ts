@@ -42,14 +42,14 @@ export default class VisualStoryComponent {
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
-  images = computed(() => this.genmedia()?.images()?.map((item) => item.image));
+  images = computed(() => this.genmedia()?.imagesWithTokenUsage().images.map((item) => item));
 
   isLoading = computed(() =>this.genmedia()?.isLoading() || false);
   error = computed(() => this.genmedia()?.error() || '');
 
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
-  numImages = computed(() => this.genmedia()?.images()?.length || 0);
+  numImages = computed(() => this.genmedia()?.imagesWithTokenUsage().images.length || 0);
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.promptArgs().userPrompt;

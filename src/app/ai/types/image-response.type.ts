@@ -1,4 +1,4 @@
-import { Metadata } from './grounding-metadata.type';
+import { Metadata, MetadataGroup } from './grounding-metadata.type';
 import { TokenUsage } from './token-usage.type';
 
 export type ImageResponseWithoutId = {
@@ -15,8 +15,8 @@ export type ImageResponse = ImageResponseWithoutId & {
 export type ImagesWithTokenUsage = {
   images: ImageResponse[];
   tokenUsage: TokenUsage;
-  thinkingSummary: string;
-  metadata: Metadata;
+  thinkingSummaries: string[];
+  groundingMetadata: MetadataGroup;
 }
 
 export type ImageTokenUsage = {

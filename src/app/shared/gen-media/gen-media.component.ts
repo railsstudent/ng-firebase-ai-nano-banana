@@ -3,9 +3,7 @@ import { ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
-import { TokenUsageComponent } from '../token-usage/token-usage.component';
-import { ImageActions } from '../types/actions.type';
-import { ImageViewerComponent } from './image-viewer/image-viewer.component';
+import { ImageViewersComponent } from './image-viewers/image-viewers.component';
 import { GenMediaService } from './services/gen-media.service';
 import { TokenUsageService } from './services/token-usage.service';
 import { GenMediaInput } from './types/gen-media-input.type';
@@ -14,12 +12,25 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 @Component({
   selector: 'app-gen-media',
   imports: [
-    ImageViewerComponent,
     LoaderComponent,
     VideoPlayerComponent,
-    TokenUsageComponent
+    ImageViewersComponent,
   ],
-  templateUrl: './gen-media.component.html',
+  template: `
+@if (isLoading()) {
+  <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
+    <app-loader [loadingText]="loadingText()">
+      <ng-content />
+    </app-loader>
+  </div>
+} @else {
+  <app-image-viewers
+    [images]="images()" [totalTokenUsage]="totalTokenUsage()" (handleMediaAction)="handleAction($event)"
+  />
+  <app-video-player
+    [isGeneratingVideo]="isGeneratingVideo()" [videoUrl]="videoUrl()"
+  />
+}`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenMediaComponent {
@@ -62,8 +73,7 @@ export class GenMediaComponent {
     return this.tokenUsageService.calculateTokenUage(imageTokenUsages);
   });
 
-  async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {
-    const id = context as number;
+  async handleAction({ action, id }: { action: string, id: number }) {
     if (action === 'clearImage') {
       this.imagesResource.update((items) => {
         if (!items) {

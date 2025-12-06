@@ -1,3 +1,4 @@
+import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ImageActions } from '@/shared/types/actions.type';
@@ -26,6 +27,7 @@ import { ThoughtSummaryComponent } from './thought-summary/thought-summary.compo
   <app-thought-summary
     [tokenUsage]="totalTokenUsage()"
     [thoughtSummaries]="thoughtSummaries()"
+    [groundingMetadata]="groundingMetadata()"
   />
 }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +35,8 @@ import { ThoughtSummaryComponent } from './thought-summary/thought-summary.compo
 export class ImageViewersComponent {
   images = input<ImageTokenUsage[]>([]);
   totalTokenUsage = input<TokenUsage | undefined>(undefined);
+  groundingMetadata = input<MetadataGroup | undefined>(undefined);
+
   handleMediaAction = output<{ action: string, id: number }>();
 
   thoughtSummaries = computed(() =>

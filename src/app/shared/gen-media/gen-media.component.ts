@@ -5,7 +5,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, resource, 
 import { LoaderComponent } from '../loader/loader.component';
 import { ImageViewersComponent } from './image-viewers/image-viewers.component';
 import { GenMediaService } from './services/gen-media.service';
-import { TokenUsageService } from './services/token-usage.service';
+import { GroundingMetadataService } from './services/grounding-metadata.service';
+import { TokenUsageService } from './services/token-usage.service copy';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 
@@ -25,7 +26,10 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
   </div>
 } @else {
   <app-image-viewers
-    [images]="images()" [totalTokenUsage]="totalTokenUsage()" (handleMediaAction)="handleAction($event)"
+    [images]="images()"
+    [totalTokenUsage]="totalTokenUsage()"
+    [groundingMetadata]="groundingMetadata()"
+    (handleMediaAction)="handleAction($event)"
   />
   <app-video-player
     [isGeneratingVideo]="isGeneratingVideo()" [videoUrl]="videoUrl()"
@@ -36,6 +40,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
   private readonly tokenUsageService = inject(TokenUsageService);
+  private readonly groundingMetadataService = inject(GroundingMetadataService);
   private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   loadingText = input('');
@@ -74,6 +79,11 @@ export class GenMediaComponent {
   totalTokenUsage = computed<TokenUsage | undefined>(() => {
     const imageTokenUsages = this.images();
     return this.tokenUsageService.calculateTokenUage(imageTokenUsages);
+  });
+
+  groundingMetadata = computed(() => {
+    const imageTokenUsages = this.images();
+    return this.groundingMetadataService.mergeGroundingMetadata(imageTokenUsages);
   });
 
   async handleAction({ action, id }: { action: string, id: number }) {

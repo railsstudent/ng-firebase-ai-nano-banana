@@ -1,5 +1,6 @@
 import { GroundingMetadata, UsageMetadata, WebGroundingChunk } from 'firebase/ai';
 import { TokenUsage } from '../types/token-usage.type';
+import { Metadata } from '../types/grounding-metadata.type';
 
 export function getTokenUsage(usageMetadata?: UsageMetadata): TokenUsage {
   const totalTokenCount = usageMetadata?.totalTokenCount || 0;
@@ -15,7 +16,7 @@ export function getTokenUsage(usageMetadata?: UsageMetadata): TokenUsage {
   }
 }
 
-export function constructCitations(groundingMetadata?: GroundingMetadata) {
+export function constructCitations(groundingMetadata?: GroundingMetadata): Metadata {
     const supports = groundingMetadata?.groundingSupports || [];
     const citations: WebGroundingChunk[] = [];
     for (const support of supports) {

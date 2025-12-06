@@ -115,14 +115,13 @@ export class GenMediaService {
       }
     }
 
-    return imageTokenUsages.map(({ image, tokenUsage, thinkingSummary }, index) => {
+    return imageTokenUsages.map(({ image, ...rest }, index) => {
       return {
         image: {
           ...image,
           id: index
         } as ImageResponse,
-        tokenUsage,
-        thinkingSummary,
+        ...rest,
       }
     });
   }

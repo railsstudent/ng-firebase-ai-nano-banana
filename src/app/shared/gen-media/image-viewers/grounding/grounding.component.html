@@ -1,0 +1,21 @@
+<div class="w-full mt-6">
+    @let searchQueries = groundingMetadata()?.searchQueries;
+    @if (searchQueries && searchQueries.length > 0) {
+      <h3 class="text-lg font-semibold text-slate-300 mb-3">Search Queries</h3>
+      <ol class="list-decimal mb-2">
+      @for (query of groundingMetadata()?.searchQueries; track query) {
+        @if (query) {
+          <li class="ml-4 text-slate-200"><span class="italic">{{ query }}</span></li>
+        }
+      }
+      </ol>
+    }
+
+    @if (safeRenderedContents().length > 0) {
+      <h3 class="text-lg font-semibold text-slate-300 mb-3">Google Search Suggestions</h3>
+      @for (renderedContent of safeRenderedContents(); track renderedContent) {
+        <div [innerHTML]="renderedContent"></div>
+      }
+    }
+</div>
+

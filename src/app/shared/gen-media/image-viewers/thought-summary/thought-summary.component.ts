@@ -2,14 +2,17 @@ import { TokenUsage } from '@/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { marked } from 'marked';
+import { GroundingComponent } from '../grounding/grounding.component';
 import { TokenUsageComponent } from './token-usage/token-usage.component';
+import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 
 @Component({
   selector: 'app-thought-summary',
-  imports: [TokenUsageComponent, FormsModule],
+  imports: [TokenUsageComponent, FormsModule, GroundingComponent],
   template: `
     <div class="w-full mt-6 flex flex-col">
       <app-token-usage [tokenUsage]="tokenUsage()" />
+      <app-google-search-suggestions [groundingMetadata]="groundingMetadata()" />
       @let thoughts = htmlThoughts();
       @if (thoughts && thoughts.length > 0) {
         <div>
@@ -36,6 +39,8 @@ import { TokenUsageComponent } from './token-usage/token-usage.component';
 export class ThoughtSummaryComponent {
   thoughtSummaries = input<string[]>([]);
   tokenUsage = input<TokenUsage | undefined>(undefined);
+  groundingMetadata = input<MetadataGroup | undefined>(undefined);
+
   thoughtSummaryIndex = signal(0);
 
   thoughtSummaryIndexList = computed(() => Array.from({ length: this.thoughtSummaries().length }, (_, index) => index));

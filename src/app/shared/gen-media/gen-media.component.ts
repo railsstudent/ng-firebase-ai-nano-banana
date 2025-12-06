@@ -7,15 +7,9 @@ import { TokenUsageComponent } from '../token-usage/token-usage.component';
 import { ImageActions } from '../types/actions.type';
 import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 import { GenMediaService } from './services/gen-media.service';
+import { TokenUsageService } from './services/token-usage.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
-
-const DEFAULT_TOKEN_USAGE = {
-  totalTokenCount: 0,
-  promptTokenCount: 0,
-  outputTokenCount: 0,
-  thoughtTokenCount: 0,
-}
 
 @Component({
   selector: 'app-gen-media',
@@ -25,42 +19,12 @@ const DEFAULT_TOKEN_USAGE = {
     VideoPlayerComponent,
     TokenUsageComponent
   ],
-  template: `
-    @let imageTokenUsages = images();
-    @if (isLoading()) {
-      <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
-        <app-loader [loadingText]="loadingText()">
-          <ng-content />
-        </app-loader>
-      </div>
-    } @else {
-      @if (imageTokenUsages && imageTokenUsages.length > 0) {
-        @let responsiveLayout = (imageTokenUsages && imageTokenUsages.length === 1) ?
-          'flex justify-center items-center' :
-          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
-        <div [class]="responsiveLayout">
-          @for (imageTokenUsage of imageTokenUsages; track imageTokenUsage.image.id; let i=$index) {
-            <app-image-viewer class="block mt-4"
-              [url]="imageTokenUsage.image.inlineData"
-              [id]="imageTokenUsage.image.id"
-              (imageAction)="handleAction($event)"
-            />
-          }
-        </div>
-        @if (totalTokenUsage()) {
-          <app-token-usage [tokenUsage]="totalTokenUsage()" />
-        }
-      }
-      <app-video-player
-        [isGeneratingVideo]="isGeneratingVideo()"
-        [videoUrl]="videoUrl()"
-      />
-    }
-  `,
+  templateUrl: './gen-media.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
+  private readonly tokenUsageService = inject(TokenUsageService);
   private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   loadingText = input('');
@@ -95,20 +59,7 @@ export class GenMediaComponent {
 
   totalTokenUsage = computed<TokenUsage | undefined>(() => {
     const imageTokenUsages = this.images();
-
-    if (!imageTokenUsages || imageTokenUsages.length === 0) {
-      return undefined;
-    }
-
-    return imageTokenUsages.reduce((acc, item) => {
-      const tokenUsage = item.tokenUsage;
-      return {
-        totalTokenCount: acc.totalTokenCount + tokenUsage.totalTokenCount,
-        promptTokenCount: acc.promptTokenCount + tokenUsage.promptTokenCount,
-        outputTokenCount: acc.outputTokenCount + tokenUsage.outputTokenCount,
-        thoughtTokenCount: acc.thoughtTokenCount + tokenUsage.thoughtTokenCount,
-      };
-    }, DEFAULT_TOKEN_USAGE as TokenUsage)
+    return this.tokenUsageService.calculateTokenUage(imageTokenUsages);
   });
 
   async handleAction({ action, context }: { action: ImageActions, context?: unknown }) {

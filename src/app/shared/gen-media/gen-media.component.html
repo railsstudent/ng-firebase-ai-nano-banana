@@ -1,0 +1,30 @@
+@let imageTokenUsages = images();
+@if (isLoading()) {
+  <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
+    <app-loader [loadingText]="loadingText()">
+      <ng-content />
+    </app-loader>
+  </div>
+} @else {
+  @if (imageTokenUsages && imageTokenUsages.length > 0) {
+    @let responsiveLayout = (imageTokenUsages && imageTokenUsages.length === 1) ?
+      'flex justify-center items-center' :
+      'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4';
+    <div [class]="responsiveLayout">
+      @for (imageTokenUsage of imageTokenUsages; track imageTokenUsage.image.id; let i=$index) {
+        <app-image-viewer class="block mt-4"
+          [url]="imageTokenUsage.image.inlineData"
+          [id]="imageTokenUsage.image.id"
+          (imageAction)="handleAction($event)"
+        />
+      }
+    </div>
+    @if (totalTokenUsage()) {
+      <app-token-usage [tokenUsage]="totalTokenUsage()" />
+    }
+  }
+  <app-video-player
+    [isGeneratingVideo]="isGeneratingVideo()"
+    [videoUrl]="videoUrl()"
+  />
+}

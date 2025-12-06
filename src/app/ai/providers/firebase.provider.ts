@@ -26,12 +26,12 @@ export function provideFirebase() {
               const DEFAULT_CONFIG: ModelParams = {
                 model: geminiModelName,
                 generationConfig: {
-                    responseModalities: [ResponseModality.IMAGE],
+                    responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
                     candidateCount: 1,
                     thinkingConfig: {
                       includeThoughts: true,
                       thinkingBudget: 512,
-                    }
+                    },
                 }
               };
               return getGenerativeModel(ai, DEFAULT_CONFIG);

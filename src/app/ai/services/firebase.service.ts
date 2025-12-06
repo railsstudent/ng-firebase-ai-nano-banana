@@ -20,6 +20,9 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
     );
 
   const inlineDataParts = result.response.inlineDataParts();
+  const thinkingSummary = result.response.thoughtSummary();
+
+  console.log('thinkingSummary', thinkingSummary);
 
   if (inlineDataParts?.length) {
     const images = inlineDataParts.map(({inlineData}, index) => {

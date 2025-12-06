@@ -3,15 +3,18 @@ import { ChatSession, GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
-import { getTokenUsage } from '../utils/reponse-metadata.util';
+import { constructCitations, getTokenUsage } from '../utils/reponse-metadata.util';
 
 async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImagesWithTokenUsage> {
   const result = await model.generateContent(parts);
 
-  const tokenUsage = getTokenUsage(result.response.usageMetadata);
-  const inlineDataParts = result.response.inlineDataParts();
-  const thinkingSummary = result.response.thoughtSummary();
+  const response = result.response;
+  const tokenUsage = getTokenUsage(response.usageMetadata);
+  const inlineDataParts = response.inlineDataParts();
+  const thinkingSummary = response.thoughtSummary();
+  const inlineCitations = constructCitations(response.candidates?.[0]?.groundingMetadata);
 
+  console.log('Inline citations', inlineCitations);
   console.log('thinkingSummary', thinkingSummary);
 
   if (inlineDataParts?.length) {

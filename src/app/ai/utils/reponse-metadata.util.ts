@@ -1,4 +1,4 @@
-import { UsageMetadata } from 'firebase/ai';
+import { GroundingMetadata, UsageMetadata, WebGroundingChunk } from 'firebase/ai';
 import { TokenUsage } from '../types/token-usage.type';
 
 export function getTokenUsage(usageMetadata?: UsageMetadata): TokenUsage {
@@ -7,12 +7,6 @@ export function getTokenUsage(usageMetadata?: UsageMetadata): TokenUsage {
   const outputTokenCount = usageMetadata?.candidatesTokenCount || 0;
   const thoughtTokenCount = usageMetadata?.thoughtsTokenCount || 0;
 
-  console.log('Input tokens', promptTokenCount,
-      'Output tokens', outputTokenCount,
-     'Total tokens', totalTokenCount,
-     'Thought tokens', thoughtTokenCount
-    );
-
   return {
     totalTokenCount,
     promptTokenCount,
@@ -20,3 +14,28 @@ export function getTokenUsage(usageMetadata?: UsageMetadata): TokenUsage {
     thoughtTokenCount,
   }
 }
+
+export function constructCitations(groundingMetadata?: GroundingMetadata) {
+    const supports = groundingMetadata?.groundingSupports || [];
+    const citations: WebGroundingChunk[] = [];
+    for (const support of supports) {
+      const indices = support.groundingChunkIndices || [];
+      for (const index of indices) {
+        const chunk = groundingMetadata?.groundingChunks?.[index];
+        if (chunk?.web) {
+          citations.push(chunk?.web);
+        }
+      }
+    }
+
+    const renderedContent = groundingMetadata?.searchEntryPoint?.renderedContent || '';
+    const searchQueries = (groundingMetadata?.webSearchQueries || [])
+      .filter((queries) => !!queries);
+
+    return {
+      citations,
+      renderedContent,
+      searchQueries
+    };
+}
+

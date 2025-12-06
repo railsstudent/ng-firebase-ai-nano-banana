@@ -32,7 +32,12 @@ export function provideFirebase() {
                       includeThoughts: true,
                       thinkingBudget: 512,
                     },
-                }
+                },
+                tools: [
+                  {
+                    googleSearch: {}
+                  }
+                ],
               };
               return getGenerativeModel(ai, DEFAULT_CONFIG);
             }

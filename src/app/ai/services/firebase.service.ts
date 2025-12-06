@@ -3,22 +3,12 @@ import { ChatSession, GenerativeModel, Part } from 'firebase/ai';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
+import { getTokenUsage } from '../utils/reponse-metadata.util';
 
 async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImagesWithTokenUsage> {
   const result = await model.generateContent(parts);
 
-  const usageMetadata = result.response.usageMetadata;
-  const totalTokenCount = usageMetadata?.totalTokenCount || 0;
-  const promptTokenCount = usageMetadata?.promptTokenCount || 0;
-  const outputTokenCount = usageMetadata?.candidatesTokenCount || 0;
-  const thoughtTokenCount = usageMetadata?.thoughtsTokenCount || 0;
-
-  console.log('Input tokens', promptTokenCount,
-      'Output tokens', outputTokenCount,
-     'Total tokens', totalTokenCount,
-     'Thought tokens', thoughtTokenCount
-    );
-
+  const tokenUsage = getTokenUsage(result.response.usageMetadata);
   const inlineDataParts = result.response.inlineDataParts();
   const thinkingSummary = result.response.thoughtSummary();
 
@@ -37,12 +27,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
 
     return {
       images,
-      tokenUsage: {
-        totalTokenCount,
-        promptTokenCount,
-        outputTokenCount,
-        thoughtTokenCount,
-      }
+      tokenUsage,
     };
   }
 

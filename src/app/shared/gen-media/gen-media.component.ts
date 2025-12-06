@@ -123,7 +123,7 @@ export class GenMediaComponent {
     } else if (action === 'downloadImage') {
       this.downloadImageById(id);
     } else if (action === 'generateVideo') {
-      await this.generateVideoById(id);
+      // await this.generateVideoById(id);
     }
   }
 
@@ -142,18 +142,18 @@ export class GenMediaComponent {
     this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
   }
 
-  private async generateVideoById(id: number) {
-    const imageTokenUsage = this.findImageTokenUsage(id);
-    if (imageTokenUsage) {
-      const { image } = imageTokenUsage;
-      const { data: imageBytes, mimeType } = image;
-      const imageRequest = {
-        prompt: this.trimmedUserPrompt(),
-        imageBytes,
-        mimeType,
-        isVeo31Used: this.isVeo31Used
-      }
-      await this.genMediaService.generateVideo(imageRequest);
-    }
-  }
+  // private async generateVideoById(id: number) {
+  //   const imageTokenUsage = this.findImageTokenUsage(id);
+  //   if (imageTokenUsage) {
+  //     const { image } = imageTokenUsage;
+  //     const { data: imageBytes, mimeType } = image;
+  //     const imageRequest = {
+  //       prompt: this.trimmedUserPrompt(),
+  //       imageBytes,
+  //       mimeType,
+  //       isVeo31Used: this.isVeo31Used
+  //     }
+  //     await this.genMediaService.generateVideo(imageRequest);
+  //   }
+  // }
 }

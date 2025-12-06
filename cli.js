@@ -1,21 +1,13 @@
 #!/usr/bin/env node
 
-// import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-
-// dotenv.config();
 
 process.loadEnvFile()
 
 const geminiModelName = process.env.GEMINI_MODEL_NAME;
 if (!geminiModelName) {
   throw new ERROR('GEMINI_MODEL_NAME is not set.');
-}
-
-const geminiAPIKey = process.env.GEMINI_API_KEY;
-if (!geminiAPIKey) {
-  throw new ERROR('GEMINI_API_KEY is not set. Please create the key in Gemini AI Studio.');
 }
 
 const geminiVideoModelName = process.env.GEMINI_VIDEO_MODEL_NAME;
@@ -33,13 +25,11 @@ const jsonString = JSON.stringify({
     appId: process.env.FIREBASE_APP_ID,
   },
   geminiModelName,
-  geminiAPIKey,
   geminiVideoModelName,
   poillingPeriod: +(process.env.VIDEO_POLLING_PERIOD || '10000'),
   is_veo31_used: process.env.IS_VEO31_USED === 'true',
   recaptchaEnterpriseSiteKey: process.env.RECAPTCHA_ENTERPRISE_SITE_KEY || '',
-  isFirebaseAppCheckDebugMode: process.env.IS_FIREBASE_APPCHECK_DEBUG_MODE === 'true',
-  appCheckDebugToken: process.env.APPCHECK_DEBUG_TOKEN || ''
+  vertexAILocation: process.env.VERTEX_AI_LOCATION
 }, null, 2);
 
 const outputPath = path.join('src','app', 'firebase.json');

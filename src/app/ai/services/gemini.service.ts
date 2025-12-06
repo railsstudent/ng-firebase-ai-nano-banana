@@ -11,61 +11,61 @@ import { VideoResponse } from '../types/video-response.type';
   providedIn: 'root'
 })
 export class GeminiService {
-  private readonly ai = inject(GEMINI_AI);
-  private readonly http = inject(HttpClient);
+  // private readonly ai = inject(GEMINI_AI);
+  // private readonly http = inject(HttpClient);
 
-  async generateVideo(request: GenerateVideoRequest): Promise<VideoResponse> {
-    const genVideosParams: GenerateVideosParameters = {
-      model: firebaseConfig.geminiVideoModelName,
-      prompt: request.prompt,
-      config: {
-        ...request.config,
-        numberOfVideos: 1
-      },
-      image: {
-        imageBytes: request.imageBytes,
-        mimeType: request.mimeType
-      }
-    };
+  // async generateVideo(request: GenerateVideoRequest): Promise<VideoResponse> {
+  //   const genVideosParams: GenerateVideosParameters = {
+  //     model: firebaseConfig.geminiVideoModelName,
+  //     prompt: request.prompt,
+  //     config: {
+  //       ...request.config,
+  //       numberOfVideos: 1
+  //     },
+  //     image: {
+  //       imageBytes: request.imageBytes,
+  //       mimeType: request.mimeType
+  //     }
+  //   };
 
-    const uri = await this.generateDownloadLink(genVideosParams);
-    const videoUrl = await this.downloadVideo(uri);
+  //   const uri = await this.generateDownloadLink(genVideosParams);
+  //   const videoUrl = await this.downloadVideo(uri);
 
-    return {
-      uri,
-      videoUrl,
-    }
-  }
+  //   return {
+  //     uri,
+  //     videoUrl,
+  //   }
+  // }
 
-  private async generateDownloadLink(genVideosParams: GenerateVideosParameters): Promise<string> {
-    let operation = await this.ai.models.generateVideos(genVideosParams);
-    while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, firebaseConfig.poillingPeriod));
-      operation = await this.ai.operations.getVideosOperation({ operation });
-    }
+  // private async generateDownloadLink(genVideosParams: GenerateVideosParameters): Promise<string> {
+  //   let operation = await this.ai.models.generateVideos(genVideosParams);
+  //   while (!operation.done) {
+  //     await new Promise(resolve => setTimeout(resolve, firebaseConfig.poillingPeriod));
+  //     operation = await this.ai.operations.getVideosOperation({ operation });
+  //   }
 
-    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!downloadLink) {
-      const strError = 'Video generation finished but no download link was provided.';
-      console.error(strError);
-      throw new Error(strError);
-    }
+  //   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+  //   if (!downloadLink) {
+  //     const strError = 'Video generation finished but no download link was provided.';
+  //     console.error(strError);
+  //     throw new Error(strError);
+  //   }
 
-    return downloadLink;
-  }
+  //   return downloadLink;
+  // }
 
-  private async downloadVideo(downloadLink: string): Promise<string> {
-    const blobUrl$ = this.http.get(`${downloadLink}&key=${firebaseConfig.geminiAPIKey}`, {
-      responseType: 'blob'
-    }).pipe(
-      map((blob) => URL.createObjectURL(blob)),
-      retry({ count: 2, delay: 300 }),
-      catchError((err) => {
-        console.error(err);
-        return throwError(() => err)
-      })
-    );
+  // private async downloadVideo(downloadLink: string): Promise<string> {
+  //   const blobUrl$ = this.http.get(`${downloadLink}&key=${firebaseConfig.geminiAPIKey}`, {
+  //     responseType: 'blob'
+  //   }).pipe(
+  //     map((blob) => URL.createObjectURL(blob)),
+  //     retry({ count: 2, delay: 300 }),
+  //     catchError((err) => {
+  //       console.error(err);
+  //       return throwError(() => err)
+  //     })
+  //   );
 
-    return await firstValueFrom(blobUrl$);
-  }
+  //   return await firstValueFrom(blobUrl$);
+  // }
 }

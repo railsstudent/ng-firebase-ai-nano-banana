@@ -75,12 +75,12 @@ export class VisualStoryService {
     this.promptHistoryService.addPrompt(key, strPrompt);
   }
 
-  interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
-    try {
-      return this.genMediaService.generateVideoFromFrames(request);
-    } catch (e) {
-      console.error(e);
-      return Promise.resolve({ uri: '', videoUrl: '' });
-    }
-  }
+  // interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
+  //   try {
+  //     return this.genMediaService.generateVideoFromFrames(request);
+  //   } catch (e) {
+  //     console.error(e);
+  //     return Promise.resolve({ uri: '', videoUrl: '' });
+  //   }
+  // }
 }

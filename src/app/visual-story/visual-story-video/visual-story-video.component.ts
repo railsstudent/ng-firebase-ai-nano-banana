@@ -14,12 +14,14 @@ import { VisualStoryService } from '../services/visual-story.service';
   ],
   template: `
     @if (canGenerateVideoFromFirstLastFrames()) {
+      <!--
       <button
         type="button"
         (click)="generateVideoFromFrames()"
         class="px-6 py-3 mr-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200">
           Interpolate video
       </button>
+    -->
 
       @let videoUrl = videoResponse()?.videoUrl;
       @if (isLoading()) {
@@ -53,28 +55,28 @@ export default class VisualStoryVideoComponent {
     return this.isVeo31Used && hasFirstImage && hasLastImage;
   });
 
-  async generateVideoFromFrames(): Promise<void> {
-    try {
-      this.isLoading.set(true);
-      this.videoResponse.set(undefined);
+  // async generateVideoFromFrames(): Promise<void> {
+  //   try {
+  //     this.isLoading.set(true);
+  //     this.videoResponse.set(undefined);
 
-      if (!this.canGenerateVideoFromFirstLastFrames()) {
-        return;
-      }
+  //     if (!this.canGenerateVideoFromFirstLastFrames()) {
+  //       return;
+  //     }
 
-      const { data: firstImageData, mimeType: firstImageMimeType } = this.firstImage() || { data: '', mimeType: '' };
-      const { data: lastImageData, mimeType: lastImageMimeType } = this.lastImage() || { data: '', mimeType: '' };
-      const result = await this.visualStoryService.interpolateVideo({
-        prompt: this.userPrompt(),
-        imageBytes: firstImageData,
-        mimeType: firstImageMimeType,
-        lastFrameImageBytes: lastImageData,
-        lastFrameMimeType: lastImageMimeType,
-        isVeo31Used: this.isVeo31Used
-      });
-      this.videoResponse.set(result);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
+  //     const { data: firstImageData, mimeType: firstImageMimeType } = this.firstImage() || { data: '', mimeType: '' };
+  //     const { data: lastImageData, mimeType: lastImageMimeType } = this.lastImage() || { data: '', mimeType: '' };
+  //     const result = await this.visualStoryService.interpolateVideo({
+  //       prompt: this.userPrompt(),
+  //       imageBytes: firstImageData,
+  //       mimeType: firstImageMimeType,
+  //       lastFrameImageBytes: lastImageData,
+  //       lastFrameMimeType: lastImageMimeType,
+  //       isVeo31Used: this.isVeo31Used
+  //     });
+  //     this.videoResponse.set(result);
+  //   } finally {
+  //     this.isLoading.set(false);
+  //   }
+  // }
 }

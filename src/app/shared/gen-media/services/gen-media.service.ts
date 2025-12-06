@@ -37,35 +37,35 @@ export class GenMediaService {
       this.document.body.removeChild(link);
   }
 
-  async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
-    try {
-      this.videoError.set('');
-      this.isGeneratingVideo.set(true);
+  // async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
+  //   try {
+  //     this.videoError.set('');
+  //     this.isGeneratingVideo.set(true);
 
-      const isVeo31Used = imageParams.isVeo31Used || false;
+  //     const isVeo31Used = imageParams.isVeo31Used || false;
 
-      const loadVideoPromise = isVeo31Used ?
-        this.geminiService.generateVideo({
-          ...imageParams,
-          config: {
-            aspectRatio: '16:9',
-            resolution: "720p"
-          }
-        }) :
-        this.getFallbackVideoUrl(imageParams);
+  //     const loadVideoPromise = isVeo31Used ?
+  //       this.geminiService.generateVideo({
+  //         ...imageParams,
+  //         config: {
+  //           aspectRatio: '16:9',
+  //           resolution: "720p"
+  //         }
+  //       }) :
+  //       this.getFallbackVideoUrl(imageParams);
 
-      const videoUrl = (await loadVideoPromise).videoUrl;
-      this.videoUrl.set(videoUrl);
-    } catch (e) {
-      console.error(e);
-      const errMsg = e instanceof Error ?
-        e.message :
-        'An unexpected error occurred in video generation using the first and last frames.'
-      this.videoError.set(errMsg);
-    } finally {
-      this.isGeneratingVideo.set(false);
-    }
-  }
+  //     const videoUrl = (await loadVideoPromise).videoUrl;
+  //     this.videoUrl.set(videoUrl);
+  //   } catch (e) {
+  //     console.error(e);
+  //     const errMsg = e instanceof Error ?
+  //       e.message :
+  //       'An unexpected error occurred in video generation using the first and last frames.'
+  //     this.videoError.set(errMsg);
+  //   } finally {
+  //     this.isGeneratingVideo.set(false);
+  //   }
+  // }
 
   private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage | undefined> {
     if (!prompt || !prompt.trim()) {
@@ -126,39 +126,39 @@ export class GenMediaService {
     });
   }
 
-  async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
-    const isVeo31Used = imageParams.isVeo31Used || false;
-    try {
-      const loadVideoPromise = isVeo31Used ?
-        this.geminiService.generateVideo({
-          ...imageParams,
-          config: {
-            aspectRatio: '16:9',
-            resolution: "720p",
-            lastFrame: {
-              imageBytes: imageParams.lastFrameImageBytes,
-              mimeType: imageParams.lastFrameMimeType
-            }
-          }
-      }) :
-        this.getFallbackVideoUrl(imageParams);
+  // async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
+  //   const isVeo31Used = imageParams.isVeo31Used || false;
+  //   try {
+  //     const loadVideoPromise = isVeo31Used ?
+  //       this.geminiService.generateVideo({
+  //         ...imageParams,
+  //         config: {
+  //           aspectRatio: '16:9',
+  //           resolution: "720p",
+  //           lastFrame: {
+  //             imageBytes: imageParams.lastFrameImageBytes,
+  //             mimeType: imageParams.lastFrameMimeType
+  //           }
+  //         }
+  //     }) :
+  //       this.getFallbackVideoUrl(imageParams);
 
-      return await loadVideoPromise;
-    } catch (e) {
-      throw e instanceof Error ?
-        e :
-        new Error('An unexpected error occurred in video generation using the first and last frames.');
-    }
-  }
+  //     return await loadVideoPromise;
+  //   } catch (e) {
+  //     throw e instanceof Error ?
+  //       e :
+  //       new Error('An unexpected error occurred in video generation using the first and last frames.');
+  //   }
+  // }
 
-  private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams): Promise<VideoResponse> {
-    return this.geminiService.generateVideo({
-      prompt: imageParams.prompt,
-      imageBytes: imageParams.imageBytes,
-      mimeType: imageParams.mimeType,
-      config: {
-        aspectRatio: '16:9',
-      }
-    });
-  }
+  // private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams): Promise<VideoResponse> {
+  //   return this.geminiService.generateVideo({
+  //     prompt: imageParams.prompt,
+  //     imageBytes: imageParams.imageBytes,
+  //     mimeType: imageParams.mimeType,
+  //     config: {
+  //       aspectRatio: '16:9',
+  //     }
+  //   });
+  // }
 }

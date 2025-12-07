@@ -24,9 +24,10 @@ export class NavigationComponent {
   private readonly elementRef = inject(ElementRef);
   private readonly navigationService = inject(FeatureService);
 
-  navMenuState = signal([{ id: 1, state: false }, { id: 2, state: false }]);
-
   readonly navbars = this.navigationService.getNavBars();
+  navMenuState = signal(
+    this.navbars.map((item) => ({ id: item.id, state: false }))
+  );
 
   getNavMenuState(id: number) {
     return this.navMenuState().find((item) => item.id === id)?.state || false;

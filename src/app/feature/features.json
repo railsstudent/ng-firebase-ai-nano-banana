@@ -66,15 +66,6 @@
       "description": "Transform your 2D maps into 3D models ready for any project.",
       "customPrompt": "用這個地圖的位置，在地標上面蓋「3D等距透視」的建築物，建築物要彼此要連起來，風格是動畫黏土風"
     },
-    "bottle": {
-      "name": "Glass Bottle Souvenir",
-      "path": "/predefined-prompt/bottle",
-      "mode": "single",
-      "buttonText": "Make a souvenir",
-      "loadingText": "Generating a souvenir...",
-      "description": "Transform your 2D images into 3D glass bottle souvenirs for any project.",
-      "customPrompt": "A 1/7 scale commercialized collectible figure of the character from the photo, crafted in a highly realistic style. The figure is placed in a detailed beach environment with sand, seashells, and gentle ocean waves. The entire toy display is enclosed inside a clear souvenir glass bottle, giving it a premium miniature diorama look, with realistic lighting and shadows"
-    },
     "dome": {
       "name": "Domes on the Moon",
       "path": "/predefined-prompt/dome",
@@ -83,6 +74,17 @@
       "loadingText": "Generating a colony on the moon...",
       "description": "Transform your 2D maps into 3D colonies ready for any project.",
       "customPrompt": "模擬這些地標在一顆月球上的樣子，並且把地標都變成月球上的建築物，每個建築物都要有自己的特色，地標的名稱要保留在月球上"
+    }
+  },
+  "templates": {
+    "bottle": {
+      "name": "Glass Bottle Souvenir",
+      "path": "/predefined-prompt/bottle",
+      "mode": "single",
+      "buttonText": "Make a souvenir",
+      "loadingText": "Generating a souvenir...",
+      "description": "Transform your 2D images into 3D glass bottle souvenirs for any project.",
+      "customPrompt": "A 1/7 scale commercialized collectible figure of the character from the photo, crafted in a highly realistic style. The figure is placed in a detailed beach environment with sand, seashells, and gentle ocean waves. The entire toy display is enclosed inside a clear souvenir glass bottle, giving it a premium miniature diorama look, with realistic lighting and shadows"
     }
   }
 }

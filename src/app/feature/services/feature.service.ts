@@ -1,92 +1,24 @@
 import { Injectable } from '@angular/core';
-import {
-  ChatIconComponent,
-  CubeIconComponent,
-  DomeIconComponent,
-  GlassBottleIconComponent,
-  HistoryIconComponent,
-  MagicWandIconComponent,
-  MapIconComponent,
-  ScissorsIconComponent,
-  SparklesIconComponent
-} from '@/navigation/icons/icons.component';
-import featureConfigs from '../features.json';
+import { DEFAULT_FEATURE, FEATURE_NESTED_LIST } from '../constants/features.const';
 import { FeatureDetails } from '../types/feature-details.type';
-import { Feature } from '../types/feature.type';
+import { buildNavigationBars } from '../util/navbar.util';
 
-const features = featureConfigs.features as Record<string, FeatureDetails>;
-const modeling_features = featureConfigs.modeling as Record<string, FeatureDetails>;
-
-function buildNavigationMap(features: Record<string, FeatureDetails>, iconMap: Record<string, any>): Feature[] {
-  const keys = Object.keys(features);
-
-  return keys.reduce((acc, key) => {
-    if (features[key]) {
-      const feature = features[key];
-      const { name, path } = feature;
-      const icon = iconMap[key] || MagicWandIconComponent; // Default icon if not found in the map
-      return acc.concat({ id: key, icon, name, path });
-    }
-
-    return acc;
-  }, [] as Feature[]);
-}
-
-function buildPhotoEditNavigationMap(): Feature[] {
-  const iconMap: Record<string, any> = {
-    create: MagicWandIconComponent,
-    edit: SparklesIconComponent,
-    restoration: HistoryIconComponent,
-    fuse: ScissorsIconComponent,
-    'visual-story': HistoryIconComponent,
-    conversation: ChatIconComponent,
-  };
-
-  return buildNavigationMap(features, iconMap);
-}
-
-function buildModelingNavigationMap(): Feature[] {
-  const iconMap: Record<string, any> = {
-    figurine: CubeIconComponent,
-    '3d-map': MapIconComponent,
-    bottle:  GlassBottleIconComponent,
-    dome: DomeIconComponent,
-  };
-
-  return buildNavigationMap(modeling_features, iconMap);
-}
-
-const PHOTO_EDIT_ITEMS = buildPhotoEditNavigationMap();
-const MODELING_ITEMS = buildModelingNavigationMap();
+const navbar = buildNavigationBars();
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeatureService {
   getNavBars() {
-    return [
-      {
-        id: 1,
-        navName: 'Editor',
-        menu: PHOTO_EDIT_ITEMS,
-      },
-      {
-        id: 2,
-        navName: 'Modeling',
-        menu: MODELING_ITEMS,
-      }
-    ];
+    return navbar;
   }
 
   getFeatureName(featureId: string) {
-    const editItem = PHOTO_EDIT_ITEMS.find(f => f.id === featureId);
-    if (editItem) {
-      return editItem.name;
-    }
-
-    const modelingItem = MODELING_ITEMS.find(f => f.id === featureId);
-    if (modelingItem) {
-      return modelingItem.name;
+    for (const { menu } of navbar) {
+      const editItem = menu.find(f => f.id === featureId);
+      if (editItem) {
+        return editItem.name;
+      }
     }
 
     // Fallback for featureIds not present in the navigation service.
@@ -95,14 +27,12 @@ export class FeatureService {
   }
 
   getFeatureDetails(featureId: string): FeatureDetails {
-    if (features[featureId]) {
-      return features[featureId];
+    for (const featureList of FEATURE_NESTED_LIST) {
+      if (featureList[featureId]) {
+        return featureList[featureId];
+      }
     }
 
-    if (modeling_features[featureId]) {
-      return modeling_features[featureId];
-    }
-
-    return featureConfigs.features.create;
+    return DEFAULT_FEATURE;
   }
 }

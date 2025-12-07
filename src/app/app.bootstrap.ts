@@ -21,6 +21,7 @@ function createRemoteConfig(firebaseApp: FirebaseApp) {
     'isVeo31Used': true,
     'includeThoughts': true,
     'thinkingBudget': 512,
+    'glassBottleSouvenirTemplateId': 'glass-bottle-souvenir-v0-0-1',
   };
 
   return remoteConfig;

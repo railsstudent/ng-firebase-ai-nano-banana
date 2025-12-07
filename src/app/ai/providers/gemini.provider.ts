@@ -13,7 +13,7 @@ export function provideGemini() {
     // },
     {
       provide: IS_VEO31_USED,
-      useValue: firebaseConfig.is_veo31_used,
+      useValue: true,
     }
   ])
 }

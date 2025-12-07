@@ -1,45 +1,63 @@
-import firebaseConfig from '@/firebase.json';
-import { makeEnvironmentProviders } from '@angular/core';
+import { inject, makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, ModelParams, ResponseModality, VertexAIBackend } from 'firebase/ai';
-import { initializeApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
+import { FirebaseApp } from 'firebase/app';
+import { getValue, RemoteConfig } from 'firebase/remote-config';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { ConfigService } from '../services/config.service';
+
+function getGenerativeAIModel(firebaseApp: FirebaseApp, remoteConfig: RemoteConfig) {
+
+  try {
+    const modelName = getValue(remoteConfig, 'geminiModelName').asString();
+    const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
+    const includeThoughts = getValue(remoteConfig, 'includeThoughts').asBoolean();
+    const thinkingBudget = getValue(remoteConfig, 'thinkingBudget').asNumber();
+
+    const DEFAULT_CONFIG: ModelParams = {
+      model: modelName,
+      generationConfig: {
+          responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
+          candidateCount: 1,
+          thinkingConfig: {
+            includeThoughts,
+            thinkingBudget,
+          },
+      },
+      tools: [
+        {
+          googleSearch: {}
+        }
+      ],
+    };
+
+    const ai = getAI(firebaseApp, {
+      backend: new VertexAIBackend(vertexAILocation)
+    });
+
+    return getGenerativeModel(ai, DEFAULT_CONFIG);
+  } catch(err) {
+    console.error('Remote Config fetch failed', err);
+    throw err;
+  }
+}
+
 
 export function provideFirebase() {
     return makeEnvironmentProviders([
         {
             provide: NANO_BANANA_MODEL,
             useFactory: () => {
-              const { app, geminiModelName = 'gemini-2.5-flash-image' } = firebaseConfig;
-              const firebaseApp = initializeApp(app);
+              const configService = inject(ConfigService);
 
-              // Initialize Firebase App Check
-              initializeAppCheck(firebaseApp, {
-                provider: new ReCaptchaEnterpriseProvider(firebaseConfig.recaptchaEnterpriseSiteKey),
-                isTokenAutoRefreshEnabled: true,
-              });
+              if (!configService.remoteConfig) {
+                throw new Error('Remote config does not exist.');
+              }
 
-              const ai = getAI(firebaseApp, {
-                backend: new VertexAIBackend(firebaseConfig.vertexAILocation)
-              });
+              if (!configService.firebaseApp) {
+                throw new Error('Firebase App does not exist');
+              }
 
-              const DEFAULT_CONFIG: ModelParams = {
-                model: geminiModelName,
-                generationConfig: {
-                    responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
-                    candidateCount: 1,
-                    thinkingConfig: {
-                      includeThoughts: true,
-                      thinkingBudget: 512,
-                    },
-                },
-                tools: [
-                  {
-                    googleSearch: {}
-                  }
-                ],
-              };
-              return getGenerativeModel(ai, DEFAULT_CONFIG);
+              return getGenerativeAIModel(configService.firebaseApp, configService.remoteConfig);
             }
         }
     ]);

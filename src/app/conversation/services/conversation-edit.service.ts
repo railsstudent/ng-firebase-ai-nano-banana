@@ -19,16 +19,12 @@ export class ConversationEditService {
 
   async editImage(prompt: string, inlineData: GenerativeContentBlob): Promise<Base64InlineData> {
     try {
-      const contentParts = await this.getGeneratedParts(inlineData, prompt);
-
-      if (contentParts.length > 0) {
-        const { data = '', mimeType = '' } = contentParts[0].inlineData;
-        if (data && mimeType) {
-          return {
-            inlineData: { data, mimeType },
-            base64: getBase64EncodedString({ data, mimeType })
-          };
-        }
+      const contentPart = await this.getGeneratedPart(inlineData, prompt);
+      if (contentPart && contentPart.data && contentPart.mimeType) {
+        return {
+          inlineData: contentPart,
+          base64: getBase64EncodedString(contentPart)
+        };
       }
       throw new Error('Send message completed but image is not generated.');
     } catch (error) {
@@ -40,16 +36,18 @@ export class ConversationEditService {
     }
   }
 
-  private async getGeneratedParts(inlineData: GenerativeContentBlob, prompt: string) {
+  private async getGeneratedPart(inlineData: GenerativeContentBlob, prompt: string) {
     const currentChat = this.chat();
     if (!currentChat) {
-      return [];
+      return undefined;
     }
+
     const inlineDataPart = inlineData.data && inlineData.mimeType ? { inlineData } : undefined;
     const message = inlineDataPart ? [prompt, inlineDataPart] : [prompt];
     const response = await currentChat.sendMessage(message);
 
-    return response.response.inlineDataParts() || [];
+    const contentParts = response.response.inlineDataParts();
+    return contentParts?.[0]?.inlineData;
   }
 
   endEdit(): void {

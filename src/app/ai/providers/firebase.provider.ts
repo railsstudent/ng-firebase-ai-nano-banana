@@ -6,14 +6,12 @@ import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
 function getGenerativeAIModel(firebaseApp: FirebaseApp, remoteConfig: RemoteConfig) {
-
-  try {
     const modelName = getValue(remoteConfig, 'geminiModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
     const includeThoughts = getValue(remoteConfig, 'includeThoughts').asBoolean();
     const thinkingBudget = getValue(remoteConfig, 'thinkingBudget').asNumber();
 
-    const DEFAULT_CONFIG: ModelParams = {
+    const modelParams: ModelParams = {
       model: modelName,
       generationConfig: {
           responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
@@ -34,13 +32,8 @@ function getGenerativeAIModel(firebaseApp: FirebaseApp, remoteConfig: RemoteConf
       backend: new VertexAIBackend(vertexAILocation)
     });
 
-    return getGenerativeModel(ai, DEFAULT_CONFIG);
-  } catch(err) {
-    console.error('Remote Config fetch failed', err);
-    throw err;
-  }
+    return getGenerativeModel(ai, modelParams);
 }
-
 
 export function provideFirebase() {
     return makeEnvironmentProviders([

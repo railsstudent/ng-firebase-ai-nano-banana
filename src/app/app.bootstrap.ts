@@ -14,7 +14,7 @@ function createRemoteConfig(firebaseApp: FirebaseApp) {
 
   // Set default values for Remote Config parameters.
   remoteConfig.defaultConfig = {
-    'geminiModelName': 'gemini-2.5-flash-image',
+    'geminiModelName': 'gemini-3-pro-image-preview',
     'vertexAILocation': 'global',
     'pollingPeriod': 10000,
     'geminiVideoModelName': 'veo-3.1-fast-generate-001',

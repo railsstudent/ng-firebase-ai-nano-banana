@@ -22,9 +22,9 @@ import { ChevronDownIconComponent, HomeIconComponent, PhotoIconComponent } from 
 })
 export class NavigationComponent {
   private readonly elementRef = inject(ElementRef);
-  private readonly navigationService = inject(FeatureService);
+  private readonly featureService = inject(FeatureService);
 
-  readonly navbars = this.navigationService.getNavBars();
+  readonly navbars = this.featureService.getNavBars();
   navMenuState = signal(
     this.navbars.map((item) => ({ id: item.id, state: false }))
   );

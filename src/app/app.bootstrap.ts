@@ -4,26 +4,15 @@ import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-ch
 import { fetchAndActivate, getRemoteConfig } from 'firebase/remote-config';
 import { ConfigService } from './ai/services/config.service';
 import firebaseConfig from './firebase.json';
+import remoteConfigDefaults from '../../firebase-project/remoteconfig.defaults.json';
 
-function createRemoteConfig(firebaseApp: FirebaseApp) {
-  // Initialize Remote Config and get a reference to the service
+async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
   const remoteConfig = getRemoteConfig(firebaseApp);
-
-  // The default and recommended production fetch interval for Remote Config is 12 hours
   remoteConfig.settings.minimumFetchIntervalMillis = 3600000;
 
-  // Set default values for Remote Config parameters.
-  remoteConfig.defaultConfig = {
-    'geminiImageModelName': 'gemini-3-pro-image-preview',
-    'vertexAILocation': 'global',
-    'pollingPeriod': 10000,
-    'geminiVideoModelName': 'veo-3.1-fast-generate-001',
-    'isVeo31Used': true,
-    'includeThoughts': true,
-    'thinkingBudget': 512,
-    'glassBottleSouvenirTemplateId': 'glass-bottle-souvenir-v0-0-1',
-  };
-
+  console.log('remoteConfigDefaults', remoteConfigDefaults);
+  remoteConfig.defaultConfig = remoteConfigDefaults;
+  await fetchAndActivate(remoteConfig);
   return remoteConfig;
 }
 
@@ -38,8 +27,7 @@ export async function bootstrapFirebase() {
         isTokenAutoRefreshEnabled: true,
       });
 
-      const remoteConfig = createRemoteConfig(firebaseApp);
-      await fetchAndActivate(remoteConfig);
+      const remoteConfig = await fetchRemoteConfig(firebaseApp);
 
       configService.loadConfig(firebaseApp, remoteConfig);
     } catch (err) {

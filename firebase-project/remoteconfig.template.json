@@ -1,0 +1,76 @@
+{
+  "parameters": {
+    "geminiModelName": {
+      "defaultValue": {
+        "value": "gemini-3-pro-preview"
+      },
+      "description": "Germini Model Name",
+      "valueType": "STRING"
+    },
+    "thinkingBudget": {
+      "defaultValue": {
+        "value": "512"
+      },
+      "description": "Thinking budget of Nano Banana Pro",
+      "valueType": "STRING"
+    },
+    "isVeo31Used": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Enable to use Veo 3.1 video model",
+      "valueType": "STRING"
+    },
+    "geminiImageModelName": {
+      "defaultValue": {
+        "value": "gemini-3-pro-image-preview"
+      },
+      "description": "Gemini Image Model Name",
+      "valueType": "STRING"
+    },
+    "includeThoughts": {
+      "defaultValue": {
+        "value": "true"
+      },
+      "description": "Whether or notNano Banana Pro generates thinking summaries",
+      "valueType": "STRING"
+    },
+    "geminiVideoModelName": {
+      "defaultValue": {
+        "value": "veo-3.1-fast-generate-001"
+      },
+      "description": "Gemini Video Model Name",
+      "valueType": "STRING"
+    },
+    "pollingPeriod": {
+      "defaultValue": {
+        "value": "10000"
+      },
+      "description": "Polling period of checking video generation",
+      "valueType": "NUMBER"
+    },
+    "glassBottleSouvenirTemplateId": {
+      "defaultValue": {
+        "value": "glass-bottle-souvenir-v0-0-1"
+      },
+      "description": "Glass bottle souvenir template id",
+      "valueType": "STRING"
+    },
+    "vertexAILocation": {
+      "defaultValue": {
+        "value": "global"
+      },
+      "description": "Vertex AI Location",
+      "valueType": "STRING"
+    }
+  },
+  "version": {
+    "versionNumber": "16",
+    "updateTime": "2025-12-12T05:35:11.343752Z",
+    "updateUser": {
+      "email": "cleung334@gmail.com"
+    },
+    "updateOrigin": "CONSOLE",
+    "updateType": "INCREMENTAL_UPDATE"
+  }
+}

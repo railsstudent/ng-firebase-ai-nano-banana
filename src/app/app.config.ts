@@ -1,4 +1,3 @@
-import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { provideFirebase } from './ai/providers/firebase.provider';
@@ -13,6 +12,5 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(async () => bootstrapFirebase()),
     provideFirebase(),
     provideGemini(),
-    provideHttpClient()
   ]
 };

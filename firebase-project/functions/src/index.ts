@@ -1,32 +1,85 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
+import * as express from "express";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+setGlobalOptions({maxInstances: 2, region: "asia-east1"});
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+function validate(value: string | undefined, fieldName: string, response: express.Response) {
+  const err = `${fieldName} is missing.`;
+  if (!value) {
+    logger.error(err);
+    response.status(500).send(err);
+  }
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+  return value;
+}
+
+function validateFirebaseConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
+  const apiKey = validate(env.APP_API_KEY,"API Key", response);
+  if (!apiKey) {
+    return undefined;
+  }
+
+  const appId = validate(env.APP_ID, "App Id", response);
+  if (!appId) {
+    return undefined;
+  }
+
+  const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID", response);
+  if (!messagingSenderId) {
+    return undefined;
+  }
+
+  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY,"Recaptcha site key", response);
+  if (!recaptchaSiteKey) {
+    return undefined;
+  }
+
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG,"Firebase config", response);
+  if (!strFirebaseConfig) {
+    return undefined;
+  }
+
+  const firebaseConfig = JSON.parse(strFirebaseConfig);
+  const projectId = validate(firebaseConfig?.projectId, "Project ID", response);
+  if (!projectId) {
+    return undefined;
+  }
+
+  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", response);
+  if (!storageBucket) {
+    return undefined;
+  }
+
+  return {
+    apiKey,
+    appId,
+    recaptchaSiteKey,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+  };
+}
+
+export const getFirebaseConfig = onRequest( {cors: true}, (_, response) => {
+  logger.info("getFirebaseConfig called");
+
+  process.loadEnvFile();
+
+  const variables = validateFirebaseConfigFields(process.env, response);
+  if (!variables) {
+    return;
+  }
+
+  const { recaptchaSiteKey, ...rest } = variables;
+  const config = JSON.stringify({
+    app: {
+      ...rest,
+      authDomain: `${rest.projectId}.firebaseapp.com`,
+    },
+    recaptchaSiteKey,
+  });
+
+  response.send(config);
+});

@@ -42,4 +42,3 @@ testem.log
 Thumbs.db
 
 .env
-src/app/firebase.json

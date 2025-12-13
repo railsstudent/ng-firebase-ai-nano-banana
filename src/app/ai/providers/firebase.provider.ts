@@ -1,11 +1,12 @@
 import { inject, makeEnvironmentProviders } from '@angular/core';
-import { getAI, getGenerativeModel, ModelParams, ResponseModality, VertexAIBackend } from 'firebase/ai';
-import { FirebaseApp } from 'firebase/app';
-import { getValue, RemoteConfig } from 'firebase/remote-config';
+import { getAI, getGenerativeModel, ModelParams, VertexAIBackend } from 'firebase/ai';
+import { getValue } from 'firebase/remote-config';
 import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
-function getGenerativeAIModel(firebaseApp: FirebaseApp, remoteConfig: RemoteConfig) {
+function getGenerativeAIModel(configService: ConfigService) {
+    const firebaseApp = configService.firebaseApp!;
+    const remoteConfig = configService.remoteConfig!;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
     const includeThoughts = getValue(remoteConfig, 'includeThoughts').asBoolean();
@@ -14,7 +15,6 @@ function getGenerativeAIModel(firebaseApp: FirebaseApp, remoteConfig: RemoteConf
     const modelParams: ModelParams = {
       model: modelName,
       generationConfig: {
-          responseModalities: [ResponseModality.TEXT, ResponseModality.IMAGE],
           candidateCount: 1,
           thinkingConfig: {
             includeThoughts,
@@ -50,7 +50,7 @@ export function provideFirebase() {
                 throw new Error('Firebase App does not exist');
               }
 
-              return getGenerativeAIModel(configService.firebaseApp, configService.remoteConfig);
+              return getGenerativeAIModel(configService);
             }
         }
     ]);

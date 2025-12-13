@@ -1,6 +1,6 @@
 {
   "geminiModelName": "gemini-3-pro-preview",
-  "thinkingBudget": "768",
+  "thinkingBudget": "512",
   "isVeo31Used": "true",
   "geminiImageModelName": "gemini-3-pro-image-preview",
   "includeThoughts": "true",

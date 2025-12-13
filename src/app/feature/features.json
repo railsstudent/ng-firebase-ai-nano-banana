@@ -30,7 +30,7 @@
       "buttonText": "Restore",
       "loadingText": "Restoring photo...",
       "description": "Bring old and damaged photos back to life by removing scratches and restoring color.",
-      "customPrompt": "Restore this photograph to its original quality. Remove scratches, enhance details, correct colors, and make it look as close to the original as possible when it was first taken."
+      "customPrompt": "Ultra-realistic recreation of an old vintage photo, keeping the same original face (99% likeness, no alteration). Transform into a modern high-quality digital portrait with vibrant updated colors, smooth realistic skin textures, and natural lighting. The outfits and background should be preserved maintaining authenticity of the original poses and expressions."
     },
     "visual-story": {
       "name": "Visual Story",

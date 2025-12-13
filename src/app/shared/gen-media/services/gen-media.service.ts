@@ -1,6 +1,8 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
+import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
+import { TokenUsage } from '@/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
@@ -121,20 +123,30 @@ export class GenMediaService {
           ...image,
           id: index
         }),
-        tokenUsage: {
-          outputTokenCount: acc.tokenUsage.outputTokenCount + tokenUsage.outputTokenCount,
-          promptTokenCount: acc.tokenUsage.promptTokenCount + tokenUsage.promptTokenCount,
-          thoughtTokenCount: acc.tokenUsage.thoughtTokenCount + tokenUsage.thoughtTokenCount,
-          totalTokenCount: acc.tokenUsage.totalTokenCount + tokenUsage.totalTokenCount,
-        },
-        groundingMetadata: {
-          searchQueries: acc.groundingMetadata.searchQueries.concat(metadata.searchQueries),
-          citations: acc.groundingMetadata.citations.concat(metadata.citations),
-          renderedContents: metadata.renderedContent ? acc.groundingMetadata.renderedContents.concat(metadata.renderedContent) : acc.groundingMetadata.renderedContents,
-        },
+        tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
+        groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
         thinkingSummaries: acc.thinkingSummaries.concat(thinkingSummary),
       };
     }, DEFAULT_IMAGES_TOKEN_USAGE)
+  }
+
+  private concatGrounding(groundingMetadata: MetadataGroup, metadata: Metadata): MetadataGroup {
+    const newRenderedContents = metadata.renderedContent ? groundingMetadata.renderedContents.concat(metadata.renderedContent) : groundingMetadata.renderedContents;
+
+    return {
+      searchQueries: groundingMetadata.searchQueries.concat(metadata.searchQueries),
+      citations: groundingMetadata.citations.concat(metadata.citations),
+      renderedContents: newRenderedContents,
+    };
+  }
+
+  private calculateTokenUsage(tokenUsage: TokenUsage, otherTokenUsage: TokenUsage): TokenUsage {
+    return {
+      outputTokenCount: tokenUsage.outputTokenCount + otherTokenUsage.outputTokenCount,
+      promptTokenCount: tokenUsage.promptTokenCount + otherTokenUsage.promptTokenCount,
+      thoughtTokenCount: tokenUsage.thoughtTokenCount + otherTokenUsage.thoughtTokenCount,
+      totalTokenCount: tokenUsage.totalTokenCount + otherTokenUsage.totalTokenCount,
+    };
   }
 
   // async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {

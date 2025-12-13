@@ -1,3 +1,12 @@
+/**
+ * Import function triggers from their respective submodules:
+ *
+ * import {onCall} from "firebase-functions/v2/https";
+ * import {onDocumentWritten} from "firebase-functions/v2/firestore";
+ *
+ * See a full list of supported triggers at https://firebase.google.com/docs/functions
+ */
+
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
 import * as logger from "firebase-functions/logger";
@@ -5,6 +14,13 @@ import * as express from "express";
 
 setGlobalOptions({maxInstances: 2, region: "asia-east1"});
 
+/**
+ *
+ * @param {string} value a string value to validate
+ * @param {string} fieldName the name of the field being validated
+ * @param {express.Response} response  express response object
+ * @return {string | undefined} the validated string value or undefined if validation fails
+ */
 function validate(value: string | undefined, fieldName: string, response: express.Response) {
   const err = `${fieldName} is missing.`;
   if (!value) {
@@ -15,8 +31,14 @@ function validate(value: string | undefined, fieldName: string, response: expres
   return value;
 }
 
+/**
+ *
+ * @param {NodeJS.ProcessEnv} env         a dicitonary of environment variables
+ * @param {express.Response} response    express response object
+ * @return {object} an object containing validated environment variables or undefined if validation fails
+ */
 function validateFirebaseConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
-  const apiKey = validate(env.APP_API_KEY,"API Key", response);
+  const apiKey = validate(env.APP_API_KEY, "API Key", response);
   if (!apiKey) {
     return undefined;
   }
@@ -31,12 +53,12 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv, response: express.
     return undefined;
   }
 
-  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY,"Recaptcha site key", response);
+  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key", response);
   if (!recaptchaSiteKey) {
     return undefined;
   }
 
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG,"Firebase config", response);
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", response);
   if (!strFirebaseConfig) {
     return undefined;
   }
@@ -72,7 +94,7 @@ export const getFirebaseConfig = onRequest( {cors: true}, (_, response) => {
     return;
   }
 
-  const { recaptchaSiteKey, ...rest } = variables;
+  const {recaptchaSiteKey, ...rest} = variables;
   const config = JSON.stringify({
     app: {
       ...rest,

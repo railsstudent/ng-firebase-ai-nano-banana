@@ -95,11 +95,13 @@ export const getFirebaseConfig = onRequest( {cors: true}, (_, response) => {
   }
 
   const {recaptchaSiteKey, ...rest} = variables;
+  // Construct the Firebase config object
+  const app = {
+    ...rest,
+    authDomain: `${rest.projectId}.firebaseapp.com`,
+  };
   const config = JSON.stringify({
-    app: {
-      ...rest,
-      authDomain: `${rest.projectId}.firebaseapp.com`,
-    },
+    app,
     recaptchaSiteKey,
   });
 

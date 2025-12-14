@@ -7,7 +7,7 @@ import { lastValueFrom } from 'rxjs';
 import config from '../../firebase-project/config.json';
 import remoteConfigDefaults from '../../firebase-project/remoteconfig.defaults.json';
 import { ConfigService } from './ai/services/config.service';
-import { FirebaseConfig } from './ai/types/firebase-config.type';
+import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
 
 async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
   const remoteConfig = getRemoteConfig(firebaseApp);
@@ -19,7 +19,7 @@ async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
 
 async function loadFirebaseConfig() {
   const httpService = inject(HttpClient);
-  const firebaseConfig$ = httpService.get<FirebaseConfig>(`${config.appUrl}/getFirebaseConfig`)
+  const firebaseConfig$ = httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`)
   const firebaseConfig = await lastValueFrom(firebaseConfig$);
   return firebaseConfig;
 }

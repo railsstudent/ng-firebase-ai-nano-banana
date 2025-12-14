@@ -43,11 +43,23 @@ function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Res
     return;
   }
 
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", response);
+  if (!strFirebaseConfig) {
+    return;
+  }
+
+  const firebaseConfig = JSON.parse(strFirebaseConfig);
+  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", response);
+  if (!storageBucket) {
+    return;
+  }
+
   return {
     project,
     location,
     vertexai: vertexai.toLowerCase() === "true",
     geminiVideoModelName,
+    storageBucket,
   };
 }
 
@@ -63,7 +75,7 @@ export async function generateVideoFunction(request: express.Request, response: 
     return;
   }
 
-  const {project, location, vertexai, geminiVideoModelName} = variables;
+  const {project, location, vertexai, geminiVideoModelName, storageBucket} = variables;
 
   try {
     // Video generation logic using Vertex AI would go here
@@ -72,8 +84,12 @@ export async function generateVideoFunction(request: express.Request, response: 
       project,
       location,
     });
-    const videoBytes = await generateBase64Video(ai, geminiVideoModelName, request.body as GenerateVideoRequest);
-    response.status(200).send(JSON.stringify({videoBytes}));
+    const uri = await generateBase64Video(ai,
+      geminiVideoModelName,
+      storageBucket,
+      request.body as GenerateVideoRequest
+    );
+    response.status(200).send(JSON.stringify({uri}));
   } catch (error) {
     console.error("Error generating video:", error);
     response.status(500).send("Error generating video");
@@ -91,6 +107,7 @@ export async function generateVideoFunction(request: express.Request, response: 
 async function generateVideoByPolling(
   ai: GoogleGenAI,
   model: string,
+  storageBucket: string,
   request: GenerateVideoRequest,
 ) {
   const genVideosParams: GenerateVideosParameters = {
@@ -99,6 +116,7 @@ async function generateVideoByPolling(
     config: {
       ...request.config,
       numberOfVideos: 1,
+      outputGcsUri: `gs://${storageBucket}`,
     },
     image: {
       imageBytes: request.imageBytes,
@@ -140,10 +158,11 @@ function constructVideoArguments(imageParams: GenerateVideoRequest) {
 async function generateBase64Video(
   ai: GoogleGenAI,
   model: string,
+  storageBucket: string,
   imageParams: GenerateVideoRequest,
 ) {
   const args = constructVideoArguments(imageParams);
-  return generateVideoByPolling(ai, model, args);
+  return generateVideoByPolling(ai, model, storageBucket, args);
 }
 
 /**
@@ -165,13 +184,19 @@ async function getVideoBytes(
     operation = await ai.operations.getVideosOperation({operation});
   }
 
-  const videoBytes = operation.response?.generatedVideos?.[0]?.video?.videoBytes;
+  const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
 
-  if (videoBytes) {
-    return videoBytes;
+  if (operation.error) {
+    const strError = `Video generation failed: ${operation.error.message}`;
+    console.error(strError);
+    throw new Error(strError);
   }
 
-  const strError = "Video generation finished but no video bytes were provided.";
+  if (uri) {
+    return uri;
+  }
+
+  const strError = "Video generation finished but no uri was provided.";
   console.error(strError);
   throw new Error(strError);
 }

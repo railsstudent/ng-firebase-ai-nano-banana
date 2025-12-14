@@ -5,6 +5,7 @@ import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
+import { GenerateVideoRequestImageParams } from '../types/video-params.type';
 
 @Injectable({
   providedIn: 'root'
@@ -38,35 +39,23 @@ export class GenMediaService {
       this.document.body.removeChild(link);
   }
 
-  // async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
-  //   try {
-  //     this.videoError.set('');
-  //     this.isGeneratingVideo.set(true);
+  async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
+    try {
+      this.videoError.set('');
+      this.isGeneratingVideo.set(true);
 
-  //     const isVeo31Used = imageParams.isVeo31Used || false;
-
-  //     const loadVideoPromise = isVeo31Used ?
-  //       this.geminiService.generateVideo({
-  //         ...imageParams,
-  //         config: {
-  //           aspectRatio: '16:9',
-  //           resolution: "720p"
-  //         }
-  //       }) :
-  //       this.getFallbackVideoUrl(imageParams);
-
-  //     const videoUrl = (await loadVideoPromise).videoUrl;
-  //     this.videoUrl.set(videoUrl);
-  //   } catch (e) {
-  //     console.error(e);
-  //     const errMsg = e instanceof Error ?
-  //       e.message :
-  //       'An unexpected error occurred in video generation using the first and last frames.'
-  //     this.videoError.set(errMsg);
-  //   } finally {
-  //     this.isGeneratingVideo.set(false);
-  //   }
-  // }
+      const videoBytes = await this.geminiService.generateVideo(imageParams);
+      this.videoUrl.set(videoBytes);
+    } catch (e) {
+      console.error(e);
+      const errMsg = e instanceof Error ?
+        e.message :
+        'An unexpected error occurred in video generation.'
+      this.videoError.set(errMsg);
+    } finally {
+      this.isGeneratingVideo.set(false);
+    }
+  }
 
   private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage | undefined> {
     if (!prompt || !prompt.trim()) {

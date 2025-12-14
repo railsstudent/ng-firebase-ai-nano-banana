@@ -9,10 +9,29 @@
 
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
-import { getFirebaseConfigFunction } from './firebase';
+import {getFirebaseConfigFunction} from "./firebase";
+import {generateVideoFunction} from "./video";
 
 setGlobalOptions({maxInstances: 2, region: "asia-east1"});
 
 export const getFirebaseConfig = onRequest( {cors: true},
-  (_, response) => getFirebaseConfigFunction(response)
+  (request, response) => {
+    if (request.method !== "GET") {
+      response.status(405).send("Method Not Allowed");
+      return;
+    }
+
+    getFirebaseConfigFunction(response);
+  }
+);
+
+export const generateVideo = onRequest( {cors: true},
+  (request, response) => {
+    if (request.method !== "POST") {
+      response.status(405).send("Method Not Allowed");
+      return;
+    }
+
+    generateVideoFunction(request, response);
+  }
 );

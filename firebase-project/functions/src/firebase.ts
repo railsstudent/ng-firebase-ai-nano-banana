@@ -9,23 +9,7 @@
 
 import logger from "firebase-functions/logger";
 import express from "express";
-
-/**
- *
- * @param {string} value a string value to validate
- * @param {string} fieldName the name of the field being validated
- * @param {express.Response} response  express response object
- * @return {string | undefined} the validated string value or undefined if validation fails
- */
-function validate(value: string | undefined, fieldName: string, response: express.Response) {
-  const err = `${fieldName} is missing.`;
-  if (!value) {
-    logger.error(err);
-    response.status(500).send(err);
-  }
-
-  return value;
-}
+import {validate} from "./validate";
 
 /**
  *
@@ -101,5 +85,6 @@ export const getFirebaseConfigFunction = (response: express.Response) => {
     recaptchaSiteKey,
   });
 
+  response.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
   response.send(config);
-}
+};

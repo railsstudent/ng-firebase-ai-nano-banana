@@ -1,4 +1,3 @@
-import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from './constants/images-token-usage.const';
@@ -34,7 +33,6 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 })
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
-  private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   loadingText = input('');
   genMediaInput = input<GenMediaInput>();
@@ -88,7 +86,7 @@ export class GenMediaComponent {
     } else if (action === 'downloadImage') {
       this.downloadImageById(id);
     } else if (action === 'generateVideo') {
-      // await this.generateVideoById(id);
+      await this.generateVideoById(id);
     }
   }
 
@@ -107,18 +105,16 @@ export class GenMediaComponent {
     this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
   }
 
-  // private async generateVideoById(id: number) {
-  //   const imageTokenUsage = this.findImageTokenUsage(id);
-  //   if (imageTokenUsage) {
-  //     const { image } = imageTokenUsage;
-  //     const { data: imageBytes, mimeType } = image;
-  //     const imageRequest = {
-  //       prompt: this.trimmedUserPrompt(),
-  //       imageBytes,
-  //       mimeType,
-  //       isVeo31Used: this.isVeo31Used
-  //     }
-  //     await this.genMediaService.generateVideo(imageRequest);
-  //   }
-  // }
+  private async generateVideoById(id: number) {
+    const imageTokenUsage = this.findImageTokenUsage(id);
+    if (imageTokenUsage) {
+      const { data: imageBytes, mimeType } = imageTokenUsage;
+      const imageRequest = {
+        prompt: this.trimmedUserPrompt(),
+        imageBytes,
+        mimeType,
+      }
+      await this.genMediaService.generateVideo(imageRequest);
+    }
+  }
 }

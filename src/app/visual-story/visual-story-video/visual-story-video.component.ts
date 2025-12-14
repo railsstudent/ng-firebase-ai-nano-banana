@@ -1,4 +1,3 @@
-import { IS_VEO31_USED } from '@/ai/constants/gemini.constant';
 import { ImageResponse } from '@/ai/types/image-response.type';
 import { VideoResponse } from '@/ai/types/video-response.type';
 import { VideoPlayerComponent } from '@/shared/gen-media/video-player/video-player.component';
@@ -35,7 +34,6 @@ import { VisualStoryService } from '../services/visual-story.service';
 })
 export default class VisualStoryVideoComponent {
   private readonly visualStoryService = inject(VisualStoryService);
-  private readonly isVeo31Used = inject(IS_VEO31_USED);
 
   images = input<ImageResponse[] | undefined>(undefined);
   userPrompt = input.required<string>();
@@ -52,7 +50,8 @@ export default class VisualStoryVideoComponent {
   canGenerateVideoFromFirstLastFrames = computed(() => {
     const hasFirstImage = !!this.firstImage()?.data && !!this.firstImage()?.mimeType;
     const hasLastImage = !!this.lastImage()?.data && !!this.lastImage()?.mimeType;
-    return this.isVeo31Used && hasFirstImage && hasLastImage;
+    // return this.isVeo31Used && hasFirstImage && hasLastImage;
+    return false;
   });
 
   // async generateVideoFromFrames(): Promise<void> {

@@ -19,7 +19,7 @@ export class ImageViewerComponent {
   id = input(0);
   capabilities = input<ImageViewerCapabilities>({
     download: true,
-    video: false,
+    video: true,
     clearImage: true
   });
   imageSize = input({ width: 512, height: 512 });

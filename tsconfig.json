@@ -16,6 +16,7 @@
     "module": "preserve",
     "resolveJsonModule": true,
     "paths": {
+      "@/firebase-project/*": ["./firebase-project/*"],
       "@/*": ["./src/app/*"]
     }
   },

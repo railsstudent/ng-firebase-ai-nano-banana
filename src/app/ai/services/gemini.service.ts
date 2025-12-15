@@ -14,7 +14,7 @@ export class GeminiService {
 
   private async retrieveVideoUri(request: GenerateVideoRequest): Promise<string> {
     const uri$ = this.http.post<{ uri: string }>(
-      `${config.appUrl}/generateVideo`, request
+      `${config.appUrl}/videos-generateVideo`, request
     )
       .pipe(
         map(response => response.uri),

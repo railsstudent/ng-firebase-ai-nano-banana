@@ -162,15 +162,4 @@ export class GenMediaService {
   //       new Error('An unexpected error occurred in video generation using the first and last frames.');
   //   }
   // }
-
-  // private async getFallbackVideoUrl(imageParams: GenerateVideoRequestImageParams): Promise<VideoResponse> {
-  //   return this.geminiService.generateVideo({
-  //     prompt: imageParams.prompt,
-  //     imageBytes: imageParams.imageBytes,
-  //     mimeType: imageParams.mimeType,
-  //     config: {
-  //       aspectRatio: '16:9',
-  //     }
-  //   });
-  // }
 }

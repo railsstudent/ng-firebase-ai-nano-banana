@@ -1,11 +1,11 @@
 import config from '@/firebase-project/config.json';
+import remoteConfigDefaults from '@/firebase-project/remoteconfig.defaults.json';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { fetchAndActivate, getRemoteConfig } from 'firebase/remote-config';
 import { lastValueFrom } from 'rxjs';
-import remoteConfigDefaults from '../../firebase-project/remoteconfig.defaults.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
 

@@ -1,5 +1,12 @@
 {
   "parameters": {
+    "vertexAILocation": {
+      "defaultValue": {
+        "value": "global"
+      },
+      "description": "Location of Firebase AI Logic VertexAI Backend ",
+      "valueType": "STRING"
+    },
     "thinkingBudget": {
       "defaultValue": {
         "value": "512"
@@ -44,8 +51,8 @@
     }
   },
   "version": {
-    "versionNumber": "18",
-    "updateTime": "2025-12-15T06:35:15.593652Z",
+    "versionNumber": "19",
+    "updateTime": "2025-12-15T19:34:21.300075Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

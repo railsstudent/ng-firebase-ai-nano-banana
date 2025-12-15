@@ -1,4 +1,4 @@
-import {GenerateVideosConfig} from "@google/genai";
+import {GenerateVideosConfig, GoogleGenAI} from "@google/genai";
 
 export type GenerateVideoRequest = {
   prompt: string;
@@ -7,3 +7,8 @@ export type GenerateVideoRequest = {
   config?: GenerateVideosConfig;
 }
 
+export type AIVideoBucket = {
+  ai: GoogleGenAI;
+  model: string;
+  storageBucket: string;
+}

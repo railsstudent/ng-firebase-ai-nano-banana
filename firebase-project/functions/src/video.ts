@@ -1,6 +1,6 @@
 import {GenerateVideosParameters, GoogleGenAI} from "@google/genai";
 import express from "express";
-import {GenerateVideoRequest} from "./types/video.type";
+import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
 import {validate} from "./validate";
 
 process.loadEnvFile();
@@ -36,10 +36,10 @@ function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Res
     return;
   }
 
-  const geminiVideoModelName = validate(process.env.GEMINI_VIDEO_MODEL_NAME,
+  const model = validate(process.env.GEMINI_VIDEO_MODEL_NAME,
     "Gemini Video Model Name", response
   );
-  if (!geminiVideoModelName) {
+  if (!model) {
     return;
   }
 
@@ -55,10 +55,12 @@ function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Res
   }
 
   return {
-    project,
-    location,
-    vertexai: vertexai.toLowerCase() === "true",
-    geminiVideoModelName,
+    genAIOptions: {
+      project,
+      location,
+      vertexai: vertexai.toLowerCase() === "true",
+    },
+    model,
     storageBucket,
   };
 }
@@ -75,20 +77,12 @@ export async function generateVideoFunction(request: express.Request, response: 
     return;
   }
 
-  const {project, location, vertexai, geminiVideoModelName, storageBucket} = variables;
+  const {genAIOptions, model, storageBucket} = variables;
 
   try {
     // Video generation logic using Vertex AI would go here
-    const ai = new GoogleGenAI({
-      vertexai,
-      project,
-      location,
-    });
-    const uri = await generateBase64Video(ai,
-      geminiVideoModelName,
-      storageBucket,
-      request.body as GenerateVideoRequest
-    );
+    const ai = new GoogleGenAI(genAIOptions);
+    const uri = await generateBase64Video({ai, model, storageBucket}, request.body as GenerateVideoRequest);
     response.status(200).send(JSON.stringify({uri}));
   } catch (error) {
     console.error("Error generating video:", error);
@@ -99,16 +93,12 @@ export async function generateVideoFunction(request: express.Request, response: 
 
 /**
  *
- * @param {GoogleGenAI} ai      GenAI instance
- * @param {string} model    Gemini video model name
- * @param {string} storageBucket    GCS Storage Bucket name
+ * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {string} request    Generate  Video Request
  * @return {string} video btyes in base64 format
  */
 async function generateVideoByPolling(
-  ai: GoogleGenAI,
-  model: string,
-  storageBucket: string,
+  { ai, model, storageBucket }: AIVideoBucket,
   request: GenerateVideoRequest,
 ) {
   const genVideosParams: GenerateVideosParameters = {
@@ -125,7 +115,7 @@ async function generateVideoByPolling(
     },
   };
 
-  return getVideoBytes(ai, genVideosParams, pollingPeriod);
+  return getVideoUri(ai, genVideosParams, pollingPeriod);
 }
 
 /**
@@ -151,20 +141,13 @@ function constructVideoArguments(imageParams: GenerateVideoRequest) {
 
 /**
  *
- * @param {GoogleGenAI} ai      GenAI instance
- * @param {string} model    Gemini video model name
- * @param {string} storageBucket    GCS Storage Bucket name
+ * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {GenerateVideoRequest} imageParams    Generate  Video Request
  * @return {string} video btyes in base64 format
  */
-async function generateBase64Video(
-  ai: GoogleGenAI,
-  model: string,
-  storageBucket: string,
-  imageParams: GenerateVideoRequest,
-) {
+async function generateBase64Video(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
   const args = constructVideoArguments(imageParams);
-  return generateVideoByPolling(ai, model, storageBucket, args);
+  return generateVideoByPolling(aiVideo, args);
 }
 
 /**
@@ -174,7 +157,7 @@ async function generateBase64Video(
  * @param {number} pollingPeriod    Polling period in milliseconds
  * @return {string} video btyes in base64 format
  */
-async function getVideoBytes(
+async function getVideoUri(
   ai: GoogleGenAI,
   genVideosParams: GenerateVideosParameters,
   pollingPeriod: number,

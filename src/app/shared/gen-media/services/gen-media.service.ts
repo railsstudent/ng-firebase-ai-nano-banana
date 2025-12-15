@@ -44,8 +44,8 @@ export class GenMediaService {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
 
-      const videoBytes = await this.geminiService.generateVideo(imageParams);
-      this.videoUrl.set(videoBytes);
+      const videoUrl = await this.geminiService.downloadVideoAsBase64(imageParams);
+      this.videoUrl.set(videoUrl);
     } catch (e) {
       console.error(e);
       const errMsg = e instanceof Error ?

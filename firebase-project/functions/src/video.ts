@@ -101,6 +101,7 @@ export async function generateVideoFunction(request: express.Request, response: 
  *
  * @param {GoogleGenAI} ai      GenAI instance
  * @param {string} model    Gemini video model name
+ * @param {string} storageBucket    GCS Storage Bucket name
  * @param {string} request    Generate  Video Request
  * @return {string} video btyes in base64 format
  */
@@ -152,6 +153,7 @@ function constructVideoArguments(imageParams: GenerateVideoRequest) {
  *
  * @param {GoogleGenAI} ai      GenAI instance
  * @param {string} model    Gemini video model name
+ * @param {string} storageBucket    GCS Storage Bucket name
  * @param {GenerateVideoRequest} imageParams    Generate  Video Request
  * @return {string} video btyes in base64 format
  */

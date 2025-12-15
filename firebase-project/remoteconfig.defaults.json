@@ -1,11 +1,8 @@
 {
-  "geminiModelName": "gemini-3-pro-preview",
   "thinkingBudget": "512",
+  "geminiModelName": "gemini-3-pro-preview",
   "isVeo31Used": "true",
   "geminiImageModelName": "gemini-3-pro-image-preview",
   "includeThoughts": "true",
-  "geminiVideoModelName": "veo-3.1-fast-generate-001",
-  "pollingPeriod": "10000",
-  "glassBottleSouvenirTemplateId": "glass-bottle-souvenir-v0-0-1",
-  "vertexAILocation": "global"
+  "glassBottleSouvenirTemplateId": "glass-bottle-souvenir-v0-0-1"
 }

@@ -1,4 +1,26 @@
-# NgFirebaseAiNanoBanana
+# Firebase CLI
+
+## Install firebase tools
+
+```bash
+npm install -g firebase-tools
+```
+
+## Firebase Authentication
+
+```bash
+firebase logout
+firebase login 
+```
+
+## Start Firebase Emulator Suite
+
+- Storage Emulator requires Java 21 or above
+
+```bash
+cd functions
+npm run serve  # start Functions and Storage emulator
+```
 
 ## Firebase AI Logic Setup
 
@@ -7,15 +29,18 @@
 - Enable Gemini API and Vertex AI
 - Enable AI Monitoring
 - Add Firebase AI Logic Web App to the project.
-- Enable AppCheck in Firebase AI Logic
 
-## Start Firebase Emulator Suite
+## Environment Setup
+
+- Copy `.env.example` to `.env`
+- Replace the placeholders with the Firebase AI Logic configuration
+
+## Generate a Firebase Configuration and Start Server
 
 ```bash
-cd reibase-project/functions
-npm run serve
+chmod a+x ./cli.js
+npm start
 ```
-
 
 - Run the script to generate the Firebase configuration object in the `src/app/firebase.json` file.
 - The server runs at `http://localhost:4200/`. 
@@ -23,6 +48,13 @@ npm run serve
 - Start the server
 
 ## Development server
+
+Perform a one-off operation to generate the Firebase configuration object.
+
+```bash
+chmod a+x ./cli.js
+node ./cli.js
+```
 
 To start a local development server, run:
 

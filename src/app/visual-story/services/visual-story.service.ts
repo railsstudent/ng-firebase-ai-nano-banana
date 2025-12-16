@@ -1,5 +1,5 @@
+import { GenerateVideoFromFramesRequest } from '@/shared-libs/video.type';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
-import { GenerateVideoFromFramesRequest } from '@/shared/gen-media/types/video-params.type';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
 import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';

@@ -1,7 +1,7 @@
+import { GenerateVideoRequest } from '@/shared-libs/video.type';
 import { inject, Injectable } from '@angular/core';
 import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import { GenerateVideoRequest } from '../types/generate-video.type';
 import { ConfigService } from './config.service';
 
 @Injectable({

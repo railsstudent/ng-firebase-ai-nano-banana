@@ -4,8 +4,9 @@ import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
 
 /**
  *
- * @param {express.Request} data      Generate video request object
- * @return {void} write the video bytes to the response or an error message
+ * @param {GenerateVideoRequest} data      Generate video request object
+ * @return {Promise<string>} the GCS uri of a video
+ * @throws {Error} If configuration is invalid or video generation fails.
  */
 export async function generateVideoFunction(data: GenerateVideoRequest) {
   const variables = validateVideoConfigFields();

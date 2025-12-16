@@ -5,7 +5,8 @@ import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
 /**
  *
  * @param {GenerateVideoFromFramesRequest} data Generate video from frames object
- * @return {void} write the video bytes to the response or an error message
+ * @return {Promise<string>} the GCS uri of a video
+ * @throws {Error} If configuration is invalid or video generation fails.
  */
 export async function generateVideoFromFramesFunction(data: GenerateVideoFromFramesRequest) {
   const variables = validateVideoConfigFields();
@@ -54,7 +55,7 @@ function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVide
 /**
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {GenerateVideoRequest} imageParams    Generate Video from Frames Request
+ * @param {GenerateVideoFromFramesRequest} imageParams    Generate Video from Frames Request
  * @return {string} video uri
  */
 async function interpolateVideo(aiVideo: AIVideoBucket, imageParams: GenerateVideoFromFramesRequest) {

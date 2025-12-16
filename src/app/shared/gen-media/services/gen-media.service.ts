@@ -1,12 +1,11 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
-import { GenerateVideoRequest } from '@/ai/types/generate-video.type';
 import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
+import { GenerateVideoFromFramesRequest, GenerateVideoRequest } from '@/shared-libs/video.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
-import { GenerateVideoFromFramesRequest } from '../types/video-params.type';
 
 @Injectable({
   providedIn: 'root'

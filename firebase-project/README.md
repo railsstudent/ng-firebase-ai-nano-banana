@@ -15,60 +15,17 @@ firebase login
 
 ## Start Firebase Emulator Suite
 
-- Storage Emulator requires Java 21 or above
+- Storage Emulator requires Java 21 or above.
+
+- Connect to the Cloud Storage for Firebase emulator when the FIREBASE_STORAGE_EMULATOR_HOST environment variable is set:
+
+```bash
+export FIREBASE_STORAGE_EMULATOR_HOST="127.0.0.1:9199"
+```
 
 ```bash
 cd functions
 npm run serve  # start Functions and Storage emulator
 ```
 
-## Firebase AI Logic Setup
-
-- Set up a new project in Firebase Console [https://console.firebase.google.com/](https://console.firebase.google.com/)  
-
-- Enable Gemini API and Vertex AI
-- Enable AI Monitoring
-- Add Firebase AI Logic Web App to the project.
-
-## Environment Setup
-
-- Copy `.env.example` to `.env`
-- Replace the placeholders with the Firebase AI Logic configuration
-
-## Generate a Firebase Configuration and Start Server
-
-```bash
-chmod a+x ./cli.js
-npm start
-```
-
-- Run the script to generate the Firebase configuration object in the `src/app/firebase.json` file.
-- The server runs at `http://localhost:4200/`. 
-
-- Start the server
-
-## Development server
-
-Perform a one-off operation to generate the Firebase configuration object.
-
-```bash
-chmod a+x ./cli.js
-node ./cli.js
-```
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Production Build
-
-```bash
-npm run build
-serve dist
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:3000/` to try the production build.
+Once the Firebase Emulator Suite is running, open your browser and navigate to `http://127.0.0.1:4000/` to try the emulators.

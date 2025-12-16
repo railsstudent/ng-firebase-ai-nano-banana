@@ -79,7 +79,7 @@ export class VisualStoryService {
       return this.genMediaService.generateVideoFromFrames(request);
     } catch (e) {
       console.error(e);
-      return Promise.resolve('');
+      throw e;
     }
   }
 }

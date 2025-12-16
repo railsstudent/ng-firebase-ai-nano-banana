@@ -11,7 +11,9 @@ import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
 import {getFirebaseConfigFunction} from "./firebase";
 
-setGlobalOptions({maxInstances: 2, region: "asia-east1"});
+process.loadEnvFile();
+
+setGlobalOptions({maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || 'us-central1'});
 
 export const getFirebaseConfig = onRequest( {cors: true},
   (request, response) => {

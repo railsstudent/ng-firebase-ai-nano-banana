@@ -1,10 +1,10 @@
 {
   "parameters": {
-    "vertexAILocation": {
+    "functionRegion": {
       "defaultValue": {
-        "value": "global"
+        "value": "asia-east1"
       },
-      "description": "Location of Firebase AI Logic VertexAI Backend ",
+      "description": "Location where the functions are deployed",
       "valueType": "STRING"
     },
     "thinkingBudget": {
@@ -42,17 +42,38 @@
       "description": "Whether or notNano Banana Pro generates thinking summaries",
       "valueType": "STRING"
     },
+    "functionEmulatorHost": {
+      "defaultValue": {
+        "value": "localhost"
+      },
+      "description": "Function emulator host",
+      "valueType": "STRING"
+    },
     "glassBottleSouvenirTemplateId": {
       "defaultValue": {
         "value": "glass-bottle-souvenir-v0-0-1"
       },
       "description": "Glass bottle souvenir template id",
       "valueType": "STRING"
+    },
+    "vertexAILocation": {
+      "defaultValue": {
+        "value": "global"
+      },
+      "description": "Location of Firebase AI Logic VertexAI Backend ",
+      "valueType": "STRING"
+    },
+    "functionEmulatorPort": {
+      "defaultValue": {
+        "value": "5001"
+      },
+      "description": "Function emulator port number",
+      "valueType": "NUMBER"
     }
   },
   "version": {
-    "versionNumber": "19",
-    "updateTime": "2025-12-15T19:34:21.300075Z",
+    "versionNumber": "24",
+    "updateTime": "2025-12-16T09:32:21.168942Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

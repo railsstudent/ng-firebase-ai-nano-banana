@@ -4,7 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
-import { fetchAndActivate, getRemoteConfig } from 'firebase/remote-config';
+import { connectFunctionsEmulator, Functions, getFunctions } from "firebase/functions";
+import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'firebase/remote-config';
 import { lastValueFrom } from 'rxjs';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
@@ -36,9 +37,22 @@ export async function bootstrapFirebase() {
         isTokenAutoRefreshEnabled: true,
       });
 
-      configService.loadConfig(firebaseApp, remoteConfig);
+      const functionRegion = getValue(remoteConfig, 'functionRegion').asString();
+      const functions = getFunctions(firebaseApp, functionRegion);
+      connectEmulators(functions, remoteConfig);
+
+      configService.loadConfig(firebaseApp, remoteConfig, functions);
     } catch (err) {
       console.error('Remote Config fetch failed', err);
       throw err;
     }
 }
+
+function connectEmulators(functions: Functions, remoteConfig: RemoteConfig) {
+  if (location.hostname === 'localhost') {
+    const host = getValue(remoteConfig, 'functionEmulatorHost').asString();
+    const port = getValue(remoteConfig, 'functionEmulatorPort').asNumber();
+    connectFunctionsEmulator(functions, host, port);
+  }
+}
+

@@ -1,34 +1,40 @@
-import config from '@/firebase-project/config.json';
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import { catchError, lastValueFrom, map, throwError } from 'rxjs';
 import { GenerateVideoRequest } from '../types/generate-video.type';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeminiService {
-  private readonly http = inject(HttpClient);
   private readonly storage = getStorage();
+  private readonly configService = inject(ConfigService);
 
-  async retrieveVideoUri(request: GenerateVideoRequest, endpoint='videos-generateVideo'): Promise<string> {
-    const uri$ = this.http.post<{ uri: string }>(
-      `${config.appUrl}/${endpoint}`, request
-    )
-      .pipe(
-        map(response => response.uri),
-        catchError((err) => {
-          console.error(err);
-          return throwError(() => err)
-        })
+  async retrieveVideoUri(request: GenerateVideoRequest, methodName: string): Promise<string> {
+    try {
+      const functions = this.configService.functions;
+      if (!functions) {
+        throw new Error('Functions does not exist.');
+      }
+
+      const downloadGcsUri = httpsCallable<GenerateVideoRequest, string>(
+        functions, methodName
       );
-
-    return lastValueFrom(uri$);
+      const { data: gcsUri } = await downloadGcsUri(request);
+      return gcsUri;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
   }
 
-  async downloadVideoAsBase64(request: GenerateVideoRequest): Promise<string> {
-    const gcsUri = await this.retrieveVideoUri(request);
+  async downloadVideoAsUrl(request: GenerateVideoRequest, methodName='videos-generateVideo'): Promise<string> {
+    const gcsUri = await this.retrieveVideoUri(request, methodName);
+
+    if (!gcsUri) {
+      throw new Error('Video operation completed but no URI was returned.');
+    }
 
     return getDownloadURL(ref(this.storage, gcsUri))
       .then((url) => {

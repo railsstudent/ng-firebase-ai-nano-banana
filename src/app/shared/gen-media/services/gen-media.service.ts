@@ -5,7 +5,6 @@ import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
-import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 import { GenerateVideoFromFramesRequest } from '../types/video-params.type';
 
@@ -16,7 +15,6 @@ export class GenMediaService {
   private readonly document = inject(DOCUMENT);
   private readonly geminiService = inject(GeminiService);
   private readonly firebaseService = inject(FirebaseService);
-  private readonly storage = getStorage();
 
   videoError = signal('');
   videoUrl = signal('');
@@ -47,7 +45,7 @@ export class GenMediaService {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
 
-      const videoUrl = await this.geminiService.downloadVideoAsBase64(imageParams);
+      const videoUrl = await this.geminiService.downloadVideoAsUrl(imageParams);
       this.videoUrl.set(videoUrl);
     } catch (e) {
       console.error(e);
@@ -117,7 +115,7 @@ export class GenMediaService {
         }),
         tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
         groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
-        thinkingSummaries: acc.thinkingSummaries.concat(thinkingSummary),
+        thinkingSummaries: thinkingSummary ? acc.thinkingSummaries.concat(thinkingSummary) : acc.thinkingSummaries,
       };
     }, DEFAULT_IMAGES_TOKEN_USAGE)
   }
@@ -142,28 +140,7 @@ export class GenMediaService {
   }
 
   async generateVideoFromFrames(request: GenerateVideoFromFramesRequest): Promise<string> {
-    const gcsUri = await this.geminiService.retrieveVideoUri(request, 'videos-interpolateVideo');
-
-    return getDownloadURL(ref(this.storage, gcsUri))
-      .then((url) => {
-        console.log("download url", url);
-        return url;
-      })
-      .catch((error) => {
-        // A full list of error codes is available at
-        // https://firebase.google.com/docs/storage/web/handle-errors
-        switch (error.code) {
-          case 'storage/object-not-found':
-            throw new Error("File doesn't exist");
-          case 'storage/unauthorized':
-            throw new Error("User doesn't have permission to access the object");
-          case 'storage/canceled':
-            throw new Error("User canceled the upload");
-          case 'storage/unknown':
-            throw new Error("Unknown storage error occurred, inspect the server response");
-        }
-        throw new Error("Unknown error occurred");
-      });
+    return this.geminiService.downloadVideoAsUrl(request, 'videos-interpolateVideo');
   }
 
 }

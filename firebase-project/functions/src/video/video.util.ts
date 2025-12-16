@@ -1,55 +1,47 @@
 import {GenerateVideosParameters, GoogleGenAI} from "@google/genai";
-import express from "express";
 import {AIVideoBucket, GenerateVideoRequest} from "../types/video.type";
 import {validate} from "../validate";
 
 /**
  *
- * @param {NodeJS.ProcessEnv} env         a dicitonary of environment variables
- * @param {express.Response} response    express response object
  * @return {object} an object containing validated environment variables or undefined if validation fails
  */
-export function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
+export function validateVideoConfigFields() {
   process.loadEnvFile();
 
-  const isVeo31Used = (process.env.IS_VEO31_USED || "false") === "true";
-  const pollingPeriod = Number(process.env.POLLING_PERIOD_MS || "10000");
+  const env = process.env;
+  const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
+  const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
 
-  const project = validate(process.env.GCLOUD_PROJECT,
-    "Google Cloud Project Id", response);
+  const project = validate(env.GCLOUD_PROJECT,"Google Cloud Project Id");
 
   if (!project) {
     return;
   }
 
-  const location = validate(process.env.GOOGLE_CLOUD_LOCATION,
-    "Vertex Location", response);
+  const location = validate(env.GOOGLE_CLOUD_LOCATION,"Vertex Location");
 
   if (!location) {
     return;
   }
 
-  const vertexai = validate(process.env.GOOGLE_GENAI_USE_VERTEXAI,
-    "Use Vertex AI", response
-  );
+  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI,"Use Vertex AI");
   if (!vertexai) {
     return;
   }
 
-  const model = validate(process.env.GEMINI_VIDEO_MODEL_NAME,
-    "Gemini Video Model Name", response
-  );
+  const model = validate(env.GEMINI_VIDEO_MODEL_NAME,"Gemini Video Model Name");
   if (!model) {
     return;
   }
 
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", response);
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config");
   if (!strFirebaseConfig) {
     return;
   }
 
   const firebaseConfig = JSON.parse(strFirebaseConfig);
-  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", response);
+  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket");
   if (!storageBucket) {
     return;
   }
@@ -124,6 +116,7 @@ async function getVideoUri(
   }
 
   if (uri) {
+    console.log("video uri", uri);
     return uri;
   }
 

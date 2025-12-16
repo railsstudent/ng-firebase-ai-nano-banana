@@ -1,24 +1,28 @@
-import {onRequest} from "firebase-functions/https";
+import {onCall} from "firebase-functions/https";
 import {generateVideoFunction} from "./generate-video";
 import {generateVideoFromFramesFunction} from "./interpolate-video-by-frames";
+import {GenerateVideoFromFramesRequest, GenerateVideoRequest} from "../types/video.type";
 
-export const generateVideo = onRequest( {cors: true},
-  (request, response) => {
-    if (request.method !== "POST") {
-      response.status(405).send("Method Not Allowed");
-      return;
+export const generateVideo = onCall( {cors: true, enforceAppCheck: true},
+  ({data, app}) => {
+    const videoRequest = data as GenerateVideoRequest;
+    const appId = process.env?.APP_ID || "";
+    if (app?.appId && app?.appId === appId) {
+      return generateVideoFunction(videoRequest);
     }
 
-    generateVideoFunction(request, response);
+    throw new Error("App Check failed");
   }
 );
 
-export const interpolateVideo = onRequest( {cors: true},
-  (request, response) => {
-    if (request.method !== "POST") {
-      response.status(405).send("Method Not Allowed");
-      return;
+export const interpolateVideo = onCall( {cors: true, enforceAppCheck: true, timeoutSeconds: 180},
+  ({data, app}) => {
+    const videoRequest = data as GenerateVideoFromFramesRequest;
+    const appId = process.env?.APP_ID || "";
+    if (app?.appId && app?.appId === appId) {
+      return generateVideoFromFramesFunction(videoRequest);
     }
-    generateVideoFromFramesFunction(request, response);
+
+    throw new Error("App Check failed");
   }
 );

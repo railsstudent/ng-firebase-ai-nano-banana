@@ -1,19 +1,16 @@
 import {GoogleGenAI} from "@google/genai";
-import express from "express";
 import {AIVideoBucket, GenerateVideoRequest} from "../types/video.type";
 import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
 
-
 /**
  *
- * @param {express.Request} request      express request object
- * @param {express.Response} response    express response object
+ * @param {express.Request} data      Generate video request object
  * @return {void} write the video bytes to the response or an error message
  */
-export async function generateVideoFunction(request: express.Request, response: express.Response) {
-  const variables = validateVideoConfigFields(process.env, response);
+export async function generateVideoFunction(data: GenerateVideoRequest) {
+  const variables = validateVideoConfigFields();
   if (!variables) {
-    return;
+    return '';
   }
 
   const {genAIOptions, aiVideoOptions} = variables;
@@ -21,12 +18,10 @@ export async function generateVideoFunction(request: express.Request, response: 
   try {
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    const uri = await generateBase64Video({ai, ...aiVideoOptions}, request.body as GenerateVideoRequest);
-    response.status(200).send(JSON.stringify({uri}));
+    return await generateBase64Video({ai, ...aiVideoOptions}, data);
   } catch (error) {
     console.error("Error generating video:", error);
-    response.status(500).send("Error generating video");
-    return;
+    throw new Error("Error generating video");
   }
 }
 

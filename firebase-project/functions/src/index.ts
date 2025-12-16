@@ -24,4 +24,4 @@ export const getFirebaseConfig = onRequest( {cors: true},
   }
 );
 
-exports.videos = require('./video');
+exports.videos = require("./video");

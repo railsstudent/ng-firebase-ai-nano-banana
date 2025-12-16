@@ -12,9 +12,9 @@ export class GeminiService {
   private readonly http = inject(HttpClient);
   private readonly storage = getStorage();
 
-  private async retrieveVideoUri(request: GenerateVideoRequest): Promise<string> {
+  async retrieveVideoUri(request: GenerateVideoRequest, endpoint='videos-generateVideo'): Promise<string> {
     const uri$ = this.http.post<{ uri: string }>(
-      `${config.appUrl}/videos-generateVideo`, request
+      `${config.appUrl}/${endpoint}`, request
     )
       .pipe(
         map(response => response.uri),

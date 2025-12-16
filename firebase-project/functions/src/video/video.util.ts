@@ -1,12 +1,7 @@
 import {GenerateVideosParameters, GoogleGenAI} from "@google/genai";
 import express from "express";
-import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
-import {validate} from "./validate";
-
-process.loadEnvFile();
-
-const isVeo31Used = (process.env.IS_VEO31_USED || "false") === "true";
-const pollingPeriod = Number(process.env.POLLING_PERIOD_MS || "10000");
+import {AIVideoBucket, GenerateVideoRequest} from "../types/video.type";
+import {validate} from "../validate";
 
 /**
  *
@@ -14,7 +9,12 @@ const pollingPeriod = Number(process.env.POLLING_PERIOD_MS || "10000");
  * @param {express.Response} response    express response object
  * @return {object} an object containing validated environment variables or undefined if validation fails
  */
-function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
+export function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
+  process.loadEnvFile();
+
+  const isVeo31Used = (process.env.IS_VEO31_USED || "false") === "true";
+  const pollingPeriod = Number(process.env.POLLING_PERIOD_MS || "10000");
+
   const project = validate(process.env.GCLOUD_PROJECT,
     "Google Cloud Project Id", response);
 
@@ -60,35 +60,13 @@ function validateVideoConfigFields(env: NodeJS.ProcessEnv, response: express.Res
       location,
       vertexai: vertexai.toLowerCase() === "true",
     },
-    model,
-    storageBucket,
+    aiVideoOptions: {
+      model,
+      storageBucket,
+      isVeo31Used,
+      pollingPeriod,
+    },
   };
-}
-
-/**
- *
- * @param {express.Request} request      express request object
- * @param {express.Response} response    express response object
- * @return {void} write the video bytes to the response or an error message
- */
-export async function generateVideoFunction(request: express.Request, response: express.Response) {
-  const variables = validateVideoConfigFields(process.env, response);
-  if (!variables) {
-    return;
-  }
-
-  const {genAIOptions, model, storageBucket} = variables;
-
-  try {
-    // Video generation logic using Vertex AI would go here
-    const ai = new GoogleGenAI(genAIOptions);
-    const uri = await generateBase64Video({ai, model, storageBucket}, request.body as GenerateVideoRequest);
-    response.status(200).send(JSON.stringify({uri}));
-  } catch (error) {
-    console.error("Error generating video:", error);
-    response.status(500).send("Error generating video");
-    return;
-  }
 }
 
 /**
@@ -97,8 +75,8 @@ export async function generateVideoFunction(request: express.Request, response: 
  * @param {string} request    Generate  Video Request
  * @return {string} video btyes in base64 format
  */
-async function generateVideoByPolling(
-  {ai, model, storageBucket}: AIVideoBucket,
+export async function generateVideoByPolling(
+  {ai, model, storageBucket, pollingPeriod}: AIVideoBucket,
   request: GenerateVideoRequest,
 ) {
   const genVideosParams: GenerateVideosParameters = {
@@ -116,38 +94,6 @@ async function generateVideoByPolling(
   };
 
   return getVideoUri(ai, genVideosParams, pollingPeriod);
-}
-
-/**
- *
- * @param {string} imageParams    Generate  Video Request
- * @return {GenerateVideoRequest} augmented video request
- */
-function constructVideoArguments(imageParams: GenerateVideoRequest) {
-  const veoConfig = isVeo31Used ? {
-    aspectRatio: "16:9",
-    resolution: "720p",
-  } : {
-    aspectRatio: "16:9",
-  };
-
-  return {
-    prompt: imageParams.prompt,
-    imageBytes: imageParams.imageBytes,
-    mimeType: imageParams.mimeType,
-    config: veoConfig,
-  };
-}
-
-/**
- *
- * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {GenerateVideoRequest} imageParams    Generate  Video Request
- * @return {string} video btyes in base64 format
- */
-async function generateBase64Video(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
-  const args = constructVideoArguments(imageParams);
-  return generateVideoByPolling(aiVideo, args);
 }
 
 /**

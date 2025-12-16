@@ -1,11 +1,13 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { GeminiService } from '@/ai/services/gemini.service';
+import { GenerateVideoRequest } from '@/ai/types/generate-video.type';
 import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
-import { GenerateVideoRequestImageParams } from '../types/video-params.type';
+import { GenerateVideoFromFramesRequest } from '../types/video-params.type';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,7 @@ export class GenMediaService {
   private readonly document = inject(DOCUMENT);
   private readonly geminiService = inject(GeminiService);
   private readonly firebaseService = inject(FirebaseService);
+  private readonly storage = getStorage();
 
   videoError = signal('');
   videoUrl = signal('');
@@ -39,7 +42,7 @@ export class GenMediaService {
       this.document.body.removeChild(link);
   }
 
-  async generateVideo(imageParams: GenerateVideoRequestImageParams): Promise<void> {
+  async generateVideo(imageParams: GenerateVideoRequest): Promise<void> {
     try {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
@@ -138,28 +141,29 @@ export class GenMediaService {
     };
   }
 
-  // async generateVideoFromFrames(imageParams: GenerateVideoFromFramesRequest): Promise<VideoResponse> {
-  //   const isVeo31Used = imageParams.isVeo31Used || false;
-  //   try {
-  //     const loadVideoPromise = isVeo31Used ?
-  //       this.geminiService.generateVideo({
-  //         ...imageParams,
-  //         config: {
-  //           aspectRatio: '16:9',
-  //           resolution: "720p",
-  //           lastFrame: {
-  //             imageBytes: imageParams.lastFrameImageBytes,
-  //             mimeType: imageParams.lastFrameMimeType
-  //           }
-  //         }
-  //     }) :
-  //       this.getFallbackVideoUrl(imageParams);
+  async generateVideoFromFrames(request: GenerateVideoFromFramesRequest): Promise<string> {
+    const gcsUri = await this.geminiService.retrieveVideoUri(request, 'videos-interpolateVideo');
 
-  //     return await loadVideoPromise;
-  //   } catch (e) {
-  //     throw e instanceof Error ?
-  //       e :
-  //       new Error('An unexpected error occurred in video generation using the first and last frames.');
-  //   }
-  // }
+    return getDownloadURL(ref(this.storage, gcsUri))
+      .then((url) => {
+        console.log("download url", url);
+        return url;
+      })
+      .catch((error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            throw new Error("File doesn't exist");
+          case 'storage/unauthorized':
+            throw new Error("User doesn't have permission to access the object");
+          case 'storage/canceled':
+            throw new Error("User canceled the upload");
+          case 'storage/unknown':
+            throw new Error("Unknown storage error occurred, inspect the server response");
+        }
+        throw new Error("Unknown error occurred");
+      });
+  }
+
 }

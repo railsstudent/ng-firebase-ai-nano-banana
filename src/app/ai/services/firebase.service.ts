@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ChatSession, GenerativeModel, Part } from 'firebase/ai';
-import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ImageTokenUsage } from '../types/image-response.type';
 import { getBase64EncodedString, resolveImageParts } from '../utils/inline-image-data.util';
 import { constructCitations, getTokenUsage } from '../utils/reponse-metadata.util';
@@ -40,7 +40,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
   providedIn: 'root'
 })
 export class FirebaseService  {
-    private readonly geminiModel = inject(NANO_BANANA_MODEL);
+    private readonly geminiModel = inject(GEMINI_IMAGE_MODEL);
 
     async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage> {
         try {

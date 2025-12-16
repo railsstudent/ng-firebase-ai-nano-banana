@@ -1,7 +1,7 @@
 import { inject, makeEnvironmentProviders } from '@angular/core';
 import { getAI, getGenerativeModel, ModelParams, VertexAIBackend } from 'firebase/ai';
 import { getValue } from 'firebase/remote-config';
-import { NANO_BANANA_MODEL } from '../constants/firebase.constant';
+import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
 function getGenerativeAIModel(configService: ConfigService) {
@@ -38,7 +38,7 @@ function getGenerativeAIModel(configService: ConfigService) {
 export function provideFirebase() {
     return makeEnvironmentProviders([
         {
-            provide: NANO_BANANA_MODEL,
+            provide: GEMINI_IMAGE_MODEL,
             useFactory: () => {
               const configService = inject(ConfigService);
 

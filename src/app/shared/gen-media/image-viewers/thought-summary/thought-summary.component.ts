@@ -12,7 +12,7 @@ import { TokenUsageComponent } from './token-usage/token-usage.component';
   template: `
     <div class="w-full mt-6 flex flex-col">
       <app-token-usage [tokenUsage]="tokenUsage()" />
-      <app-google-search-suggestions [groundingMetadata]="groundingMetadata()" />
+      <app-grounding [groundingMetadata]="groundingMetadata()" />
       @let thoughts = htmlThoughts();
       @if (thoughts && thoughts.length > 0) {
         <div>

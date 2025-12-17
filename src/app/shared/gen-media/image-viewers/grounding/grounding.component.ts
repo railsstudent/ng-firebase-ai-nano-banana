@@ -3,7 +3,7 @@ import { afterRenderEffect, ChangeDetectionStrategy, Component, computed, Elemen
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-google-search-suggestions',
+  selector: 'app-grounding',
   templateUrl: './grounding.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

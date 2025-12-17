@@ -1,31 +1,17 @@
 {
   "parameters": {
-    "functionRegion": {
-      "defaultValue": {
-        "value": "asia-east1"
-      },
-      "description": "Location where the functions are deployed",
-      "valueType": "STRING"
-    },
     "thinkingBudget": {
       "defaultValue": {
         "value": "512"
       },
       "description": "Thinking budget of Nano Banana Pro",
-      "valueType": "STRING"
+      "valueType": "NUMBER"
     },
     "geminiModelName": {
       "defaultValue": {
         "value": "gemini-3-pro-preview"
       },
       "description": "Germini Model Name",
-      "valueType": "STRING"
-    },
-    "isVeo31Used": {
-      "defaultValue": {
-        "value": "true"
-      },
-      "description": "Enable to use Veo 3.1 video model",
       "valueType": "STRING"
     },
     "geminiImageModelName": {
@@ -40,7 +26,7 @@
         "value": "true"
       },
       "description": "Whether or notNano Banana Pro generates thinking summaries",
-      "valueType": "STRING"
+      "valueType": "BOOLEAN"
     },
     "functionEmulatorHost": {
       "defaultValue": {
@@ -69,11 +55,18 @@
       },
       "description": "Function emulator port number",
       "valueType": "NUMBER"
+    },
+    "functionRegion": {
+      "defaultValue": {
+        "value": "asia-east2"
+      },
+      "description": "Location where the functions are deployed",
+      "valueType": "STRING"
     }
   },
   "version": {
-    "versionNumber": "24",
-    "updateTime": "2025-12-16T09:32:21.168942Z",
+    "versionNumber": "29",
+    "updateTime": "2025-12-17T15:02:04.398145Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

@@ -2,8 +2,9 @@ import {onCall} from "firebase-functions/https";
 import {generateVideoFunction} from "./generate-video";
 import {generateVideoFromFramesFunction} from "./interpolate-video-by-frames";
 
+const cors = process.env.WHITELIST ? process.env.WHITELIST : true;
 const options = {
-  cors: true,
+  cors,
   enforceAppCheck: true,
 };
 

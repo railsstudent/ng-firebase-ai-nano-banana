@@ -15,7 +15,10 @@ process.loadEnvFile();
 
 setGlobalOptions({maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || "us-central1"});
 
-export const getFirebaseConfig = onRequest( {cors: true},
+const cors = process.env.WHITELIST ? process.env.WHITELIST : true;
+const whitelist = process.env.WHITELIST?.split(",") || [];
+
+export const getFirebaseConfig = onRequest( {cors},
   (request, response) => {
     if (request.method !== "GET") {
       response.status(405).send("Method Not Allowed");
@@ -30,7 +33,7 @@ export const getFirebaseConfig = onRequest( {cors: true},
         return;
       }
 
-      if (!["http://localhost:4200/"].includes(referer)) {
+      if (!whitelist.includes(referer)) {
         response.status(401).send("Unauthorized");
         return;
       }

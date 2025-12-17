@@ -1,5 +1,5 @@
+import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
 import {GenerateVideosParameters, GoogleGenAI} from "@google/genai";
-import {AIVideoBucket, GenerateVideoRequest} from "../types/video.type";
 import {validate} from "../validate";
 
 /**
@@ -13,24 +13,24 @@ export function validateVideoConfigFields() {
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
   const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
 
-  const project = validate(env.GCLOUD_PROJECT,"Google Cloud Project Id");
+  const project = validate(env.GCLOUD_PROJECT, "Google Cloud Project Id");
 
   if (!project) {
     return;
   }
 
-  const location = validate(env.GOOGLE_CLOUD_LOCATION,"Vertex Location");
+  const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location");
 
   if (!location) {
     return;
   }
 
-  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI,"Use Vertex AI");
+  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI, "Use Vertex AI");
   if (!vertexai) {
     return;
   }
 
-  const model = validate(env.GEMINI_VIDEO_MODEL_NAME,"Gemini Video Model Name");
+  const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name");
   if (!model) {
     return;
   }

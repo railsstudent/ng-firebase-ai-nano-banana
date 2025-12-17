@@ -1,4 +1,4 @@
-import { GenerateVideoFromFramesRequest } from '@/shared-libs/video.type';
+import { GenerateVideoFromFramesRequest } from '@/ai/types/video.type';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal } from '@angular/core';

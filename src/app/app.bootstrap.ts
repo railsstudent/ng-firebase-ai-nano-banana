@@ -1,4 +1,3 @@
-import config from '@/firebase-project/config.json';
 import remoteConfigDefaults from '@/firebase-project/remoteconfig.defaults.json';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
@@ -7,6 +6,7 @@ import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-ch
 import { connectFunctionsEmulator, Functions, getFunctions } from "firebase/functions";
 import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'firebase/remote-config';
 import { lastValueFrom } from 'rxjs';
+import config from '../../public/config.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
 
@@ -39,6 +39,7 @@ export async function bootstrapFirebase() {
 
       const functionRegion = getValue(remoteConfig, 'functionRegion').asString();
       const functions = getFunctions(firebaseApp, functionRegion);
+      console.log('bootstrapFirebase -> functions region', functions.region);
       connectEmulators(functions, remoteConfig);
 
       configService.loadConfig(firebaseApp, remoteConfig, functions);
@@ -52,6 +53,7 @@ function connectEmulators(functions: Functions, remoteConfig: RemoteConfig) {
   if (location.hostname === 'localhost') {
     const host = getValue(remoteConfig, 'functionEmulatorHost').asString();
     const port = getValue(remoteConfig, 'functionEmulatorPort').asNumber();
+    console.log('functionEmulator', `${host}:${port}`);
     connectFunctionsEmulator(functions, host, port);
   }
 }

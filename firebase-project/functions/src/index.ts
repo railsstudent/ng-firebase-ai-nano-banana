@@ -13,7 +13,7 @@ import {getFirebaseConfigFunction} from "./firebase";
 
 process.loadEnvFile();
 
-setGlobalOptions({maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || 'us-central1'});
+setGlobalOptions({maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || "us-central1"});
 
 export const getFirebaseConfig = onRequest( {cors: true},
   (request, response) => {
@@ -26,4 +26,5 @@ export const getFirebaseConfig = onRequest( {cors: true},
   }
 );
 
+// eslint-disable-next-line  @typescript-eslint/no-require-imports
 exports.videos = require("./video");

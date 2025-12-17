@@ -1,7 +1,7 @@
-import { GenerateVideoRequest } from '@/shared-libs/video.type';
 import { inject, Injectable } from '@angular/core';
 import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { GenerateVideoRequest } from '../types/video.type';
 import { ConfigService } from './config.service';
 
 @Injectable({
@@ -18,6 +18,7 @@ export class GeminiService {
         throw new Error('Functions does not exist.');
       }
 
+      console.log('retrieveVideoUri -> functions region', functions.region);
       const downloadGcsUri = httpsCallable<GenerateVideoRequest, string>(
         functions, methodName
       );

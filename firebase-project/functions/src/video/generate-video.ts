@@ -1,5 +1,5 @@
 import {GoogleGenAI} from "@google/genai";
-import {AIVideoBucket, GenerateVideoRequest} from "../types/video.type";
+import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
 import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
 
 /**
@@ -11,7 +11,7 @@ import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
 export async function generateVideoFunction(data: GenerateVideoRequest) {
   const variables = validateVideoConfigFields();
   if (!variables) {
-    return '';
+    return "";
   }
 
   const {genAIOptions, aiVideoOptions} = variables;

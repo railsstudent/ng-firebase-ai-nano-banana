@@ -106,7 +106,7 @@ export class GenMediaService {
     }
 
     return imageTokenUsages.reduce((acc, { image, ...rest }, index) => {
-      const { tokenUsage, metadata, thinkingSummary } = rest;
+      const { tokenUsage, metadata, thoughtSummary } = rest;
       return {
         images: acc.images.concat({
           ...image,
@@ -114,7 +114,7 @@ export class GenMediaService {
         }),
         tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
         groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
-        thinkingSummaries: thinkingSummary ? acc.thinkingSummaries.concat(thinkingSummary) : acc.thinkingSummaries,
+        thoughtSummary: thoughtSummary ? acc.thoughtSummary.concat(thoughtSummary) : acc.thoughtSummary,
       };
     }, DEFAULT_IMAGES_TOKEN_USAGE)
   }

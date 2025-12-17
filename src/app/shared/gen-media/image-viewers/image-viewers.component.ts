@@ -36,7 +36,7 @@ export class ImageViewersComponent {
   handleMediaAction = output<{ action: string, id: number }>();
 
   images = computed(() => this.imagesWithTokenUsage().images);
-  thoughtSummaries = computed(() => this.imagesWithTokenUsage().thinkingSummaries);
+  thoughtSummaries = computed(() => this.imagesWithTokenUsage().thoughtSummary);
   totalTokenUsage = computed(() => this.imagesWithTokenUsage().tokenUsage);
   groundingMetadata = computed(() => this.imagesWithTokenUsage().groundingMetadata);
 

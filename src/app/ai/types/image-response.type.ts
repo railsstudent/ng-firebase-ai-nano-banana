@@ -15,14 +15,14 @@ export type ImageResponse = ImageResponseWithoutId & {
 export type ImagesWithTokenUsage = {
   images: ImageResponse[];
   tokenUsage: TokenUsage;
-  thinkingSummaries: string[];
+  thoughtSummary: string[];
   groundingMetadata: MetadataGroup;
 }
 
 export type ImageTokenUsage = {
   image: ImageResponse,
   tokenUsage: TokenUsage
-  thinkingSummary: string;
+  thoughtSummary: string;
   metadata: Metadata;
 }
 

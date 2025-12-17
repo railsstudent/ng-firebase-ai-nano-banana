@@ -11,7 +11,7 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
   const response = result.response;
   const tokenUsage = getTokenUsage(response.usageMetadata);
   const inlineDataParts = response.inlineDataParts();
-  const thinkingSummary = response.thoughtSummary() || '';
+  const thoughtSummary = response.thoughtSummary() || '';
   const citations = constructCitations(response.candidates?.[0]?.groundingMetadata);
 
   if (inlineDataParts?.length) {
@@ -25,10 +25,14 @@ async function getBase64Images(model: GenerativeModel, parts: Array<string | Par
       };
     });
 
+    if (images.length <= 0) {
+      throw new Error('Error in generating the image.');
+    }
+
     return {
       image: images[0],
       tokenUsage,
-      thinkingSummary,
+      thoughtSummary,
       metadata: citations,
     };
   }

@@ -15,5 +15,5 @@ export const DEFAULT_IMAGES_TOKEN_USAGE: ImagesWithTokenUsage = {
       citations: [],
       renderedContents: []
     } as MetadataGroup,
-    thinkingSummaries: [] as string[]
+    thoughtSummary: [] as string[]
 };

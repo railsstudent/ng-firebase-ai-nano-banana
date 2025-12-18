@@ -15,7 +15,7 @@ process.loadEnvFile();
 
 setGlobalOptions({maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || "us-central1"});
 
-const cors = process.env.WHITELIST ? process.env.WHITELIST : true;
+const cors = process.env.WHITELIST ? process.env.WHITELIST.split(',') : true;
 const whitelist = process.env.WHITELIST?.split(",") || [];
 
 export const getFirebaseConfig = onRequest( {cors},
@@ -27,14 +27,24 @@ export const getFirebaseConfig = onRequest( {cors},
 
     try {
       const referer = request.header("referer");
-      console.log("referer", referer);
+      const origin = request.header("origin");
       if (!referer) {
-        response.status(401).send("Unauthorized");
+        response.status(401).send("Unauthorized, invalid referer.");
         return;
       }
 
       if (!whitelist.includes(referer)) {
-        response.status(401).send("Unauthorized");
+        response.status(401).send("Unauthorized, invalid referer.");
+        return;
+      }
+
+      if (!origin) {
+        response.status(401).send("Unauthorized, invalid origin.");
+        return;
+      }
+
+      if (!whitelist.includes(origin)) {
+        response.status(401).send("Unauthorized, invalid origin.");
         return;
       }
 

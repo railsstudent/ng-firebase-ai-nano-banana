@@ -52,7 +52,7 @@ export const getFirebaseConfig = onRequest( { cors },
       const config = getFirebaseConfigFunction();
 
       response.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
-      response.send(config);
+      response.json(config);
     } catch (err) {
       console.error(err);
       response.status(401).send(err);

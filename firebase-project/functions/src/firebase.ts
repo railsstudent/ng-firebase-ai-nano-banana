@@ -42,7 +42,7 @@ export const getFirebaseConfigFunction = () => {
 
   const variables = validateFirebaseConfigFields(process.env);
   if (!variables) {
-    return;
+    return undefined;
   }
 
   const { recaptchaSiteKey, ...rest } = variables;
@@ -51,10 +51,9 @@ export const getFirebaseConfigFunction = () => {
     ...rest,
     authDomain: `${rest.projectId}.firebaseapp.com`,
   };
-  const config = JSON.stringify({
+
+  return {
     app,
     recaptchaSiteKey,
-  });
-
-  return config;
+  };
 };

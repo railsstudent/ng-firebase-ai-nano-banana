@@ -40,6 +40,7 @@ export class GroundingComponent {
         for (const tag of tags) {
           this.renderer2.setStyle(tag, 'margin-bottom', '0.5rem');
           this.renderer2.setAttribute(tag, 'target', '_blank');
+          this.renderer2.setAttribute(tag, 'rel', 'noopener noreferrer');
         }
       }
     }

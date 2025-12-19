@@ -8,51 +8,22 @@
  */
 
 import logger from "firebase-functions/logger";
-import express from "express";
 import { validate } from "./validate";
 
 /**
  *
  * @param {NodeJS.ProcessEnv} env         a dicitonary of environment variables
- * @param {express.Response} response    express response object
  * @return {object} an object containing validated environment variables or undefined if validation fails
  */
-function validateFirebaseConfigFields(env: NodeJS.ProcessEnv, response: express.Response) {
-  const apiKey = validate(env.APP_API_KEY, "API Key", response);
-  if (!apiKey) {
-    return undefined;
-  }
-
-  const appId = validate(env.APP_ID, "App Id", response);
-  if (!appId) {
-    return undefined;
-  }
-
-  const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID", response);
-  if (!messagingSenderId) {
-    return undefined;
-  }
-
-  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key", response);
-  if (!recaptchaSiteKey) {
-    return undefined;
-  }
-
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", response);
-  if (!strFirebaseConfig) {
-    return undefined;
-  }
-
+function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
+  const apiKey = validate(env.APP_API_KEY, "API Key");
+  const appId = validate(env.APP_ID, "App Id");
+  const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID");
+  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key");
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config");
   const firebaseConfig = JSON.parse(strFirebaseConfig);
-  const projectId = validate(firebaseConfig?.projectId, "Project ID", response);
-  if (!projectId) {
-    return undefined;
-  }
-
-  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", response);
-  if (!storageBucket) {
-    return undefined;
-  }
+  const projectId = validate(firebaseConfig?.projectId, "Project ID");
+  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket");
 
   return {
     apiKey,
@@ -64,12 +35,12 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv, response: express.
   };
 }
 
-export const getFirebaseConfigFunction = (response: express.Response) => {
+export const getFirebaseConfigFunction = () => {
   logger.info("getFirebaseConfig called");
 
   process.loadEnvFile();
 
-  const variables = validateFirebaseConfigFields(process.env, response);
+  const variables = validateFirebaseConfigFields(process.env);
   if (!variables) {
     return;
   }
@@ -85,6 +56,5 @@ export const getFirebaseConfigFunction = (response: express.Response) => {
     recaptchaSiteKey,
   });
 
-  response.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
-  response.send(config);
+  return config;
 };

@@ -49,10 +49,13 @@ export const getFirebaseConfig = onRequest( { cors },
         return;
       }
 
-      getFirebaseConfigFunction(response);
+      const config = getFirebaseConfigFunction();
+
+      response.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
+      response.send(config);
     } catch (err) {
       console.error(err);
-      response.status(401).send("Unauthorized");
+      response.status(401).send(err);
     }
   }
 );

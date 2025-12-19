@@ -1,6 +1,6 @@
-import {AIVideoBucket, GenerateVideoFromFramesRequest} from "./types/video.type";
-import {GoogleGenAI} from "@google/genai";
-import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
+import { AIVideoBucket, GenerateVideoFromFramesRequest } from "./types/video.type";
+import { GoogleGenAI } from "@google/genai";
+import { generateVideoByPolling, validateVideoConfigFields } from "./video.util";
 
 /**
  *
@@ -14,12 +14,12 @@ export async function generateVideoFromFramesFunction(data: GenerateVideoFromFra
     return "";
   }
 
-  const {genAIOptions, aiVideoOptions} = variables;
+  const { genAIOptions, aiVideoOptions } = variables;
 
   try {
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    return await interpolateVideo({ai, ...aiVideoOptions}, data);
+    return await interpolateVideo({ ai, ...aiVideoOptions }, data);
   } catch (error) {
     console.error("Error generating video:", error);
     throw new Error("Error generating video");

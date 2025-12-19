@@ -1,6 +1,6 @@
-import {GoogleGenAI} from "@google/genai";
-import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
-import {generateVideoByPolling, validateVideoConfigFields} from "./video.util";
+import { GoogleGenAI } from "@google/genai";
+import { AIVideoBucket, GenerateVideoRequest } from "./types/video.type";
+import { generateVideoByPolling, validateVideoConfigFields } from "./video.util";
 
 /**
  *
@@ -14,12 +14,12 @@ export async function generateVideoFunction(data: GenerateVideoRequest) {
     return "";
   }
 
-  const {genAIOptions, aiVideoOptions} = variables;
+  const { genAIOptions, aiVideoOptions } = variables;
 
   try {
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    return await generateBase64Video({ai, ...aiVideoOptions}, data);
+    return await generateBase64Video({ ai, ...aiVideoOptions }, data);
   } catch (error) {
     console.error("Error generating video:", error);
     throw new Error("Error generating video");

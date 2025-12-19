@@ -1,4 +1,4 @@
-import {GenerateVideosConfig, GoogleGenAI} from "@google/genai";
+import { GenerateVideosConfig, GoogleGenAI } from "@google/genai";
 
 export type GenerateVideoRequest = {
   prompt: string;

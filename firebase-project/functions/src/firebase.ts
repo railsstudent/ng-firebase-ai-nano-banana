@@ -9,7 +9,7 @@
 
 import logger from "firebase-functions/logger";
 import express from "express";
-import {validate} from "./validate";
+import { validate } from "./validate";
 
 /**
  *
@@ -74,7 +74,7 @@ export const getFirebaseConfigFunction = (response: express.Response) => {
     return;
   }
 
-  const {recaptchaSiteKey, ...rest} = variables;
+  const { recaptchaSiteKey, ...rest } = variables;
   // Construct the Firebase config object
   const app = {
     ...rest,

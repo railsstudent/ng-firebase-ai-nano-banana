@@ -20,7 +20,7 @@ async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
 
 async function loadFirebaseConfig() {
   const httpService = inject(HttpClient);
-  const firebaseConfig$ = httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`)
+  const firebaseConfig$ = httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`);
   const firebaseConfig = await lastValueFrom(firebaseConfig$);
   return firebaseConfig;
 }

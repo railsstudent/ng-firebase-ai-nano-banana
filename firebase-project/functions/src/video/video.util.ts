@@ -1,6 +1,6 @@
-import {AIVideoBucket, GenerateVideoRequest} from "./types/video.type";
-import {GenerateVideosParameters, GoogleGenAI} from "@google/genai";
-import {validate} from "../validate";
+import { AIVideoBucket, GenerateVideoRequest } from "./types/video.type";
+import { GenerateVideosParameters, GoogleGenAI } from "@google/genai";
+import { validate } from "../validate";
 
 /**
  *
@@ -68,7 +68,7 @@ export function validateVideoConfigFields() {
  * @return {string} video btyes in base64 format
  */
 export async function generateVideoByPolling(
-  {ai, model, storageBucket, pollingPeriod}: AIVideoBucket,
+  { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,
   request: GenerateVideoRequest,
 ) {
   const genVideosParams: GenerateVideosParameters = {
@@ -104,7 +104,7 @@ async function getVideoUri(
 
   while (!operation.done) {
     await new Promise((resolve) => setTimeout(resolve, pollingPeriod));
-    operation = await ai.operations.getVideosOperation({operation});
+    operation = await ai.operations.getVideosOperation({ operation });
   }
 
   const uri = operation.response?.generatedVideos?.[0]?.video?.uri;

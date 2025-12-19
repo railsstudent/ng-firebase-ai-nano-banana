@@ -1,6 +1,6 @@
 {
+  "geminiModelName": "gemini-3-flash-preview",
   "thinkingBudget": "512",
-  "geminiModelName": "gemini-3-pro-preview",
   "geminiImageModelName": "gemini-3-pro-image-preview",
   "includeThoughts": "true",
   "functionEmulatorHost": "localhost",

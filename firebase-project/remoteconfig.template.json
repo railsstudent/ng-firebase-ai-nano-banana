@@ -1,18 +1,18 @@
 {
   "parameters": {
+    "geminiModelName": {
+      "defaultValue": {
+        "value": "gemini-3-flash-preview"
+      },
+      "description": "Germini Model Name",
+      "valueType": "STRING"
+    },
     "thinkingBudget": {
       "defaultValue": {
         "value": "512"
       },
       "description": "Thinking budget of Nano Banana Pro",
       "valueType": "NUMBER"
-    },
-    "geminiModelName": {
-      "defaultValue": {
-        "value": "gemini-3-pro-preview"
-      },
-      "description": "Germini Model Name",
-      "valueType": "STRING"
     },
     "geminiImageModelName": {
       "defaultValue": {
@@ -65,8 +65,8 @@
     }
   },
   "version": {
-    "versionNumber": "29",
-    "updateTime": "2025-12-17T15:02:04.398145Z",
+    "versionNumber": "32",
+    "updateTime": "2025-12-18T23:39:24.735806Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

@@ -23,10 +23,7 @@ async function loadFirebaseConfig() {
   const firebaseConfig$ =
     httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`)
       .pipe(
-        catchError((e) => {
-            console.log(e);
-            return throwError(() => e);
-        })
+        catchError((e) => throwError(() => e))
       );
   return lastValueFrom(firebaseConfig$);
 }

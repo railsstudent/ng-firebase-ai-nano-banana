@@ -52,7 +52,7 @@ export const getFirebaseConfigFunction = () => {
   process.loadEnvFile();
 
   const variables = validateFirebaseConfigFields(process.env);
-  if (!variables) {
+  if (!variables || !variables.projectId) {
     return undefined;
   }
 

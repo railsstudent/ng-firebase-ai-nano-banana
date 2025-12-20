@@ -23,8 +23,8 @@ import { TokenUsageComponent } from './token-usage/token-usage.component';
               Choose the thought summary:
             </label>
             <select id="thoughts" name="thoughts" class="mb-2.5 text-lg px-3 py-2.5 rounded-md border-solid border-2 border-indigo-300 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500" [(ngModel)]="thoughtSummaryIndex" >
-              @for (item of thoughtSummaryIndexList(); track item) {
-                <option [ngValue]="item">{{ item + 1 }}</option>
+              @for (item of thoughts; track item; let i=$index) {
+                <option [ngValue]="i">{{ i + 1 }}</option>
               }
             </select>
           }
@@ -42,8 +42,6 @@ export class ThoughtSummaryComponent {
   groundingMetadata = input<MetadataGroup | undefined>(undefined);
 
   thoughtSummaryIndex = signal(0);
-
-  thoughtSummaryIndexList = computed(() => Array.from({ length: this.thoughtSummaries().length }, (_, index) => index));
 
   htmlThoughts = computed(() =>
     this.thoughtSummaries().map((thoughtSummary) => marked(thoughtSummary.replace('\n\n', '<br />')) as string)

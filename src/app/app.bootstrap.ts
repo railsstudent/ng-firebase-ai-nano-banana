@@ -1,6 +1,6 @@
 import remoteConfigDefaults from '@/firebase-project/remoteconfig.defaults.json';
 import { HttpClient } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, isDevMode } from '@angular/core';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { connectFunctionsEmulator, Functions, getFunctions } from "firebase/functions";
@@ -12,7 +12,7 @@ import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
 
 async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
   const remoteConfig = getRemoteConfig(firebaseApp);
-  remoteConfig.settings.minimumFetchIntervalMillis = 3600000;
+  remoteConfig.settings.minimumFetchIntervalMillis = isDevMode() ? 0 : 3600000;
   remoteConfig.defaultConfig = remoteConfigDefaults;
   await fetchAndActivate(remoteConfig);
   return remoteConfig;

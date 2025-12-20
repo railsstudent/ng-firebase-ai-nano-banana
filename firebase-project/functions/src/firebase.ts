@@ -16,14 +16,25 @@ import { validate } from "./validate";
  * @return {object} an object containing validated environment variables or undefined if validation fails
  */
 function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
-  const apiKey = validate(env.APP_API_KEY, "API Key");
-  const appId = validate(env.APP_ID, "App Id");
-  const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID");
-  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key");
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config");
-  const firebaseConfig = JSON.parse(strFirebaseConfig);
-  const projectId = validate(firebaseConfig?.projectId, "Project ID");
-  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket");
+  const missingKeys: string[] = [];
+  const apiKey = validate(env.APP_API_KEY, "API Key", missingKeys);
+  const appId = validate(env.APP_ID, "App Id", missingKeys);
+  const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID", missingKeys);
+  const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key", missingKeys);
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
+
+  let projectId = "";
+  let storageBucket = "";
+  if (strFirebaseConfig) {
+    const firebaseConfig = JSON.parse(strFirebaseConfig);
+
+    projectId = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
+    storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", missingKeys);
+  }
+
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
+  }
 
   return {
     apiKey,

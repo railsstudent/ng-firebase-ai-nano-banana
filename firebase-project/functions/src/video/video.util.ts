@@ -13,44 +13,29 @@ export function validateVideoConfigFields() {
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
   const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
 
-  const project = validate(env.GCLOUD_PROJECT, "Google Cloud Project Id");
+  const missingKeys: string[] = [];
+  const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location", missingKeys);
+  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI, "Use Vertex AI", missingKeys);
+  const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
+  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
 
-  if (!project) {
-    return;
+  let projectId = "";
+  let storageBucket = "";
+  if (strFirebaseConfig) {
+    const firebaseConfig = JSON.parse(strFirebaseConfig);
+    projectId = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
+    storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", missingKeys);
   }
 
-  const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location");
-
-  if (!location) {
-    return;
-  }
-
-  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI, "Use Vertex AI");
-  if (!vertexai) {
-    return;
-  }
-
-  const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name");
-  if (!model) {
-    return;
-  }
-
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config");
-  if (!strFirebaseConfig) {
-    return;
-  }
-
-  const firebaseConfig = JSON.parse(strFirebaseConfig);
-  const storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket");
-  if (!storageBucket) {
-    return;
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
   }
 
   return {
     genAIOptions: {
-      project,
+      project: projectId,
       location,
-      vertexai: vertexai.toLowerCase() === "true",
+      vertexai: vertexai?.toLowerCase() === "true",
     },
     aiVideoOptions: {
       model,

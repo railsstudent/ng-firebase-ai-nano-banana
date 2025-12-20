@@ -5,7 +5,7 @@ import { FirebaseApp, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { connectFunctionsEmulator, Functions, getFunctions } from "firebase/functions";
 import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'firebase/remote-config';
-import { lastValueFrom } from 'rxjs';
+import { catchError, lastValueFrom, throwError } from 'rxjs';
 import config from '../../public/config.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
@@ -20,15 +20,22 @@ async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
 
 async function loadFirebaseConfig() {
   const httpService = inject(HttpClient);
-  const firebaseConfig$ = httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`);
-  const firebaseConfig = await lastValueFrom(firebaseConfig$);
-  return firebaseConfig;
+  const firebaseConfig$ =
+    httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`)
+      .pipe(
+        catchError((e) => {
+            console.log(e);
+            return throwError(() => e);
+        })
+      );
+  return lastValueFrom(firebaseConfig$);
 }
 
 export async function bootstrapFirebase() {
     try {
       const configService = inject(ConfigService);
-      const { app, recaptchaSiteKey } = await loadFirebaseConfig();
+      const firebaseConfig = await loadFirebaseConfig();
+      const { app, recaptchaSiteKey } = firebaseConfig;
       const firebaseApp = initializeApp(app);
       const remoteConfig = await fetchRemoteConfig(firebaseApp);
 
@@ -44,8 +51,7 @@ export async function bootstrapFirebase() {
 
       configService.loadConfig(firebaseApp, remoteConfig, functions);
     } catch (err) {
-      console.error('Remote Config fetch failed', err);
-      throw err;
+      console.error(err);
     }
 }
 

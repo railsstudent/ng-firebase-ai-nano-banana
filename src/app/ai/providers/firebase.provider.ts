@@ -50,6 +50,10 @@ export function provideFirebase() {
                 throw new Error('Firebase App does not exist');
               }
 
+              if (!configService.functions) {
+                throw new Error('Functions does not exist.');
+              }
+
               return getGenerativeAIModel(configService);
             }
         }

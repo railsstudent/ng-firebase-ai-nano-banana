@@ -19,11 +19,11 @@ export function validateVideoConfigFields() {
   const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
   const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
 
-  let projectId = "";
+  let project = "";
   let storageBucket = "";
   if (strFirebaseConfig) {
     const firebaseConfig = JSON.parse(strFirebaseConfig);
-    projectId = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
+    project = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
     storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", missingKeys);
   }
 
@@ -33,7 +33,7 @@ export function validateVideoConfigFields() {
 
   return {
     genAIOptions: {
-      project: projectId,
+      project,
       location,
       vertexai: vertexai?.toLowerCase() === "true",
     },
@@ -92,14 +92,13 @@ async function getVideoUri(
     operation = await ai.operations.getVideosOperation({ operation });
   }
 
-  const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
-
   if (operation.error) {
     const strError = `Video generation failed: ${operation.error.message}`;
     console.error(strError);
     throw new Error(strError);
   }
 
+  const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
   if (uri) {
     console.log("video uri", uri);
     return uri;

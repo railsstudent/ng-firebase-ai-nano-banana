@@ -12,10 +12,10 @@ export function validateVideoConfigFields() {
   const env = process.env;
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
   const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
+  const isVertexAI = (env.GOOGLE_GENAI_USE_VERTEXAI || "false") === "true";
 
   const missingKeys: string[] = [];
   const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location", missingKeys);
-  const vertexai = validate(env.GOOGLE_GENAI_USE_VERTEXAI, "Use Vertex AI", missingKeys);
   const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
   const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
 
@@ -35,7 +35,7 @@ export function validateVideoConfigFields() {
     genAIOptions: {
       project,
       location,
-      vertexai: vertexai?.toLowerCase() === "true",
+      vertexai: isVertexAI,
     },
     aiVideoOptions: {
       model,

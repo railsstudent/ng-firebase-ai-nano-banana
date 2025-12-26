@@ -28,11 +28,15 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
   }
 
   return {
-    apiKey,
-    appId,
+    app: {
+      apiKey,
+      appId,
+      projectId,
+      messagingSenderId,
+      authDomain: `${projectId}.firebaseapp.com`,
+      storageBucket: `${projectId}.firebasestorage.app`
+    },
     recaptchaSiteKey,
-    projectId,
-    messagingSenderId,
   };
 }
 
@@ -42,20 +46,9 @@ export const getFirebaseConfigFunction = () => {
   process.loadEnvFile();
 
   const variables = validateFirebaseConfigFields(process.env);
-  if (!variables || !variables.projectId) {
+  if (!variables) {
     return undefined;
   }
 
-  const { recaptchaSiteKey, ...rest } = variables;
-  // Construct the Firebase config object
-  const app = {
-    ...rest,
-    authDomain: `${rest.projectId}.firebaseapp.com`,
-    storageBucket: `${rest.projectId}.firebasestorage.app`
-  };
-
-  return {
-    app,
-    recaptchaSiteKey,
-  };
+  return variables;
 };

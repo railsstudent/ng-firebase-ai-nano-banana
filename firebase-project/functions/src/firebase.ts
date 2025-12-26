@@ -21,16 +21,7 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
   const appId = validate(env.APP_ID, "App Id", missingKeys);
   const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID", missingKeys);
   const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key", missingKeys);
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
-
-  let projectId = "";
-  let storageBucket = "";
-  if (strFirebaseConfig) {
-    const firebaseConfig = JSON.parse(strFirebaseConfig);
-
-    projectId = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
-    storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", missingKeys);
-  }
+  const projectId = validate(env.GOOGLE_CLOUD_QUOTA_PROJECT, "Project ID", missingKeys);
 
   if (missingKeys.length > 0) {
     throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
@@ -41,7 +32,6 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
     appId,
     recaptchaSiteKey,
     projectId,
-    storageBucket,
     messagingSenderId,
   };
 }
@@ -61,6 +51,7 @@ export const getFirebaseConfigFunction = () => {
   const app = {
     ...rest,
     authDomain: `${rest.projectId}.firebaseapp.com`,
+    storageBucket: `${rest.projectId}.firebasestorage.app`
   };
 
   return {

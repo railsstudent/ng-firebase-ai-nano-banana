@@ -6,8 +6,8 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      allow read: if resource.name.matches('.*sample_0\\.mp4');
-      allow write: if request.resource.name.matches('.*sample_0\\.mp4')
+      allow read: if resource.name.matches('.*\\.mp4');
+      allow write: if request.resource.name.matches('.*\\.mp4')
                    && request.resource.contentType == 'video/mp4';
     }
   }

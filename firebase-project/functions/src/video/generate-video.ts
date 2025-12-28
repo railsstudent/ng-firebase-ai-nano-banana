@@ -19,7 +19,7 @@ export async function generateVideoFunction(data: GenerateVideoRequest) {
   try {
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    return await generateBase64Video({ ai, ...aiVideoOptions }, data);
+    return await generateVideoURL({ ai, ...aiVideoOptions }, data);
   } catch (error) {
     console.error("Error generating video:", error);
     throw new Error("Error generating video");
@@ -54,7 +54,7 @@ function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVide
  * @param {GenerateVideoRequest} imageParams    Generate  Video Request
  * @return {string} video uri
  */
-async function generateBase64Video(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
+async function generateVideoURL(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
   const args = constructVideoArguments(aiVideo.isVeo31Used, imageParams);
   return generateVideoByPolling(aiVideo, args);
 }

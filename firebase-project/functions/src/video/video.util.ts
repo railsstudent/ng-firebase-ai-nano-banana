@@ -12,20 +12,12 @@ export function validateVideoConfigFields() {
   const env = process.env;
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
   const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
-  const isVertexAI = (env.GOOGLE_GENAI_USE_VERTEXAI || "false") === "true";
+  const vertexai = (env.GOOGLE_GENAI_USE_VERTEXAI || "false") === "true";
 
   const missingKeys: string[] = [];
   const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location", missingKeys);
   const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
-  const strFirebaseConfig = validate(env.FIREBASE_CONFIG, "Firebase config", missingKeys);
-
-  let project = "";
-  let storageBucket = "";
-  if (strFirebaseConfig) {
-    const firebaseConfig = JSON.parse(strFirebaseConfig);
-    project = validate(firebaseConfig?.projectId, "Project ID", missingKeys);
-    storageBucket = validate(firebaseConfig?.storageBucket, "Storage Bucket", missingKeys);
-  }
+  const project = validate(env.GOOGLE_CLOUD_QUOTA_PROJECT, "Project ID", missingKeys);
 
   if (missingKeys.length > 0) {
     throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
@@ -35,11 +27,11 @@ export function validateVideoConfigFields() {
     genAIOptions: {
       project,
       location,
-      vertexai: isVertexAI,
+      vertexai,
     },
     aiVideoOptions: {
       model,
-      storageBucket,
+      storageBucket: `${project}.firebasestorage.app`,
       isVeo31Used,
       pollingPeriod,
     },

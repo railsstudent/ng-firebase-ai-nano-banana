@@ -34,7 +34,7 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
       projectId,
       messagingSenderId,
       authDomain: `${projectId}.firebaseapp.com`,
-      storageBucket: `${projectId}.firebasestorage.app`
+      storageBucket: `${projectId}.firebasestorage.app`,
     },
     recaptchaSiteKey,
   };

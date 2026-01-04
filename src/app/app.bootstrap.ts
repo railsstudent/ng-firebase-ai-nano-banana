@@ -9,6 +9,7 @@ import { catchError, lastValueFrom, throwError } from 'rxjs';
 import config from '../../public/config.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
   const remoteConfig = getRemoteConfig(firebaseApp);
@@ -44,7 +45,7 @@ export async function bootstrapFirebase() {
       const functionRegion = getValue(remoteConfig, 'functionRegion').asString();
       const functions = getFunctions(firebaseApp, functionRegion);
       console.log('bootstrapFirebase -> functions region', functions.region);
-      connectEmulators(functions, remoteConfig);
+      connectEmulators(firebaseApp,remoteConfig, functions);
 
       configService.loadConfig(firebaseApp, remoteConfig, functions);
     } catch (err) {
@@ -52,12 +53,17 @@ export async function bootstrapFirebase() {
     }
 }
 
-function connectEmulators(functions: Functions, remoteConfig: RemoteConfig) {
+function connectEmulators(app: FirebaseApp, remoteConfig: RemoteConfig, functions: Functions) {
   if (location.hostname === 'localhost') {
     const host = getValue(remoteConfig, 'functionEmulatorHost').asString();
     const port = getValue(remoteConfig, 'functionEmulatorPort').asNumber();
     console.log('functionEmulator', `${host}:${port}`);
     connectFunctionsEmulator(functions, host, port);
+    const db = getFirestore(app);
+    const dbHost = getValue(remoteConfig, 'dbEmulatorHost').asString();
+    const dbPort = getValue(remoteConfig, 'dbEmulatorPort').asNumber();
+    console.log('fireStoreEmulator', `${dbHost}:${dbPort}`);
+    connectFirestoreEmulator(db, host, dbPort);
   }
 }
 

@@ -30,7 +30,5 @@ import { NavigationComponent } from './navigation/navigation.component';
 export class AppComponent {
   private readonly configService = inject(ConfigService);
 
-  hasNoFirebase = computed(() =>
-    !this.configService.firebaseApp || !this.configService.remoteConfig || !this.configService.functions
-  );
+  hasNoFirebase = computed(() => !this.configService.firebaseObjects);
 }

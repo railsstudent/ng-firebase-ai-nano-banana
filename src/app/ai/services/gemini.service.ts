@@ -13,7 +13,7 @@ export class GeminiService {
 
   async retrieveVideoUri(request: GenerateVideoRequest, methodName: string): Promise<string> {
     try {
-      const functions = this.configService.functions;
+      const { functions } = this.configService.firebaseObjects || {};
       if (!functions) {
         throw new Error('Functions does not exist.');
       }

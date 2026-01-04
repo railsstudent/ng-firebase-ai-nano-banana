@@ -5,8 +5,11 @@ import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
 function getGenerativeAIModel(configService: ConfigService) {
-    const firebaseApp = configService.firebaseApp!;
-    const remoteConfig = configService.remoteConfig!;
+    if (!configService.firebaseObjects) {
+      throw new Error('Firebase objects do not exist.');
+    }
+
+    const { firebaseApp, remoteConfig } = configService.firebaseObjects;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
     const includeThoughts = getValue(remoteConfig, 'includeThoughts').asBoolean();
@@ -42,16 +45,8 @@ export function provideFirebase() {
             useFactory: () => {
               const configService = inject(ConfigService);
 
-              if (!configService.remoteConfig) {
-                throw new Error('Remote config does not exist.');
-              }
-
-              if (!configService.firebaseApp) {
-                throw new Error('Firebase App does not exist');
-              }
-
-              if (!configService.functions) {
-                throw new Error('Functions does not exist.');
+              if (!configService.firebaseObjects) {
+                throw new Error('Firebase objects do not exist.');
               }
 
               return getGenerativeAIModel(configService);

@@ -1,17 +1,18 @@
 import remoteConfigDefaults from '@/firebase-project/remoteconfig.defaults.json';
 import { HttpClient } from '@angular/common/http';
 import { inject, isDevMode } from '@angular/core';
-import { FirebaseApp, initializeApp } from 'firebase/app';
+import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
+import { connectFirestoreEmulator, Firestore, getFirestore } from "firebase/firestore";
 import { connectFunctionsEmulator, Functions, getFunctions } from "firebase/functions";
 import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'firebase/remote-config';
 import { catchError, lastValueFrom, throwError } from 'rxjs';
 import config from '../../public/config.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
-import { getFirestore, connectFirestoreEmulator, Firestore } from "firebase/firestore";
+import { FirebaseObjects } from './ai/types/firebase-objects';
 
-async function fetchRemoteConfig(firebaseApp: FirebaseApp) {
+async function fetchRemoteConfig(firebaseApp: FirebaseApp): Promise<RemoteConfig> {
   const remoteConfig = getRemoteConfig(firebaseApp);
   remoteConfig.settings.minimumFetchIntervalMillis = isDevMode() ? 0 : 3600000;
   remoteConfig.defaultConfig = remoteConfigDefaults;
@@ -34,12 +35,8 @@ export async function bootstrapFirebase() {
       const configService = inject(ConfigService);
       const firebaseConfig = await loadFirebaseConfig();
       const { app, recaptchaSiteKey } = firebaseConfig;
-      const firebaseApp = initializeApp(app);
-      const remoteConfig = await fetchRemoteConfig(firebaseApp);
-      const functionRegion = getValue(remoteConfig, 'functionRegion').asString();
-      const functions = getFunctions(firebaseApp, functionRegion);
-      console.log('bootstrapFirebase -> functions region', functions.region);
-      const db = getFirestore(firebaseApp);
+      const firebaseObjects = await initFbServices(app);
+      const { firebaseApp } = firebaseObjects;
 
       initializeAppCheck(firebaseApp, {
         provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey),
@@ -47,15 +44,25 @@ export async function bootstrapFirebase() {
       });
 
 
-      connectEmulators(firebaseApp,remoteConfig, functions, db);
+      connectEmulators(firebaseObjects);
 
-      configService.loadConfig(firebaseApp, remoteConfig, functions, db);
+      configService.loadConfig(firebaseObjects);
     } catch (err) {
       console.error(err);
     }
 }
 
-function connectEmulators(app: FirebaseApp, remoteConfig: RemoteConfig, functions: Functions, db: Firestore) {
+async function initFbServices(app: FirebaseOptions): Promise<FirebaseObjects> {
+  const firebaseApp = initializeApp(app);
+  const remoteConfig = await fetchRemoteConfig(firebaseApp);
+  const functionRegion = getValue(remoteConfig, 'functionRegion').asString();
+  const functions = getFunctions(firebaseApp, functionRegion);
+  const db = getFirestore(firebaseApp);
+  console.log('bootstrapFirebase -> functions region', functions.region);
+  return { firebaseApp, remoteConfig, functions, db };
+}
+
+function connectEmulators({ remoteConfig, functions, db }: FirebaseObjects) {
   if (location.hostname === 'localhost') {
     const host = getValue(remoteConfig, 'functionEmulatorHost').asString();
     const port = getValue(remoteConfig, 'functionEmulatorPort').asNumber();

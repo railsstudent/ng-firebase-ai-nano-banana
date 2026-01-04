@@ -27,9 +27,18 @@
     "ui": {
       "enabled": true
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "firestore": {
+      "port": 8080
+    }
   },
   "storage": {
     "rules": "storage.rules"
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-east2",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }

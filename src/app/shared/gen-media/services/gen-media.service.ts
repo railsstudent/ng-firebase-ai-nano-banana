@@ -119,11 +119,11 @@ export class GenMediaService {
     }, DEFAULT_IMAGES_TOKEN_USAGE)
   }
 
-  currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
-  currentFinishedImages = this.currentImagesAccumulator.asReadonly();
+  #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
+  currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
   async streamImages(prompts: string[], imageFiles: File[]): Promise<void> {
 
-    this.currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
+    this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
     this.imageGenerationError.set('');
     this.videoUrl.set('');
@@ -137,7 +137,7 @@ export class GenMediaService {
         const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
 
         if (imageTokenUsage) {
-          this.currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary   }) => {
+          this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary   }) => {
             return {
               images: images.concat({
                 ...imageTokenUsage?.image,
@@ -147,7 +147,7 @@ export class GenMediaService {
               groundingMetadata: this.concatGrounding(groundingMetadata, imageTokenUsage.metadata),
               thoughtSummary: imageTokenUsage.thoughtSummary ? thoughtSummary.concat(imageTokenUsage.thoughtSummary) : thoughtSummary
             }
-          })
+          });
         }
       } catch (e) {
         if (!isFirstError) {
@@ -160,6 +160,17 @@ export class GenMediaService {
         }
       }
     }
+  }
+
+  clearImage(id: number) {
+    this.#currentImagesAccumulator.update((item) => {
+      const updatedImages = item.images.filter((item) => item.id !== id)
+
+      return {
+        ...item,
+        images: updatedImages,
+      }
+    });
   }
 
   private concatGrounding(groundingMetadata: MetadataGroup, metadata: Metadata): MetadataGroup {

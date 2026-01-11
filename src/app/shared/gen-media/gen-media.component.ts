@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, resource, signal } from '@angular/core';
+import { rxResource, takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, resource, signal } from '@angular/core';
 import { LoaderComponent } from '../loader/loader.component';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from './constants/images-token-usage.const';
 import { ImageViewersComponent } from './image-viewers/image-viewers.component';
 import { GenMediaService } from './services/gen-media.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
+import { finalize, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-gen-media',
@@ -44,41 +46,69 @@ export class GenMediaComponent {
 
   downloadImageError = signal('');
 
-  imagesResource = resource({
-    params: () => this.genMediaInput(),
-    loader: ({ params }) => {
-      const { userPrompt, prompts = [], imageFiles = [] } = params;
-      const multiPrompts = prompts.length ? prompts : [userPrompt];
-      return this.genMediaService.generateImages(multiPrompts, imageFiles);
-    },
-    defaultValue: DEFAULT_IMAGES_TOKEN_USAGE,
-  });
+  // imagesResource = resource({
+  //   params: () => this.genMediaInput(),
+  //   loader: ({ params }) => {
+  //     const { userPrompt, prompts = [], imageFiles = [] } = params;
+  //     const multiPrompts = prompts.length ? prompts : [userPrompt];
+  //     return this.genMediaService.generateImages(multiPrompts, imageFiles);
+  //   },
+  //   defaultValue: DEFAULT_IMAGES_TOKEN_USAGE,
+  // });
 
-  imagesWithTokenUsage = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): DEFAULT_IMAGES_TOKEN_USAGE);
+  // imagesWithTokenUsage = computed(() => this.imagesResource.hasValue() ? this.imagesResource.value(): DEFAULT_IMAGES_TOKEN_USAGE);
 
-  #resourceError = computed(() => this.imagesResource.error() ? this.imagesResource.error()?.message : '');
+  // #resourceError = computed(() => this.imagesResource.error() ? this.imagesResource.error()?.message : '');
+
+  imagesWithTokenUsage = this.genMediaService.currentFinishedImages;
+
 
   error = computed(() =>
-    this.#resourceError() ||
+    // this.#resourceError() ||
     this.genMediaService.imageGenerationError() ||
     this.downloadImageError() ||
     this.genMediaService.videoError()
   );
 
-  isLoading = this.imagesResource.isLoading;
+  // isLoading = this.imagesResource.isLoading;
+  isLoading = signal(false);
+  destroyRef$ = inject(DestroyRef);
+
+  constructor() {
+    toObservable(this.genMediaInput)
+      .pipe(
+        tap((params) => {
+          if (!params) {
+            return;
+          }
+
+          this.isLoading.set(true);
+          const { userPrompt, prompts = [], imageFiles = [] } = params;
+          const multiPrompts = prompts.length ? prompts : [userPrompt];
+          this.genMediaService.streamImages(multiPrompts, imageFiles);
+        }),
+        finalize(() => {
+          this.isLoading.set(false);
+        }),
+        takeUntilDestroyed(this.destroyRef$),
+      )
+      .subscribe();
+  }
 
   async handleAction({ action, id }: { action: string, id: number }) {
     if (action === 'clearImage') {
-      this.imagesResource.update((items) => {
-        if (!items) {
-          return items;
-        }
-        const filteredImages = items.images.filter((image) => image.id !== id);
-        return {
-          ...items,
-          images: filteredImages,
-        };
-      });
+      // this.imagesResource.update((items) => {
+      //   if (!items) {
+      //     return items;
+      //   }
+      //   const filteredImages = items.images.filter((image) => image.id !== id);
+      //   return {
+      //     ...items,
+      //     images: filteredImages,
+      //   };
+      // });
+
+      this.genMediaService.clearImage(id);
 
       if (this.imagesWithTokenUsage().images.length === 0) {
         this.genMediaService.videoUrl.set('');

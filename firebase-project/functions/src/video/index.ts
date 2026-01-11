@@ -16,3 +16,6 @@ export const generateVideo = onCall( options,
 export const interpolateVideo = onCall( options,
   ({ data }) => generateVideoFromFramesFunction(data)
 );
+
+
+export { onVideoCreated } from "./storage-event-handlers";

@@ -1,14 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
-import { AIVideoBucket, GenerateVideoRequest } from "./types/video.type";
-import { generateVideoByPolling, validateVideoConfigFields } from "./video.util";
+import { AIVideoBucket, GenerateVideoParams, VideoTask } from "./types/video.type";
+import { processVideoTask, validateVideoConfigFields } from "./video.util";
 
 /**
  *
- * @param {GenerateVideoRequest} data      Generate video request object
+ * @param {GenerateVideoParams} data      Generate video request object
  * @return {Promise<string>} the GCS uri of a video
  * @throws {Error} If configuration is invalid or video generation fails.
  */
-export async function generateVideoFunction(data: GenerateVideoRequest) {
+export async function generateVideoFunction(data: VideoTask) {
   const variables = validateVideoConfigFields();
   if (!variables) {
     return "";
@@ -30,9 +30,9 @@ export async function generateVideoFunction(data: GenerateVideoRequest) {
  *
  * @param {boolean} isVeo31Used    whether or not veo 3.1 model is used
  * @param {string} imageParams    Generate  Video Request
- * @return {GenerateVideoRequest} augmented video request
+ * @return {GenerateVideoParams} augmented video request
  */
-function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVideoRequest) {
+function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVideoParams) {
   const veoConfig = isVeo31Used ? {
     aspectRatio: "16:9",
     resolution: "720p",
@@ -51,10 +51,10 @@ function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVide
 /**
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {GenerateVideoRequest} imageParams    Generate  Video Request
+ * @param {GenerateVideoParams} imageParams    Generate  Video Request
  * @return {string} video uri
  */
-async function generateVideoURL(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
+async function generateVideoURL(aiVideo: AIVideoBucket, imageParams: VideoTask) {
   const args = constructVideoArguments(aiVideo.isVeo31Used, imageParams);
-  return generateVideoByPolling(aiVideo, args);
+  return processVideoTask(aiVideo, imageParams.taskId, args);
 }

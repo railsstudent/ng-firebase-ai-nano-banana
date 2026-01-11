@@ -1,10 +1,14 @@
 import { GenerateVideosConfig, GoogleGenAI } from "@google/genai";
 
-export type GenerateVideoRequest = {
+export type GenerateVideoParams = {
   prompt: string;
   imageBytes: string;
   mimeType: string;
   config?: GenerateVideosConfig;
+}
+
+export type VideoTask = GenerateVideoParams & {
+  taskId: string;
 }
 
 export type AIVideoBucket = {
@@ -15,7 +19,7 @@ export type AIVideoBucket = {
   pollingPeriod: number;
 }
 
-export type GenerateVideoFromFramesRequest = GenerateVideoRequest & {
+export type GenerateVideoFromFramesParams = GenerateVideoParams & {
   lastFrameImageBytes: string;
   lastFrameMimeType: string;
 }

@@ -119,6 +119,49 @@ export class GenMediaService {
     }, DEFAULT_IMAGES_TOKEN_USAGE)
   }
 
+  currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
+  currentFinishedImages = this.currentImagesAccumulator.asReadonly();
+  async streamImages(prompts: string[], imageFiles: File[]): Promise<void> {
+
+    this.currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
+    let isFirstError = false;
+    this.imageGenerationError.set('');
+    this.videoUrl.set('');
+
+    if (!prompts?.length) {
+      return;
+    }
+
+    for (let i = 0; i < prompts.length; i=i+1) {
+      try {
+        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
+
+        if (imageTokenUsage) {
+          this.currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary   }) => {
+            return {
+              images: images.concat({
+                ...imageTokenUsage?.image,
+                id: i
+              }),
+              tokenUsage: this.calculateTokenUsage(tokenUsage, imageTokenUsage.tokenUsage),
+              groundingMetadata: this.concatGrounding(groundingMetadata, imageTokenUsage.metadata),
+              thoughtSummary: imageTokenUsage.thoughtSummary ? thoughtSummary.concat(imageTokenUsage.thoughtSummary) : thoughtSummary
+            }
+          })
+        }
+      } catch (e) {
+        if (!isFirstError) {
+          if (e instanceof Error) {
+            this.imageGenerationError.set(e.message);
+          } else {
+            this.imageGenerationError.set('Unexpected error in image generation.');
+          }
+          isFirstError = true;
+        }
+      }
+    }
+  }
+
   private concatGrounding(groundingMetadata: MetadataGroup, metadata: Metadata): MetadataGroup {
     const newRenderedContents = metadata.renderedContent ? groundingMetadata.renderedContents.concat(metadata.renderedContent) : groundingMetadata.renderedContents;
 

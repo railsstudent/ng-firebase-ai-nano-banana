@@ -1,3 +1,4 @@
+import { ImagesWithTokenUsage } from '@/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
@@ -53,7 +54,7 @@ export class GenMediaComponent {
     this.genMediaService.videoError()
   );
 
-  isLoading = linkedSignal({
+  isLoading = linkedSignal<ImagesWithTokenUsage, boolean>({
     source: () => this.imagesWithTokenUsage(),
     computation: (({ images }, previous) => {
       if (!previous || !images) {

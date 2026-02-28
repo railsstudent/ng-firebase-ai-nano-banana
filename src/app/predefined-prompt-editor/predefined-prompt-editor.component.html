@@ -6,8 +6,12 @@
     <app-dropzone [mode]="dropzoneMode()" (filesChanged)="imageFiles.set($event)" />
   </div>
 
+  <div class="w-full max-w-2xl mx-auto mb-8">
+    <app-generate-options-form (configValuesUpdated)="genConfigValues.set($event)" />
+  </div>
+
   <form class="flex justify-center sm:flex-row gap-4" id="form" name="form"
-    (ngSubmit)="handleGenerate()"
+    (submit)="handleGenerate($event)"
   >
     <button
       type="submit"

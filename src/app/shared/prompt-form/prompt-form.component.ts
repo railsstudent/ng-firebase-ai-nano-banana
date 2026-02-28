@@ -46,9 +46,11 @@ export class PromptFormComponent {
       let trimmedPrompt = inputValue;
       const aspectRatio = this.genConfigValues()?.aspectRatio || '';
       const resolution = this.genConfigValues()?.resolution || '';
+
       if (aspectRatio) {
         trimmedPrompt = `${trimmedPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
       }
+
       if (resolution) {
         trimmedPrompt = `${trimmedPrompt}\nApply this resolution to the image: ${resolution}`;
       }

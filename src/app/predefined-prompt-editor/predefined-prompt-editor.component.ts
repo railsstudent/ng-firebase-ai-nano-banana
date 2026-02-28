@@ -5,9 +5,10 @@ import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
+import { GenerateOptionsFormComponent } from '@/shared/generate-options-form/generate-options-form.component';
+import { GenerateOptions } from '@/shared/generate-options-form/types/generate-options.type';
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ChangeDetectionStrategy, Component, computed, input, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -16,9 +17,9 @@ import { FormsModule } from '@angular/forms';
     CardHeaderComponent,
     DropzoneComponent,
     ErrorDisplayComponent,
-    FormsModule,
     SpinnerIconComponent,
     GenMediaComponent,
+    GenerateOptionsFormComponent,
   ],
   templateUrl: './predefined-prompt-editor.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,9 +47,25 @@ export default class PredefinedPromptComponent {
   })
   error = computed(() => this.genmedia()?.error() || '');
 
-  async handleGenerate(): Promise<void> {
+  genConfigValues = signal<GenerateOptions | undefined>(undefined);
+
+  async handleGenerate(event: Event): Promise<void> {
+    event.preventDefault();
+
+    let userPrompt = this.customPrompt().trim();
+    const aspectRatio = this.genConfigValues()?.aspectRatio || '';
+    const resolution = this.genConfigValues()?.resolution || '';
+
+    if (aspectRatio) {
+      userPrompt = `${userPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
+    }
+
+    if (resolution) {
+      userPrompt = `${userPrompt}\nApply this resolution to the image: ${resolution}`;
+    }
+
     this.genMediaInput.set({
-      userPrompt: this.customPrompt(),
+      userPrompt,
       prompts: undefined,
       imageFiles: this.imageFiles(),
     });

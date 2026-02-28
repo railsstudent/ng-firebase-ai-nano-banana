@@ -6,6 +6,6 @@
   "dbEmulatorPort": "8089",
   "vertexAILocation": "global",
   "functionEmulatorPort": "5001",
-  "thinkingLevel": "High",
+  "thinkingLevel": "HIGH",
   "functionRegion": "us-central1"
 }

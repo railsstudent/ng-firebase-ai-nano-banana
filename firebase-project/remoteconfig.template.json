@@ -51,7 +51,7 @@
     },
     "thinkingLevel": {
       "defaultValue": {
-        "value": "High"
+        "value": "HIGH"
       },
       "description": "Thinking Level of the Nano Banana 2 model",
       "valueType": "STRING"

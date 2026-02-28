@@ -12,7 +12,8 @@ function getGenerativeAIImageModel(configService: ConfigService) {
     const { firebaseApp, remoteConfig } = configService.firebaseObjects;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
-    const thinkingLevel = getValue(remoteConfig, 'thinkingLevel').asString() as ThinkingLevel;
+    const rawThinkingLevel = getValue(remoteConfig, 'thinkingLevel').asString();
+    const thinkingLevel = ThinkingLevel[rawThinkingLevel as keyof typeof ThinkingLevel];
 
     const modelParams: ModelParams = {
       model: modelName,

@@ -1,22 +1,18 @@
-<form class="flex sm:flex-row gap-4"
-  id="form"
-  name="form"
-  (ngSubmit)="onGenerateClick()"
->
+<form id="form" name="form" [formRoot]="promptForm" class="flex sm:flex-row gap-4">
   <div class="flex flex-col gap-4 grow shrink">
     <div class="flex grow shrink">
       <textarea
         id="promptHistory"
-        name="promptHistory"
-        [(ngModel)]="prompt"
+        [formField]="promptForm.value"
         [rows]="4"
         [placeholder]="placeholderText()"
         (keydown)="onEnterPress($event)"
         class="grow shrink mr-4 bg-gray-700 text-gray-200 border border-gray-600 rounded-md p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 resize-y placeholder-gray-400">
       </textarea>
       <button
-        type="submit"
+        type="button"
         [disabled]="isGenerationDisabled()"
+        (click)="onGenerateClick($event)"
         class="self-center inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200">
         @if (isLoading()) {
           <app-spinner-icon />&nbsp;&nbsp;

@@ -9,6 +9,7 @@ import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.cons
 import { ConversationMessagesService } from '../services/conversation-messages.service';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 import { ChatMessage } from '../types/chat-message.type';
+import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
 
 @Component({
   selector: 'app-conversation-mode',
@@ -26,7 +27,7 @@ export class ConversationModeComponent {
   sources = input.required<string[]>();
 
   conversationMode = signal('edit');
-  editedPrompt = signal('');
+  editedPrompt = signal<PromptForm>({ value: '' });
   imageFiles = signal<File[]>([]);
   isLoading = signal(false);
 
@@ -60,7 +61,7 @@ export class ConversationModeComponent {
     });
   }
 
-  async handleGenerate(prompt: string) {
+  async handleGenerate({ prompt }: { prompt: string; inputValue: string }) {
     try {
       this.isLoading.set(true);
       const { image } = await this.firebaseService.generateImage(prompt, []);

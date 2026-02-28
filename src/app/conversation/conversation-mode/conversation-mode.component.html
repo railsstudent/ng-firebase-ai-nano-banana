@@ -13,7 +13,7 @@
 @let details = feature();
 @if (conversationMode() === 'create') {
   <app-prompt-form
-    [(prompt)]="editedPrompt"
+    [(promptModel)]="editedPrompt"
     [isLoading]="isLoading()"
     (generate)="handleGenerate($event)"
   >

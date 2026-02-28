@@ -10,7 +10,7 @@
 
     <div class="w-full max-w-2xl mx-auto">
       <app-prompt-form
-        [(prompt)]="editedPrompt"
+        [(promptModel)]="editedPrompt"
         [additionalDisabledConditions]="additionalDisabledConditions()"
         [isLoading]="isLoading()"
         (generate)="handleGenerate($event)"

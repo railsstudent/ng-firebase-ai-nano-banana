@@ -6,6 +6,7 @@ import { ErrorDisplayComponent } from '@/shared/error-display/error-display.comp
 import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
+import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { EditorService } from './services/editor.service';
@@ -30,7 +31,7 @@ export default class EditorComponent {
 
   private readonly editorService = inject(EditorService);
 
-  editedPrompt = signal('A dog that is chewing his bone.');
+  editedPrompt = signal<PromptForm>({ value: 'A dog that is chewing his bone.' });
   promptHistory = this.editorService.getPromptHistory(this.featureId);
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
@@ -57,23 +58,23 @@ export default class EditorComponent {
     return !this.hasImageFiles() || isGeneratingVideo;
   });
 
-  async handleGenerate(currentPrompt: string): Promise<void> {
+  async handleGenerate({ prompt, inputValue }: { prompt: string; inputValue: string }): Promise<void> {
     if (!this.featureNeedsImage()) {
       if (this.imageFiles().length > 0) {
         this.imageFiles.set([]);
       }
     }
 
-    const canGenerateImage = !!currentPrompt
+    const canGenerateImage = !!prompt
       && (this.featureNeedsImage() ? this.imageFiles().length > 0 : this.imageFiles().length === 0);
 
     if (!canGenerateImage) {
       return;
     }
 
-    this.editorService.addPrompt(this.featureId(), currentPrompt);
+    this.editorService.addPrompt(this.featureId(), inputValue);
     this.genMediaInput.set({
-      userPrompt: currentPrompt,
+      userPrompt: prompt,
       imageFiles: this.imageFiles(),
     });
   }
@@ -83,6 +84,6 @@ export default class EditorComponent {
   }
 
   handleSelectPrompt(prompt: string) {
-    this.editedPrompt.set(prompt);
+    this.editedPrompt.set({ value: prompt });
   }
 }

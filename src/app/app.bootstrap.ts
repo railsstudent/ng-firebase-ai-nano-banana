@@ -5,7 +5,7 @@ import { catchError, lastValueFrom, throwError } from 'rxjs';
 import config from '../../public/config.json';
 import { ConfigService } from './ai/services/config.service';
 import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
-import { connectEmulators, initFbServices } from './firebase.util';
+import { connectEmulators, initFirebaseApp } from './firebase.util';
 
 async function loadFirebaseConfig() {
   const httpService = inject(HttpClient);
@@ -22,7 +22,7 @@ export async function bootstrapFirebase() {
       const configService = inject(ConfigService);
       const firebaseConfig = await loadFirebaseConfig();
       const { app, recaptchaSiteKey } = firebaseConfig;
-      const firebaseObjects = await initFbServices(app);
+      const firebaseObjects = await initFirebaseApp(app);
       const { firebaseApp } = firebaseObjects;
 
       initializeAppCheck(firebaseApp, {

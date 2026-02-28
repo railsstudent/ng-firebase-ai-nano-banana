@@ -18,7 +18,7 @@ async function fetchRemoteConfig(firebaseApp: FirebaseApp): Promise<RemoteConfig
   return remoteConfig;
 }
 
-export async function initFbServices(app: FirebaseOptions): Promise<FirebaseObjects> {
+export async function initFirebaseApp(app: FirebaseOptions): Promise<FirebaseObjects> {
   const firebaseApp = initializeApp(app);
   const remoteConfig = await fetchRemoteConfig(firebaseApp);
   const functionRegion = getValue(remoteConfig, 'functionRegion').asString();

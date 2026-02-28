@@ -1,10 +1,10 @@
 import { inject, makeEnvironmentProviders } from '@angular/core';
-import { getAI, getGenerativeModel, ModelParams, VertexAIBackend } from 'firebase/ai';
+import { getAI, getGenerativeModel, ModelParams, ThinkingLevel, VertexAIBackend } from 'firebase/ai';
 import { getValue } from 'firebase/remote-config';
 import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
-function getGenerativeAIModel(configService: ConfigService) {
+function getGenerativeAIImageModel(configService: ConfigService) {
     if (!configService.firebaseObjects) {
       throw new Error('Firebase objects do not exist.');
     }
@@ -12,16 +12,14 @@ function getGenerativeAIModel(configService: ConfigService) {
     const { firebaseApp, remoteConfig } = configService.firebaseObjects;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
-    const includeThoughts = getValue(remoteConfig, 'includeThoughts').asBoolean();
-    const thinkingBudget = getValue(remoteConfig, 'thinkingBudget').asNumber();
+    const thinkingLevel = getValue(remoteConfig, 'thinkingLevel').asString() as ThinkingLevel;
 
     const modelParams: ModelParams = {
       model: modelName,
       generationConfig: {
           candidateCount: 1,
           thinkingConfig: {
-            includeThoughts,
-            thinkingBudget,
+            thinkingLevel
           },
       },
       tools: [
@@ -49,7 +47,7 @@ export function provideFirebase() {
                 throw new Error('Firebase objects do not exist.');
               }
 
-              return getGenerativeAIModel(configService);
+              return getGenerativeAIImageModel(configService);
             }
         }
     ]);

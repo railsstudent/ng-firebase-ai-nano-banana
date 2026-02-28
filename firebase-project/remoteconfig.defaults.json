@@ -1,12 +1,11 @@
 {
-  "functionRegion": "us-central1",
-  "thinkingBudget": "512",
   "dbEmulatorHost": "localhost",
-  "geminiImageModelName": "gemini-3-pro-image-preview",
-  "includeThoughts": "true",
+  "geminiImageModelName": "gemini-3.1-flash-image-preview",
   "functionEmulatorHost": "localhost",
   "glassBottleSouvenirTemplateId": "glass-bottle-souvenir-v0-0-1",
   "dbEmulatorPort": "8089",
   "vertexAILocation": "global",
-  "functionEmulatorPort": "5001"
+  "functionEmulatorPort": "5001",
+  "thinkingLevel": "High",
+  "functionRegion": "us-central1"
 }

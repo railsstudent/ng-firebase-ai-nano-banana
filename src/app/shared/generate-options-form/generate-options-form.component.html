@@ -1,0 +1,18 @@
+<form [formRoot]="generateConfigForm" class="flex flex-col sm:flex-row gap-4" id="form" name="form">
+  <label for="aspectRatio">
+    <span>Aspect Ratio:</span>
+    <select id="aspectRatio" [formField]="generateConfigForm.aspectRatio" class="px-2 py-2">
+      @for (o of aspectRatioOptions; track o) {
+        <option [value]="o">{{ o }}</option>
+      }
+    </select>
+  </label>
+  <label for="resolution">
+    <span>Resolution:</span>
+    <select id="resolution" [formField]="generateConfigForm.resolution" class="px-2 py-2">
+      @for (o of resolutionOptions; track o) {
+        <option [value]="o">{{ o }}</option>
+      }
+    </select>
+  </label>
+</form>

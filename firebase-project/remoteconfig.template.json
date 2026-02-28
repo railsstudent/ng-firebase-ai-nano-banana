@@ -1,11 +1,11 @@
 {
   "parameters": {
-    "functionRegion": {
+    "dbEmulatorPort": {
       "defaultValue": {
-        "value": "us-central1"
+        "value": "8089"
       },
-      "description": "Location where the functions are deployed",
-      "valueType": "STRING"
+      "description": "FireStore emulator port",
+      "valueType": "NUMBER"
     },
     "thinkingBudget": {
       "defaultValue": {
@@ -13,13 +13,6 @@
       },
       "description": "Thinking budget of Nano Banana Pro",
       "valueType": "NUMBER"
-    },
-    "geminiModelName": {
-      "defaultValue": {
-        "value": "gemini-3-flash-preview"
-      },
-      "description": "Germini Model Name",
-      "valueType": "STRING"
     },
     "dbEmulatorHost": {
       "defaultValue": {
@@ -56,13 +49,6 @@
       "description": "Glass bottle souvenir template id",
       "valueType": "STRING"
     },
-    "dbEmulatorPort": {
-      "defaultValue": {
-        "value": "8080"
-      },
-      "description": "FireStore emulator port",
-      "valueType": "NUMBER"
-    },
     "vertexAILocation": {
       "defaultValue": {
         "value": "global"
@@ -76,11 +62,18 @@
       },
       "description": "Function emulator port number",
       "valueType": "NUMBER"
+    },
+    "functionRegion": {
+      "defaultValue": {
+        "value": "us-central1"
+      },
+      "description": "Location where the functions are deployed",
+      "valueType": "STRING"
     }
   },
   "version": {
-    "versionNumber": "34",
-    "updateTime": "2026-01-04T01:18:28.048268Z",
+    "versionNumber": "38",
+    "updateTime": "2026-02-28T00:49:02.551053Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

@@ -2,7 +2,7 @@ import { GenerateVideoFromFramesRequest } from '@/ai/types/video.type';
 import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
-import { VisualStoryGenerateArgs } from '../types/visual-story-args.type';
+import { VisualStoryForm } from '../visual-story-form/types/visual-story-form.type';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,8 @@ export class VisualStoryService {
   private readonly promptHistoryService = inject(PromptHistoryService);
   private readonly genMediaService = inject(GenMediaService);
 
-  buildStepPrompts(genArgs: VisualStoryGenerateArgs): string[] {
-    const { userPrompt, args } = genArgs;
+  buildStepPrompts(genArgs: VisualStoryForm): string[] {
+    const { userPrompt, numberOfImages } = genArgs;
     const currentPrompt = userPrompt.trim();
 
     if (!currentPrompt) {
@@ -21,17 +21,16 @@ export class VisualStoryService {
 
     const stepPrompts: string[] = [];
 
-    for (let i = 0; i < args.numberOfImages; i++) {
-      const storyPrompt = this.buildStoryPrompt({ userPrompt: currentPrompt, args }, i + 1);
+    for (let i = 0; i < numberOfImages; i++) {
+      const storyPrompt = this.buildStoryPrompt(genArgs, i + 1);
       stepPrompts.push(storyPrompt);
     }
 
     return stepPrompts;
   }
 
-  private buildStoryPrompt(genArgs: VisualStoryGenerateArgs, stepNumber: number): string {
-    const { userPrompt, args } = genArgs;
-    const { numberOfImages, style, transition, type } = args;
+  private buildStoryPrompt(genArgs: VisualStoryForm, stepNumber: number): string {
+    const { userPrompt, numberOfImages, style, transition, type } = genArgs;
     let fullPrompt = `${userPrompt}, step ${stepNumber} of ${numberOfImages}`;
 
     // Add context based on type
@@ -69,8 +68,9 @@ export class VisualStoryService {
     this.promptHistoryService.clearHistory(key);
   }
 
-  addPrompt(key: string, args: VisualStoryGenerateArgs) {
-    const strPrompt = JSON.stringify(args);
+  addPrompt(key: string, modelValues: VisualStoryForm) {
+    const { userPrompt, ...args } = modelValues;
+    const strPrompt = JSON.stringify({ userPrompt, args });
     this.promptHistoryService.addPrompt(key, strPrompt);
   }
 

@@ -6,9 +6,9 @@ import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
 import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
-import { DEFAULT_PROMPT_ARGS } from './constants/default_prompt_args.const';
 import { VisualStoryService } from './services/visual-story.service';
-import { VisualStoryGenerateArgs } from './types/visual-story-args.type';
+import { DEFAULT_VISUAL_STORY_FORM_VALUES } from './visual-story-form/constants/visual-story-form-values.const';
+import { VisualStoryForm, VisualStoryNoPromptArgs } from './visual-story-form/types/visual-story-form.type';
 import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.component';
 import VisualStoryVideoComponent from './visual-story-video/visual-story-video.component';
 
@@ -32,7 +32,7 @@ export default class VisualStoryComponent {
 
   feature = this.featureService.getFeatureDetails('visual-story');
 
-  promptArgs = signal<VisualStoryGenerateArgs>(DEFAULT_PROMPT_ARGS);
+  visualStoryModel = signal<VisualStoryForm>(DEFAULT_VISUAL_STORY_FORM_VALUES);
 
   key = signal('visual-story');
   genMediaInput = signal<GenMediaInput>({
@@ -52,7 +52,7 @@ export default class VisualStoryComponent {
   numImages = computed(() => this.genmedia()?.imagesWithTokenUsage().images.length || 0);
 
   async handleGenerate(): Promise<void> {
-    const userPrompt = this.promptArgs().userPrompt;
+    const userPrompt = this.visualStoryModel().userPrompt;
     if (!userPrompt && !userPrompt.trim()) {
       return;
     }
@@ -60,7 +60,7 @@ export default class VisualStoryComponent {
     this.savePromptArgs(userPrompt);
 
     const stepPrompts = await this.visualStoryService.buildStepPrompts(
-      this.promptArgs()
+      this.visualStoryModel()
     );
 
     this.genMediaInput.set({
@@ -71,12 +71,12 @@ export default class VisualStoryComponent {
   }
 
   private savePromptArgs(trimmedPrompt: string) {
-    this.promptArgs.update(args => {
+    this.visualStoryModel.update(args => {
       args.userPrompt = trimmedPrompt;
       return args;
     });
 
-    this.visualStoryService.addPrompt(this.key(), this.promptArgs());
+    this.visualStoryService.addPrompt(this.key(), this.visualStoryModel());
   }
 
   onClearHistory(): void {
@@ -85,10 +85,17 @@ export default class VisualStoryComponent {
 
   handleVisualStoryArgs(stringifyPromptArgs: string) {
     try {
-      this.promptArgs.set(JSON.parse(stringifyPromptArgs));
+      const obj = JSON.parse(stringifyPromptArgs) as { userPrompt: string, args: VisualStoryNoPromptArgs };
+      const { userPrompt, args } = obj;
+      const modelValues: VisualStoryForm = {
+        userPrompt
+        ...args
+      };
+
+      this.visualStoryModel.set(modelValues);
     } catch (e) {
       console.error(e);
-      this.promptArgs.set(DEFAULT_PROMPT_ARGS);
+      this.visualStoryModel.set(DEFAULT_VISUAL_STORY_FORM_VALUES);
     }
   }
 }

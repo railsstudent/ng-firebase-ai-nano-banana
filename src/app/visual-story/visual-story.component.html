@@ -4,7 +4,7 @@
   <div class="w-full max-w-2xl mx-auto">
     <app-visual-story-form
       [isLoading]="isLoading()"
-      [(promptArgs)]="promptArgs"
+      [(visualStoryModel)]="visualStoryModel"
       (generate)="handleGenerate()"
     >
       <span loading-text>{{ feature.loadingText }}</span>
@@ -26,11 +26,11 @@
     [genMediaInput]="genMediaInput()"
     #genmedia
   >
-    <p class="text-sm">Your generated {{ promptArgs().args.type}} will appear here. Please be patient.</p>
+    <p class="text-sm">Your generated {{ visualStoryModel().type }} will appear here. Please be patient.</p>
   </app-gen-media>
 
   <app-visual-story-video
-    [userPrompt]="this.promptArgs().userPrompt"
+    [userPrompt]="this.visualStoryModel().userPrompt"
     [images]="this.images()"
   />
 </app-card>

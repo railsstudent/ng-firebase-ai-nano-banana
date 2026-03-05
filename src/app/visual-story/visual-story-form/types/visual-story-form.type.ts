@@ -11,4 +11,7 @@ export const VisualStoryFormSchema = z.object({
 
 export type VisualStoryForm = z.infer<typeof VisualStoryFormSchema>;
 
-export type VisualStoryNoPromptArgs = Omit<VisualStoryForm, 'userPrompt'>;
+export type VisualStoryStorage = {
+  userPrompt: string;
+  args: Omit<VisualStoryForm, 'userPrompt'>
+};

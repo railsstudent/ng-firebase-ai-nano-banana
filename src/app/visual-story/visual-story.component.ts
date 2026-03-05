@@ -8,7 +8,7 @@ import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.c
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { VisualStoryService } from './services/visual-story.service';
 import { DEFAULT_VISUAL_STORY_FORM_VALUES } from './visual-story-form/constants/visual-story-form-values.const';
-import { VisualStoryForm, VisualStoryNoPromptArgs } from './visual-story-form/types/visual-story-form.type';
+import { VisualStoryForm, VisualStoryStorage } from './visual-story-form/types/visual-story-form.type';
 import { VisualStoryFormComponent } from './visual-story-form/visual-story-form.component';
 import VisualStoryVideoComponent from './visual-story-video/visual-story-video.component';
 
@@ -85,10 +85,10 @@ export default class VisualStoryComponent {
 
   handleVisualStoryArgs(stringifyPromptArgs: string) {
     try {
-      const obj = JSON.parse(stringifyPromptArgs) as { userPrompt: string, args: VisualStoryNoPromptArgs };
+      const obj = JSON.parse(stringifyPromptArgs) as VisualStoryStorage;
       const { userPrompt, args } = obj;
       const modelValues: VisualStoryForm = {
-        userPrompt
+        userPrompt,
         ...args
       };
 

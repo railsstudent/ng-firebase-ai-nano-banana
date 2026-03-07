@@ -16,7 +16,8 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     ImageViewersComponent,
   ],
   template: `
-@if (isHideImageViewer()) {
+  isShowViewerLoader: {{ isShowViewerLoader() }}
+@if (isShowViewerLoader()) {
   <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
     <app-loader [loadingText]="loadingText()">
       <ng-content />
@@ -56,9 +57,17 @@ export class GenMediaComponent {
 
   isLoading = signal(false);
 
-  isHideImageViewer = linkedSignal<ImagesWithTokenUsage, boolean>({
-    source: () => this.imagesWithTokenUsage(),
-    computation: (({ images }, previous) => !previous || !images || images.length === 0)
+  isShowViewerLoader = linkedSignal<{ tokenUsage: ImagesWithTokenUsage, isLoading: boolean }, boolean>({
+    source: () => ({ tokenUsage: this.imagesWithTokenUsage(), isLoading: this.isLoading() }),
+    computation: (({ tokenUsage, isLoading }, previous) => {
+      const images = tokenUsage.images;
+      console.log("previous", previous, "images", images)
+      if (!isLoading) {
+        return false;
+      }
+
+      return images && images.length === 0
+    })
   });
 
   destroyRef$ = inject(DestroyRef);

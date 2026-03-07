@@ -2,21 +2,23 @@ import { FirebaseService } from '@/ai/services/firebase.service';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
+import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { form, FormField, required } from '@angular/forms/signals';
 import { GenerativeContentBlob } from 'firebase/ai';
-import { FormsModule } from '@angular/forms';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
+import { IMAGE_CHANNEL_LIST } from '../constants/image-channel.const';
 import { ConversationMessagesService } from '../services/conversation-messages.service';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 import { ChatMessage } from '../types/chat-message.type';
-import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
+import { ImageChannel } from '../types/conversation-model.type';
 
 @Component({
   selector: 'app-conversation-mode',
   imports: [
     DropzoneComponent,
-    FormsModule,
     PromptFormComponent,
+    FormField,
   ],
   templateUrl: './conversation-mode.component.html',
   styleUrl: './conversation-mode.component.css',
@@ -24,9 +26,16 @@ import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
 })
 export class ConversationModeComponent {
   feature = input.required<FeatureDetails>();
-  sources = input.required<string[]>();
+  imageChannels = IMAGE_CHANNEL_LIST;
 
-  conversationMode = signal('edit');
+  imageChannelModel = signal<ImageChannel>({
+     mode: 'edit',
+  })
+
+  imageChannelForm = form(this.imageChannelModel, (schemaPath) => {
+    required(schemaPath.mode);
+  });
+
   editedPrompt = signal<PromptForm>({ value: '' });
   imageFiles = signal<File[]>([]);
   isLoading = signal(false);

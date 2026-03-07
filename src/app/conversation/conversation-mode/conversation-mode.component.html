@@ -1,9 +1,9 @@
 <ul class="mode-radio-group">
-  @for (source of sources(); track source) {
-    @let displayValue = source.charAt(0).toUpperCase() + source.slice(1);
+  @for (channel of imageChannels; track channel) {
+    @let displayValue = channel.charAt(0).toUpperCase() + channel.slice(1);
     <li class="mode-item">
       <div class="mode-block">
-        <input type="radio" [value]="source" name="list-radio" class="mode-input" [(ngModel)]="conversationMode">
+        <input type="radio" [value]="channel" class="mode-input" [formField]="imageChannelForm.mode">
         <label for="horizontal-list-radio-license" class="mode-label">{{ displayValue }} </label>
       </div>
     </li>
@@ -11,7 +11,8 @@
 </ul>
 
 @let details = feature();
-@if (conversationMode() === 'create') {
+@let modeValue = imageChannelForm.mode().value();
+@if (modeValue === 'create') {
   <app-prompt-form
     [(promptModel)]="editedPrompt"
     [isLoading]="isLoading()"
@@ -20,6 +21,8 @@
     <span button-text>{{ details.buttonText }}</span>
     <span loading-text>{{ details.loadingText }}</span>
   </app-prompt-form>
-} @else {
+} @else if (modeValue === 'edit') {
   <app-dropzone #dropzone mode='single' (filesChanged)="imageFiles.set($event)" />
+} @else if (modeValue === 'camera') {
+  Camera: To be implemented
 }

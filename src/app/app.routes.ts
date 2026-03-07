@@ -11,9 +11,6 @@ export const routes: Routes = [
     path: 'conversation',
     loadComponent: () => import('./conversation/conversation-edit.component'),
     title: 'Conversation Editing',
-    data: {
-      sources: ['edit', 'create', 'camera']
-    }
   },
   {
     path: 'visual-story',

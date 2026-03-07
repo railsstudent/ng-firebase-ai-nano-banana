@@ -16,7 +16,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     ImageViewersComponent,
   ],
   template: `
-@if (isLoading()) {
+@if (isHideImageViewer()) {
   <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
     <app-loader [loadingText]="loadingText()">
       <ng-content />
@@ -54,16 +54,13 @@ export class GenMediaComponent {
     this.genMediaService.videoError()
   );
 
-  isLoading = linkedSignal<ImagesWithTokenUsage, boolean>({
-    source: () => this.imagesWithTokenUsage(),
-    computation: (({ images }, previous) => {
-      if (!previous || !images) {
-        return false;
-      }
+  isLoading = signal(false);
 
-      return images.length === 0;
-    })
+  isHideImageViewer = linkedSignal<ImagesWithTokenUsage, boolean>({
+    source: () => this.imagesWithTokenUsage(),
+    computation: (({ images }, previous) => !previous || !images || images.length === 0)
   });
+
   destroyRef$ = inject(DestroyRef);
 
   constructor() {
@@ -80,9 +77,7 @@ export class GenMediaComponent {
           if (multiPrompts.length) {
             this.isLoading.set(true);
             this.genMediaService.streamImages(multiPrompts, imageFiles)
-              .finally(
-                () => this.isLoading.set(false)
-              );
+              .finally(() => this.isLoading.set(false));
           }
         }),
         takeUntilDestroyed(this.destroyRef$),

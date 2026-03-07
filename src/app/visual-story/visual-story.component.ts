@@ -49,7 +49,7 @@ export default class VisualStoryComponent {
 
   promptHistory = this.visualStoryService.getPromptHistory(this.key);
 
-  numImages = computed(() => this.genmedia()?.imagesWithTokenUsage().images.length || 0);
+  numImages = computed(() => this.images()?.length || 0);
 
   async handleGenerate(): Promise<void> {
     const userPrompt = this.visualStoryModel().userPrompt;

@@ -121,6 +121,10 @@ export class GenMediaService {
 
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
+
+  #currentStep = signal(0);
+  currentStep = this.#currentStep.asReadonly();
+
   async streamImages(prompts: string[], imageFiles: File[]): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
@@ -134,10 +138,11 @@ export class GenMediaService {
 
     for (let i = 0; i < prompts.length; i=i+1) {
       try {
+        this.#currentStep.set(i + 1);
         const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
 
         if (imageTokenUsage) {
-          this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary   }) => {
+          this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary }) => {
             return {
               images: images.concat({
                 ...imageTokenUsage?.image,

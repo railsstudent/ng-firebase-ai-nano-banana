@@ -16,7 +16,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     ImageViewersComponent,
   ],
   template: `
-@if (isLoading()) {
+@if (showCurrentStep() && currentStep() > 0) {
   <div class="mb-2 text-lg text-gray-400">Generating step: {{ currentStep() }}</div>
 }
 @if (isShowViewerLoader()) {
@@ -41,6 +41,7 @@ export class GenMediaComponent {
 
   loadingText = input('');
   genMediaInput = input<GenMediaInput>();
+  showCurrentStep = input(false);
 
   videoUrl = this.genMediaService.videoUrl.asReadonly();
   isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
@@ -50,6 +51,7 @@ export class GenMediaComponent {
   downloadImageError = signal('');
 
   imagesWithTokenUsage = this.genMediaService.currentFinishedImages;
+  currentStep = this.genMediaService.currentStep;
 
   error = computed(() =>
     this.genMediaService.imageGenerationError() ||
@@ -58,7 +60,6 @@ export class GenMediaComponent {
   );
 
   isLoading = signal(false);
-  currentStep = this.genMediaService.currentStep;
 
   isShowViewerLoader = linkedSignal<{ tokenUsage: ImagesWithTokenUsage, isLoading: boolean }, boolean>({
     source: () => ({ tokenUsage: this.imagesWithTokenUsage(), isLoading: this.isLoading() }),

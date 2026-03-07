@@ -57,7 +57,12 @@ export class GenMediaService {
     }
   }
 
-  private async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage | undefined> {
+  #currentStep = signal(0);
+  currentStep = this.#currentStep.asReadonly();
+
+  private async generateImage(prompt: string, imageFiles: File[], step = 0): Promise<ImageTokenUsage | undefined> {
+    this.#currentStep.set(step);
+
     if (!prompt || !prompt.trim()) {
       return undefined;
     }
@@ -77,53 +82,50 @@ export class GenMediaService {
     }
   }
 
-  async generateImages(prompts: string[], imageFiles: File[]): Promise<ImagesWithTokenUsage> {
-    if (!prompts?.length) {
-      return DEFAULT_IMAGES_TOKEN_USAGE
-    }
+  // async generateImages(prompts: string[], imageFiles: File[]): Promise<ImagesWithTokenUsage> {
+  //   if (!prompts?.length) {
+  //     return DEFAULT_IMAGES_TOKEN_USAGE
+  //   }
 
-    let isFirstError = false;
-    const imageTokenUsages: ImageTokenUsage[] = [];
-    this.imageGenerationError.set('');
-    this.videoUrl.set('');
+  //   let isFirstError = false;
+  //   const imageTokenUsages: ImageTokenUsage[] = [];
+  //   this.imageGenerationError.set('');
+  //   this.videoUrl.set('');
 
-    for (let i = 0; i < prompts.length; i=i+1) {
-      try {
-        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
-        if (imageTokenUsage) {
-          imageTokenUsages.push(imageTokenUsage);
-        }
-      } catch (e) {
-        if (!isFirstError) {
-          if (e instanceof Error) {
-            this.imageGenerationError.set(e.message);
-          } else {
-            this.imageGenerationError.set('Unexpected error in image generation.');
-          }
-          isFirstError = true;
-        }
-      }
-    }
+  //   for (let i = 0; i < prompts.length; i=i+1) {
+  //     try {
+  //       const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
+  //       if (imageTokenUsage) {
+  //         imageTokenUsages.push(imageTokenUsage);
+  //       }
+  //     } catch (e) {
+  //       if (!isFirstError) {
+  //         if (e instanceof Error) {
+  //           this.imageGenerationError.set(e.message);
+  //         } else {
+  //           this.imageGenerationError.set('Unexpected error in image generation.');
+  //         }
+  //         isFirstError = true;
+  //       }
+  //     }
+  //   }
 
-    return imageTokenUsages.reduce((acc, { image, ...rest }, index) => {
-      const { tokenUsage, metadata, thoughtSummary } = rest;
-      return {
-        images: acc.images.concat({
-          ...image,
-          id: index
-        }),
-        tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
-        groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
-        thoughtSummary: thoughtSummary ? acc.thoughtSummary.concat(thoughtSummary) : acc.thoughtSummary,
-      };
-    }, DEFAULT_IMAGES_TOKEN_USAGE)
-  }
+  //   return imageTokenUsages.reduce((acc, { image, ...rest }, index) => {
+  //     const { tokenUsage, metadata, thoughtSummary } = rest;
+  //     return {
+  //       images: acc.images.concat({
+  //         ...image,
+  //         id: index
+  //       }),
+  //       tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
+  //       groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
+  //       thoughtSummary: thoughtSummary ? acc.thoughtSummary.concat(thoughtSummary) : acc.thoughtSummary,
+  //     };
+  //   }, DEFAULT_IMAGES_TOKEN_USAGE)
+  // }
 
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
-
-  #currentStep = signal(0);
-  currentStep = this.#currentStep.asReadonly();
 
   async streamImages(prompts: string[], imageFiles: File[]): Promise<void> {
 
@@ -138,8 +140,7 @@ export class GenMediaService {
 
     for (let i = 0; i < prompts.length; i=i+1) {
       try {
-        this.#currentStep.set(i + 1);
-        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
+        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles, i + 1);
 
         if (imageTokenUsage) {
           this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary }) => {

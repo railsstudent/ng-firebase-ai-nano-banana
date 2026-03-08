@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, OnDestroy, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, OnDestroy, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
 
@@ -26,6 +26,7 @@ const WIDTH = 320;
         <button (click)="takePhoto()">Capture Photo</button>
         @if (currentImageURL()) {
           <button (click)="clearPhoto()">Clear Photo</button>
+          <button (click)="convertDataURLToFile()">Use This</button>
         }
       </div>
     </div>
@@ -52,6 +53,7 @@ const WIDTH = 320;
       margin-top: 1rem;
       display: flex;
       justify-content: center;
+      gap: 0.5rem;
     }
     button {
       padding: 8px 16px;
@@ -69,6 +71,8 @@ const WIDTH = 320;
 export class LiveImageComponent implements OnDestroy {
   video = viewChild.required<ElementRef<HTMLVideoElement>>('videoElement');
   canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvasElement');
+
+  useThisImage = output<File>();
 
   currentImageURL = signal<string | null>(null);
   width = signal(WIDTH);
@@ -138,6 +142,32 @@ export class LiveImageComponent implements OnDestroy {
       context.fillRect(0, 0, canvasEl.width, canvasEl.height);
       this.currentImageURL.set(canvasEl.toDataURL('image/png'));
     }
+  }
+
+  convertDataURLToFile() {
+    const dataUrl = this.currentImageURL();
+    if (!dataUrl) {
+      return;
+    }
+
+    const arr = dataUrl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) {
+      return;
+    }
+
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    const file = new File([u8arr], 'captured-image.png', { type: mime });
+    console.log(file);
+    this.useThisImage.emit(file);
   }
 
   ngOnDestroy() {

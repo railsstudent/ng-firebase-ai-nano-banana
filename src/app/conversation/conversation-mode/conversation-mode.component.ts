@@ -1,6 +1,7 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
+import { LiveImageComponent } from '@/shared/live-image/live-image.component';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
@@ -17,6 +18,7 @@ import { ImageChannel } from '../types/conversation-model.type';
   selector: 'app-conversation-mode',
   imports: [
     DropzoneComponent,
+    LiveImageComponent,
     PromptFormComponent,
     FormField,
   ],

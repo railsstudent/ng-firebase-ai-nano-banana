@@ -12,6 +12,7 @@ const WIDTH = 320;
   imports: [ErrorDisplayComponent, LiveImageControlsComponent],
   templateUrl: './live-image.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LiveImagesStripComponent],
   host: {
     class: 'block',
   },

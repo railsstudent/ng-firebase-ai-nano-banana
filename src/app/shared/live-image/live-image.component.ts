@@ -23,10 +23,9 @@ const WIDTH = 320;
       }
 
       <div class="controls">
-        @if (!currentImageURL()) {
-          <button (click)="capture()">Capture Photo</button>
-        } @else {
-          <button (click)="retake()">Retake</button>
+        <button (click)="takePhoto()">Capture Photo</button>
+        @if (currentImageURL()) {
+          <button (click)="clearPhoto()">Clear Photo</button>
         }
       </div>
     </div>
@@ -116,7 +115,7 @@ export class LiveImageComponent implements OnDestroy {
     }
   }
 
-  capture() {
+  takePhoto() {
     const videoEl = this.videoNativeElement();
     const canvasEl = this.canvasNativeElement();
 
@@ -131,8 +130,14 @@ export class LiveImageComponent implements OnDestroy {
     }
   }
 
-  retake() {
-    this.currentImageURL.set(null);
+  clearPhoto() {
+    const canvasEl = this.canvasNativeElement();
+    const context = canvasEl.getContext('2d');
+    if (context) {
+      context.fillStyle = '#aaaaaa';
+      context.fillRect(0, 0, canvasEl.width, canvasEl.height);
+      this.currentImageURL.set(canvasEl.toDataURL('image/png'));
+    }
   }
 
   ngOnDestroy() {

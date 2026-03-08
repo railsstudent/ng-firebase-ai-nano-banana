@@ -7,79 +7,65 @@ const WIDTH = 320;
 @Component({
   selector: 'app-live-image',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'block',
+  },
   template: `
-    <div class="camera-container">
+    <div class="relative mx-auto w-full max-w-[500px]">
       @if (errorMessage(); as msg) {
-        <div class="error-message">
+        <div class="rounded-lg border border-red-500 bg-red-100 p-4 text-center text-red-700">
           <p>{{ msg }}</p>
         </div>
       } @else {
-        <video #videoElement autoplay playsinline
+        <video
+          #videoElement
+          autoplay
+          playsinline
           [height]="height()"
-          [width]="width()">
-        </video>
+          [width]="width()"
+          class="block rounded-lg shadow-sm"
+        ></video>
 
         @if (currentImageURL()) {
-          <img [src]="currentImageURL()"
+          <img
+            [src]="currentImageURL()"
             alt="Captured Image"
             [height]="height()"
             [width]="width()"
+            class="block rounded-lg shadow-sm"
           />
         }
 
-        <div class="controls">
-          <button (click)="takePhoto()">Capture Photo</button>
+        <div class="mt-4 flex justify-center gap-2">
+          <button
+            (click)="takePhoto()"
+            class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Capture Photo
+          </button>
           @if (currentImageURL()) {
-            <button (click)="clearPhoto()">Clear Photo</button>
-            <button (click)="convertDataURLToFile()">Use This</button>
+            <button
+              (click)="clearPhoto()"
+              class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Clear Photo
+            </button>
+            <button
+              (click)="convertDataURLToFile()"
+              class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Use This
+            </button>
           }
         </div>
       }
     </div>
-    <canvas #canvasElement style="display: none;"
-        [height]="height()"
-        [width]="width()"
+    <canvas
+      #canvasElement
+      style="display: none;"
+      [height]="height()"
+      [width]="width()"
     ></canvas>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-    .camera-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    video, img {
-      border-radius: 8px;
-      display: block;
-    }
-    .controls {
-      margin-top: 1rem;
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-    button {
-      padding: 8px 16px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .error-message {
-      padding: 1rem;
-      background-color: #fee2e2;
-      border: 1px solid #ef4444;
-      border-radius: 8px;
-      color: #b91c1c;
-      text-align: center;
-    }
   `,
 })
 export class LiveImageComponent implements OnDestroy {
@@ -188,7 +174,7 @@ export class LiveImageComponent implements OnDestroy {
 
   ngOnDestroy() {
     if (this.stream) {
-      this.stream.getTracks().forEach(track => track.stop());
+      this.stream.getTracks().forEach((track) => track.stop());
     }
   }
 }

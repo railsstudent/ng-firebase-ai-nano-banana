@@ -9,26 +9,32 @@ const WIDTH = 320;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="camera-container">
-      <video #videoElement autoplay playsinline
-        [height]="height()"
-        [width]="width()">
-      </video>
-
-      @if (currentImageURL()) {
-        <img [src]="currentImageURL()"
-          alt="Captured Image"
+      @if (errorMessage(); as msg) {
+        <div class="error-message">
+          <p>{{ msg }}</p>
+        </div>
+      } @else {
+        <video #videoElement autoplay playsinline
           [height]="height()"
-          [width]="width()"
-        />
-      }
+          [width]="width()">
+        </video>
 
-      <div class="controls">
-        <button (click)="takePhoto()">Capture Photo</button>
         @if (currentImageURL()) {
-          <button (click)="clearPhoto()">Clear Photo</button>
-          <button (click)="convertDataURLToFile()">Use This</button>
+          <img [src]="currentImageURL()"
+            alt="Captured Image"
+            [height]="height()"
+            [width]="width()"
+          />
         }
-      </div>
+
+        <div class="controls">
+          <button (click)="takePhoto()">Capture Photo</button>
+          @if (currentImageURL()) {
+            <button (click)="clearPhoto()">Clear Photo</button>
+            <button (click)="convertDataURLToFile()">Use This</button>
+          }
+        </div>
+      }
     </div>
     <canvas #canvasElement style="display: none;"
         [height]="height()"
@@ -66,6 +72,14 @@ const WIDTH = 320;
     button:hover {
       background: #0056b3;
     }
+    .error-message {
+      padding: 1rem;
+      background-color: #fee2e2;
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+      color: #b91c1c;
+      text-align: center;
+    }
   `,
 })
 export class LiveImageComponent implements OnDestroy {
@@ -75,6 +89,7 @@ export class LiveImageComponent implements OnDestroy {
   useThisImage = output<File>();
 
   currentImageURL = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
   width = signal(WIDTH);
   height = signal(0);
   streaming = false;
@@ -114,7 +129,9 @@ export class LiveImageComponent implements OnDestroy {
         videoEl.srcObject = this.stream;
         await videoEl.play();
       }
-    } catch (err) {
+    } catch (err: any) {
+      const msg = err instanceof Error ? err.message : 'Error accessing camera';
+      this.errorMessage.set(msg);
       console.error('Error accessing camera:', err);
     }
   }
@@ -166,7 +183,6 @@ export class LiveImageComponent implements OnDestroy {
     }
 
     const file = new File([u8arr], 'captured-image.png', { type: mime });
-    console.log(file);
     this.useThisImage.emit(file);
   }
 

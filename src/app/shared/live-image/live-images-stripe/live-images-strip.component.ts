@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, linkedSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, linkedSignal, output, signal } from '@angular/core';
 import { ThumbnailHolder } from './types/live-image-stripe.type';
 
 const CAPACITY = 5;
@@ -47,6 +47,7 @@ export class LiveImagesStripComponent {
     console.log(`Generate thumbnail: ${dataURL}`);
   }
 
+  selectedThumbnail = output<string>();
   thumbnailSelected(index: number) {
     console.log(`select ${index}`);
   }

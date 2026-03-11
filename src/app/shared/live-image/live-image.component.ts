@@ -3,16 +3,16 @@ import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyR
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, take } from 'rxjs';
 import { LiveImageControlsComponent } from './live-image-controls/live-image-controls.component';
+import { LiveImagesStripComponent } from './live-images-stripe/live-images-strip.component';
 import { LiveImageService } from './services/live-image.service';
 
 const WIDTH = 320;
 
 @Component({
   selector: 'app-live-image',
-  imports: [ErrorDisplayComponent, LiveImageControlsComponent],
+  imports: [ErrorDisplayComponent, LiveImageControlsComponent, LiveImagesStripComponent],
   templateUrl: './live-image.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LiveImagesStripComponent],
   host: {
     class: 'block',
   },

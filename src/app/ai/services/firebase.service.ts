@@ -4,14 +4,12 @@ import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ImageTokenUsage } from '../types/image-response.type';
 import { getBase64Images } from '../utils/generate-image.util';
 import { resolveImageParts } from '../utils/inline-image-data.util';
-import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService  {
     private readonly geminiModel = inject(GEMINI_IMAGE_MODEL);
-    private readonly configService = inject(ConfigService);
 
     async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage> {
         try {

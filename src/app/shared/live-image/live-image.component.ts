@@ -17,6 +17,7 @@ const WIDTH = 320;
           <p>{{ msg }}</p>
         </div>
       } @else {
+        <div class="flex justify-center">
         <video
           #videoElement
           autoplay
@@ -35,6 +36,7 @@ const WIDTH = 320;
             class="block rounded-lg shadow-sm"
           />
         }
+        </div>
 
         <div class="mt-4 flex justify-center gap-2">
           <button

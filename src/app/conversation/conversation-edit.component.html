@@ -3,7 +3,7 @@
   <app-card-header [name]="details?.name || ''" [description]="details?.description || ''"  />
 
   @if (!isEditing()) {
-    <div class="w-full max-w-2xl mx-auto mb-4">
+    <div class="w-full max-w-3xl mx-auto mb-4">
       <app-conversation-mode [feature]="feature()"
         (lastEditedBlob)="lastEditedImage.set($event)"
         (originalImageMessage)="messages.set([$event])"
@@ -11,7 +11,7 @@
     </div>
   }
 
-  <div class="w-full max-w-2xl mx-auto mb-4 flex justify-end">
+  <div class="w-full max-w-3xl mx-auto mb-4 flex justify-end">
     <button
         type="button"
         [disabled]="isConversationDisabled()"
@@ -21,7 +21,7 @@
     </button>
   </div>
 
-  <div class="w-full max-w-2xl mx-auto mb-8 h-[70vh] flex flex-col bg-gray-800 border border-gray-700 rounded-xl shadow-2xl">
+  <div class="w-full max-w-3xl mx-auto mb-8 h-[70vh] flex flex-col bg-gray-800 border border-gray-700 rounded-xl shadow-2xl">
     <app-conversation-messages
       class="flex-grow p-6 space-y-6 overflow-y-auto"
       [messages]="messages()"

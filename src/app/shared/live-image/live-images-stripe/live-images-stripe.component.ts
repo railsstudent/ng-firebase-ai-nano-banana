@@ -3,7 +3,7 @@ import { ThumbnailHolder } from './types/live-image-stripe.type';
 
 const CAPACITY = 5;
 @Component({
-  selector: 'app-live-images-strip',
+  selector: 'app-live-images-stripe',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `
@@ -21,7 +21,7 @@ const CAPACITY = 5;
     }
   `,
 })
-export class LiveImagesStripComponent {
+export class LiveImagesStripeComponent {
   newThumbnail = signal<string | null>(null);
 
   thumbnailHolders = linkedSignal<string | null, ThumbnailHolder[]>({

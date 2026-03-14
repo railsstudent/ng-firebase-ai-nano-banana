@@ -1,12 +1,14 @@
 # Refactor LiveImageComponent
 
 ## Objective
+
 1. Refactor the `LiveImageComponent` to reuse the existing `ErrorDisplayComponent` for displaying error messages instead of relying on inline HTML styling.
 2. Optimize the `canplay` event listener by using RxJS `take(1)` to run the event exactly once, eliminating the need for the `streaming` state flag.
 3. Extract complex business logic (data URL conversion and canvas drawing operations) into a new `LiveImageService` to keep the component clean and focused on view coordination.
 4. Extract the inline template from the component's TypeScript file into a separate HTML file (`live-image.component.html`) for better separation of concerns and maintainability.
 
 ## Key Files & Context
+
 - `src/app/shared/live-image/live-image.component.ts`
 - `src/app/shared/live-image/live-image.component.html` (New File)
 - `src/app/shared/live-image/services/live-image.service.ts` (New File)
@@ -15,11 +17,13 @@
 ## Implementation Steps
 
 ### 1. Extract Template to HTML File
+
 1. **Create HTML File**: Create a new file `src/app/shared/live-image/live-image.component.html`.
 2. **Move Content**: Cut the inline template string from `LiveImageComponent` and paste it into the new HTML file.
 3. **Refactor Error Block**: While moving the template, replace the inline error `div` with `<app-error-display [error]="msg" />`.
 
 **`src/app/shared/live-image/live-image.component.html` Content:**
+
 ```html
 <div class="relative mx-auto w-full max-w-[500px]">
   @if (errorMessage(); as msg) {
@@ -79,8 +83,10 @@
 ```
 
 ### 2. Update Component Decorator
+
 1. **Import ErrorDisplayComponent**: Add `import { ErrorDisplayComponent } from '../error-display/error-display.component';`.
 2. **Update Metadata**: Replace `template` with `templateUrl` and add `imports`.
+
 ```typescript
 @Component({
   selector: 'app-live-image',
@@ -94,8 +100,10 @@
 ```
 
 ### 3. Create `LiveImageService`
+
 1. **Create the File**: Create `src/app/shared/live-image/services/live-image.service.ts`.
 2. **Implement Logic**: Extract the logic for taking a photo, clearing a photo, and converting a data URL to a file.
+
 ```typescript
 import { Injectable } from '@angular/core';
 
@@ -147,10 +155,12 @@ export class LiveImageService {
 ```
 
 ### 4. Optimize Event Listener & Integrate Service
+
 1. **Import `take`**: Include the `take` operator from RxJS.
 2. **Remove `streaming` Property**: Delete `streaming = false;`.
 3. **Inject Service**: Add `private readonly liveImageService = inject(LiveImageService);`.
 4. **Update `setupStreamingListener`**:
+
 ```typescript
 private setupStreamingListener(): void {
   const videoEl = this.videoNativeElement();
@@ -162,7 +172,9 @@ private setupStreamingListener(): void {
     });
 }
 ```
-5. **Update Interaction Methods**:
+
+1. **Update Interaction Methods**:
+
 ```typescript
 takePhoto() {
   const videoEl = this.videoNativeElement();
@@ -198,6 +210,7 @@ convertDataURLToFile() {
 ```
 
 ## Verification & Testing
+
 1. Run `npm run build` or `ng build` to confirm there are no compilation errors.
 2. Verify the application runs in the local development environment (`ng serve`).
 3. Ensure the camera height is correctly set automatically when the camera feed initializes.

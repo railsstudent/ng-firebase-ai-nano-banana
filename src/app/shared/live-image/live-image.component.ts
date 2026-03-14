@@ -45,11 +45,9 @@ export class LiveImageComponent implements OnDestroy {
       .subscribe(() => this.height.set(videoEl.videoHeight / (videoEl.videoWidth / this.width())));
   }
 
-  async setupCamera() {
+  async setupCamera(constraints: MediaStreamConstraints = { video: true }) {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
+      this.stream = await navigator.mediaDevices.getUserMedia(constraints);
       const videoEl = this.videoNativeElement();
 
       this.setupStreamingListener();

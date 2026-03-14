@@ -3,23 +3,10 @@
     <app-error-display [error]="msg" />
   } @else {
     <div class="flex justify-center">
-    <video
-      #videoElement
-      autoplay
-      playsinline
-      [height]="height()"
-      [width]="width()"
-      class="block rounded-lg shadow-sm"
-    ></video>
+    <video #videoElement autoplay playsinline [height]="height()" [width]="width()" class="block rounded-lg shadow-sm"></video>
 
     @if (currentImageURL()) {
-      <img
-        [src]="currentImageURL()"
-        alt="Captured Image"
-        [height]="height()"
-        [width]="width()"
-        class="block rounded-lg shadow-sm"
-      />
+      <img [src]="currentImageURL()" alt="Captured Image" [height]="height()" [width]="width()" class="block rounded-lg shadow-sm" />
     }
     </div>
 

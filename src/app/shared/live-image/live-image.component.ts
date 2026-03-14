@@ -2,13 +2,14 @@ import { ErrorDisplayComponent } from '@/shared/error-display/error-display.comp
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, take } from 'rxjs';
+import { LiveImageControlsComponent } from './live-image-controls/live-image-controls.component';
 import { LiveImageService } from './services/live-image.service';
 
 const WIDTH = 320;
 
 @Component({
   selector: 'app-live-image',
-  imports: [ErrorDisplayComponent],
+  imports: [ErrorDisplayComponent, LiveImageControlsComponent],
   templateUrl: './live-image.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -32,6 +33,7 @@ export class LiveImageComponent {
 
   videoNativeElement = computed(() => this.video().nativeElement);
   canvasNativeElement = computed(() => this.canvas().nativeElement);
+  hasURL = computed(() => !!this.currentImageURL());
 
   constructor() {
     this.destroyRef.onDestroy(() => this.stopStream());
@@ -70,19 +72,31 @@ export class LiveImageComponent {
     }
   }
 
-  takePhoto() {
-    const videoEl = this.videoNativeElement();
-    const canvasEl = this.canvasNativeElement();
+  handleCameraAction(action: 'capture' | 'clear' | 'use') {
+    switch (action) {
+      case 'capture':
+        this.takePhoto();
+        break;
+      case 'clear':
+        this.clearPhoto();
+        break;
+      case 'use':
+        this.convertDataURLToFile();
+        break;
+      default:
+        break;
+    }
+  }
 
-    const dataUrl = this.liveImageService.takePhoto(videoEl, canvasEl);
+  takePhoto() {
+    const dataUrl = this.liveImageService.takePhoto(this.videoNativeElement(), this.canvasNativeElement());
     if (dataUrl) {
       this.currentImageURL.set(dataUrl);
     }
   }
 
   clearPhoto() {
-    const canvasEl = this.canvasNativeElement();
-    const dataUrl = this.liveImageService.clearPhoto(canvasEl);
+    const dataUrl = this.liveImageService.clearPhoto(this.canvasNativeElement());
     if (dataUrl) {
       this.currentImageURL.set(dataUrl);
     }

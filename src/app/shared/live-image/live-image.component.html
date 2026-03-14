@@ -1,0 +1,55 @@
+<div class="relative mx-auto w-full max-w-[500px]">
+  @if (errorMessage(); as msg) {
+    <app-error-display [error]="msg" />
+  } @else {
+    <div class="flex justify-center">
+    <video
+      #videoElement
+      autoplay
+      playsinline
+      [height]="height()"
+      [width]="width()"
+      class="block rounded-lg shadow-sm"
+    ></video>
+
+    @if (currentImageURL()) {
+      <img
+        [src]="currentImageURL()"
+        alt="Captured Image"
+        [height]="height()"
+        [width]="width()"
+        class="block rounded-lg shadow-sm"
+      />
+    }
+    </div>
+
+    <div class="mt-4 flex justify-center gap-2">
+      <button
+        (click)="takePhoto()"
+        class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      >
+        Capture Photo
+      </button>
+      @if (currentImageURL()) {
+        <button
+          (click)="clearPhoto()"
+          class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Clear Photo
+        </button>
+        <button
+          (click)="convertDataURLToFile()"
+          class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Use This
+        </button>
+      }
+    </div>
+  }
+</div>
+<canvas
+  #canvasElement
+  style="display: none;"
+  [height]="height()"
+  [width]="width()"
+></canvas>

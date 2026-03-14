@@ -1,74 +1,19 @@
+import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, OnDestroy, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent } from 'rxjs';
+import { fromEvent, take } from 'rxjs';
+import { LiveImageService } from './services/live-image.service';
 
 const WIDTH = 320;
 
 @Component({
   selector: 'app-live-image',
+  imports: [ErrorDisplayComponent],
+  templateUrl: './live-image.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',
   },
-  template: `
-    <div class="relative mx-auto w-full max-w-[500px]">
-      @if (errorMessage(); as msg) {
-        <div class="rounded-lg border border-red-500 bg-red-100 p-4 text-center text-red-700">
-          <p>{{ msg }}</p>
-        </div>
-      } @else {
-        <div class="flex justify-center">
-        <video
-          #videoElement
-          autoplay
-          playsinline
-          [height]="height()"
-          [width]="width()"
-          class="block rounded-lg shadow-sm"
-        ></video>
-
-        @if (currentImageURL()) {
-          <img
-            [src]="currentImageURL()"
-            alt="Captured Image"
-            [height]="height()"
-            [width]="width()"
-            class="block rounded-lg shadow-sm"
-          />
-        }
-        </div>
-
-        <div class="mt-4 flex justify-center gap-2">
-          <button
-            (click)="takePhoto()"
-            class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Capture Photo
-          </button>
-          @if (currentImageURL()) {
-            <button
-              (click)="clearPhoto()"
-              class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Clear Photo
-            </button>
-            <button
-              (click)="convertDataURLToFile()"
-              class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Use This
-            </button>
-          }
-        </div>
-      }
-    </div>
-    <canvas
-      #canvasElement
-      style="display: none;"
-      [height]="height()"
-      [width]="width()"
-    ></canvas>
-  `,
 })
 export class LiveImageComponent implements OnDestroy {
   video = viewChild.required<ElementRef<HTMLVideoElement>>('videoElement');
@@ -80,10 +25,10 @@ export class LiveImageComponent implements OnDestroy {
   errorMessage = signal<string | null>(null);
   width = signal(WIDTH);
   height = signal(0);
-  streaming = false;
 
   private stream: MediaStream | null = null;
   private readonly destroyRef = inject(DestroyRef);
+  private readonly liveImageService = inject(LiveImageService);
 
   videoNativeElement = computed(() => this.video().nativeElement);
   canvasNativeElement = computed(() => this.canvas().nativeElement);
@@ -96,13 +41,8 @@ export class LiveImageComponent implements OnDestroy {
     const videoEl = this.videoNativeElement();
 
     fromEvent(videoEl, 'canplay')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        if (!this.streaming) {
-          this.height.set(videoEl.videoHeight / (videoEl.videoWidth / this.width()));
-          this.streaming = true;
-        }
-      });
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.height.set(videoEl.videoHeight / (videoEl.videoWidth / this.width())));
   }
 
   async setupCamera() {
@@ -129,23 +69,18 @@ export class LiveImageComponent implements OnDestroy {
     const canvasEl = this.canvasNativeElement();
 
     if (videoEl && canvasEl) {
-      const context = canvasEl.getContext('2d');
-      if (context) {
-        canvasEl.width = videoEl.videoWidth;
-        canvasEl.height = videoEl.videoHeight;
-        context.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-        this.currentImageURL.set(canvasEl.toDataURL('image/png'));
+      const dataUrl = this.liveImageService.takePhoto(videoEl, canvasEl);
+      if (dataUrl) {
+        this.currentImageURL.set(dataUrl);
       }
     }
   }
 
   clearPhoto() {
     const canvasEl = this.canvasNativeElement();
-    const context = canvasEl.getContext('2d');
-    if (context) {
-      context.fillStyle = '#aaaaaa';
-      context.fillRect(0, 0, canvasEl.width, canvasEl.height);
-      this.currentImageURL.set(canvasEl.toDataURL('image/png'));
+    const dataUrl = this.liveImageService.clearPhoto(canvasEl);
+    if (dataUrl) {
+      this.currentImageURL.set(dataUrl);
     }
   }
 
@@ -155,23 +90,10 @@ export class LiveImageComponent implements OnDestroy {
       return;
     }
 
-    const arr = dataUrl.split(',');
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-      return;
+    const file = this.liveImageService.convertDataURLToFile(dataUrl);
+    if (file) {
+      this.useThisImage.emit(file);
     }
-
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    const file = new File([u8arr], 'captured-image.png', { type: mime });
-    this.useThisImage.emit(file);
   }
 
   ngOnDestroy() {

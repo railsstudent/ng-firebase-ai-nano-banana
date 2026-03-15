@@ -1,21 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, linkedSignal, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DOCUMENT, ElementRef, inject, output, Renderer2, resource, signal, viewChild } from '@angular/core';
 import { LiveImageStripeService } from '../services/live-image-stripe.service';
+import { CAPACITY } from './live-images-stripe.const';
 import { ThumbnailHolder } from './types/live-image-stripe.type';
 
-const CAPACITY = 5;
 @Component({
   selector: 'app-live-images-stripe',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
-  template: `
-    <div>
-      @for (thumbnail of thumbnailHolders(); track thumbnail.index) {
-        <div (click)="thumbnailSelected(thumbnail.index)">
-          <img [src]="thumbnail.thumbnail" />
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './live-images-stripe.component.html',
   styles: `
     :host {
       display: block;
@@ -23,31 +14,45 @@ const CAPACITY = 5;
   `,
 })
 export class LiveImagesStripeComponent {
-  newThumbnail = signal<string | null>(null);
   liveImageStripeService = inject(LiveImageStripeService);
+  document = inject(DOCUMENT);
+  renderer = inject(Renderer2);
 
-  thumbnailHolders = linkedSignal<string | null, ThumbnailHolder[]>({
-    source: () => this.newThumbnail(),
-    computation: (newDataURL, previous) => {
+  newThumbnail = signal<string | null>(null);
+  thumbnailCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
+
+  thumbnailNativeElement = computed(() => this.thumbnailCanvas().nativeElement);
+
+  thumbnailHolders = signal<ThumbnailHolder[]>([]);
+
+  thumbnailHolderResource = resource({
+    params: () => this.liveImageStripeService.newSnapshot(),
+    loader: async ({ params: newDataURL }) => {
       if (!newDataURL) {
-        return previous?.value || [];
+        return this.thumbnailHolders();
       }
 
-      const holder = previous?.value;
-      const index = holder?.length ? holder?.length + 1 : 1
-      const newThumbnailHolder: ThumbnailHolder = {
-        index,
-        thumbnail: newDataURL,
+      const thumbnailURL = await this.liveImageStripeService.generateThumbnail(
+        newDataURL,
+        this.thumbnailNativeElement(),
+        150,
+      );
+
+      const newItem = {
+        thumbnail: thumbnailURL,
         original: newDataURL,
-      }
+      };
 
-      return !holder ? [newThumbnailHolder] : [...holder, newThumbnailHolder]
+      const ids = this.thumbnailHolders().map(({ index }) => index);
+      const maxIndex = this.thumbnailHolders().length <= 0 ? 0 : this.thumbnailHolders()[0].index + 1;
+      this.thumbnailHolders.update((acc) => {
+        const newList = [{ index: maxIndex, ...newItem }, ...acc];
+        return newList.slice(0, CAPACITY)
+      });
+
+      return newItem;
     }
   });
-
-  generateThumbnail(dataURL: string) {
-    console.log(`Generate thumbnail: ${dataURL}`);
-  }
 
   selectedThumbnail = output<string>();
   thumbnailSelected(index: number) {

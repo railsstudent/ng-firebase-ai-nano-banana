@@ -11,15 +11,15 @@ export class LiveImageStripeService {
     this.#newSnapshot.set(dataURL);
   }
 
-  generateThumbnail(dataURL: string, width: number = 100): Promise<string> {
+  generateThumbnail(dataURL: string, canvas: HTMLCanvasElement, width = 100): Promise<string> {
     return new Promise((resolve, reject) => {
       const img = new Image();
+      console.log('image width', img.width);
+
       img.onload = () => {
-        const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-          reject(new Error('Could not get canvas context'));
-          return;
+          return reject(new Error('Could not get canvas context'));
         }
 
         const scaleFactor = width / img.width;
@@ -27,7 +27,7 @@ export class LiveImageStripeService {
         canvas.height = img.height * scaleFactor;
 
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.7));
+        return resolve(canvas.toDataURL('image/png', 0.7));
       };
       img.onerror = (err) => reject(err);
       img.src = dataURL;

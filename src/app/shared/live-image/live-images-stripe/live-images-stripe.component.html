@@ -1,0 +1,24 @@
+<div>
+  @if (thumbnailHolderResource.status() === 'loading') {
+    <div>
+      <p>Generating a new thumbnail...</p>
+    </div>
+  } @else if (thumbnailHolderResource.status() === 'error') {
+    <div>
+      <p>An expected error occurred.</p>
+    </div>
+  }
+
+  @if (thumbnailHolders().length > 0) {
+    <div class="flex flex-wrap">
+      @for (thumbnail of thumbnailHolders(); track thumbnail.index) {
+        <div class="mr-2 mb-2" (click)="thumbnailSelected(thumbnail.index)">
+          <img [src]="thumbnail.thumbnail" width="150" />
+        </div>
+      }
+    </div>
+  } @else {
+    <div>No thumbnail</div>
+  }
+</div>
+<canvas #canvas style="display: none;"></canvas>

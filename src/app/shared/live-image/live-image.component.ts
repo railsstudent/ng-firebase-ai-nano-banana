@@ -5,6 +5,7 @@ import { fromEvent, take } from 'rxjs';
 import { LiveImageControlsComponent } from './live-image-controls/live-image-controls.component';
 import { LiveImagesStripeComponent } from './live-images-stripe/live-images-stripe.component';
 import { LiveImageService } from './services/live-image.service';
+import { LiveImageStripeService } from './services/live-image-stripe.service';
 
 const WIDTH = 320;
 
@@ -31,6 +32,7 @@ export class LiveImageComponent {
   private stream: MediaStream | null = null;
   private readonly destroyRef = inject(DestroyRef);
   private readonly liveImageService = inject(LiveImageService);
+  private readonly liveImageStripeService = inject(LiveImageStripeService);
 
   videoNativeElement = computed(() => this.video().nativeElement);
   canvasNativeElement = computed(() => this.canvas().nativeElement);
@@ -93,6 +95,7 @@ export class LiveImageComponent {
     const dataUrl = this.liveImageService.takePhoto(this.videoNativeElement(), this.canvasNativeElement());
     if (dataUrl) {
       this.currentImageURL.set(dataUrl);
+      this.liveImageStripeService.addSnapshot(dataUrl);
     }
   }
 

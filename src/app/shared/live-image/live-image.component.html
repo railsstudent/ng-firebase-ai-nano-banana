@@ -1,4 +1,4 @@
-<div class="relative mx-auto w-full max-w-[500px]">
+<div class="relative mx-auto w-full max-w-2xl">
   @if (errorMessage(); as msg) {
     <app-error-display [error]="msg" />
   } @else {
@@ -9,7 +9,7 @@
       <img [src]="currentImageURL()" alt="Captured Image" [height]="height()" [width]="width()" class="block rounded-lg shadow-sm" />
     }
     </div>
-    <app-live-image-controls [hasURL]="hasURL()" (action)="handleCameraAction($event)" />
+    <app-live-image-controls class="mb-4" [hasURL]="hasURL()" (action)="handleCameraAction($event)" />
     <app-live-images-stripe />
   }
 </div>

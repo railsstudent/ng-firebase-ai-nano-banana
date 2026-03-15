@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 @Component({
   selector: 'app-live-image-controls',
   template: `
-    <div class="mt-4 flex justify-center gap-2">
+    <div class="controls-container">
       <button
         type="button"
         (click)="action.emit('capture')"
-        class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        class="control-button btn-capture"
       >
         Capture Photo
       </button>
@@ -15,20 +15,21 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
         <button
           type="button"
           (click)="action.emit('clear')"
-          class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          class="control-button btn-clear"
         >
           Clear Photo
         </button>
         <button
           type="button"
           (click)="action.emit('use')"
-          class="cursor-pointer rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          class="control-button btn-use"
         >
           Use This
         </button>
       }
     </div>
   `,
+  styleUrl: './live-image-controls.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block',

@@ -1,0 +1,21 @@
+@reference "../../../../styles.css";
+
+.controls-container {
+  @apply mt-4 flex justify-center gap-2;
+}
+
+.control-button {
+  @apply cursor-pointer rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-capture {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+}
+
+.btn-clear {
+  @apply bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-500;
+}
+
+.btn-use {
+  @apply bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
+}

@@ -10,7 +10,7 @@
     }
     </div>
     <app-live-image-controls class="mb-4" [hasURL]="hasURL()" (action)="handleCameraAction($event)" />
-    <app-live-images-stripe />
+    <app-live-images-stripe (selectedOrignalURL)="currentImageURL.set($event)"/>
   }
 </div>
 <canvas

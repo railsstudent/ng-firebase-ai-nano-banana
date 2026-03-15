@@ -1,1 +1,1 @@
-export const CAPACITY = 8;
+export const CAPACITY = 5;

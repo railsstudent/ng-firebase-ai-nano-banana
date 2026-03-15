@@ -25,6 +25,8 @@ export class LiveImagesStripeComponent {
 
   thumbnailHolders = signal<ThumbnailHolder[]>([]);
 
+  selectedOrignalURL = output<string>();
+
   thumbnailHolderResource = resource({
     params: () => this.liveImageStripeService.newSnapshot(),
     loader: async ({ params: newDataURL }) => {
@@ -35,7 +37,7 @@ export class LiveImagesStripeComponent {
       const thumbnailURL = await this.liveImageStripeService.generateThumbnail(
         newDataURL,
         this.thumbnailNativeElement(),
-        150,
+        120,
       );
 
       const newItem = {
@@ -54,8 +56,10 @@ export class LiveImagesStripeComponent {
     }
   });
 
-  selectedThumbnail = output<string>();
-  thumbnailSelected(index: number) {
-    console.log(`select ${index}`);
+  thumbnailSelected(thumbnailId: number) {
+    const thumbnailIndex = this.thumbnailHolders().findIndex((item) => item.index === thumbnailId);
+    if (thumbnailIndex >= 0 && thumbnailIndex < this.thumbnailHolders().length) {
+      this.selectedOrignalURL.emit(this.thumbnailHolders()[thumbnailIndex].original);
+    }
   }
 }

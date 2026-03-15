@@ -13,12 +13,10 @@
     <div class="flex flex-wrap">
       @for (thumbnail of thumbnailHolders(); track thumbnail.index) {
         <div class="mr-2 mb-2" (click)="thumbnailSelected(thumbnail.index)">
-          <img [src]="thumbnail.thumbnail" width="150" />
+          <img [src]="thumbnail.thumbnail" />
         </div>
       }
     </div>
-  } @else {
-    <div>No thumbnail</div>
   }
 </div>
 <canvas #canvas style="display: none;"></canvas>

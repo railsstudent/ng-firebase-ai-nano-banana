@@ -5,8 +5,7 @@
   @if (!isEditing()) {
     <div class="w-full max-w-3xl mx-auto mb-4">
       <app-conversation-mode [feature]="feature()"
-        (lastEditedBlob)="lastEditedImage.set($event)"
-        (originalImageMessage)="messages.set([$event])"
+        (originalImageMessage)="handleOriginalImage($event)"
       />
     </div>
   }

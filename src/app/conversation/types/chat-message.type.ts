@@ -1,3 +1,4 @@
+import { GenerativeContentBlob } from 'firebase/ai';
 import { Base64InlineData } from './base64-inline-data.type';
 import { Sender } from './sender.type';
 
@@ -14,3 +15,9 @@ export type PreviousMessagesState = {
   source: NoInfer<Base64InlineData>
   value: NoInfer<ChatMessage | undefined>;
 } | undefined;
+
+export type OriginalImageMessage = {
+  blob:  GenerativeContentBlob;
+  firstMessage: ChatMessage;
+}
+

@@ -10,7 +10,7 @@ import { ConversationMessagesComponent } from './conversation-messages/conversat
 import { ConversationModeComponent } from './conversation-mode/conversation-mode.component';
 import { makeAIResponsePair, makeErrorMessage, makeSuccessMessage } from './helpers/message.helper';
 import { ConversationEditService } from './services/conversation-edit.service';
-import { ChatMessage } from './types/chat-message.type';
+import { ChatMessage, OriginalImageMessage } from './types/chat-message.type';
 
 @Component({
   selector: 'app-conversation-edit',
@@ -85,5 +85,10 @@ export default class ConversationEditComponent {
 
   handleDownloadImage(event: { base64: string, filename: string }) {
     this.genMediaService.downloadImage(event.filename, event.base64);
+  }
+
+  handleOriginalImage(originalImageMessage: OriginalImageMessage) {
+    this.lastEditedImage.set(originalImageMessage.blob);
+    this.messages.update(messages => [originalImageMessage.firstMessage]);
   }
 }

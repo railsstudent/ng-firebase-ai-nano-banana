@@ -1,17 +1,16 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
+import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
 import { LiveImageComponent } from '@/shared/live-image/live-image.component';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, resource, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
-import { GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { IMAGE_CHANNEL_LIST } from '../constants/image-channel.const';
-import { ConversationMessagesService } from '../services/conversation-messages.service';
 import { Base64InlineData } from '../types/base64-inline-data.type';
-import { ChatMessage } from '../types/chat-message.type';
+import { ChatMessage, OriginalImageMessage } from '../types/chat-message.type';
 import { ImageChannel } from '../types/conversation-model.type';
 
 @Component({
@@ -43,31 +42,55 @@ export class ConversationModeComponent {
   isLoading = signal(false);
 
   private readonly firebaseService = inject(FirebaseService);
-  private readonly conversationMessagesService = inject(ConversationMessagesService);
 
-  originalImageMessage = output<ChatMessage>();
-  lastEditedBlob = output<GenerativeContentBlob>();
+  originalImageMessage = output<OriginalImageMessage>();
 
-  #originalImageResource = this.conversationMessagesService.getInitialMessageResource(this.imageFiles);
-
-  #originalImage = computed(() => this.#originalImageResource.hasValue() ?
-    this.#originalImageResource.value() : DEFAULT_BASE64_INLINE_DATA
+  #originalImageResource =resource<Base64InlineData, File[]>(
+    {
+      params: () => this.imageFiles(),
+      loader: async ({ params }) => {
+        const result = await getBase64InlineData(params);
+        return result.length > 0 ?
+          {
+            ...result[0],
+            text: 'Here is the original image you uploaded. How would you like to edit it?'
+          }
+          : DEFAULT_BASE64_INLINE_DATA;
+      },
+      defaultValue: DEFAULT_BASE64_INLINE_DATA,
+    }
   );
 
-  firstMessage = linkedSignal<Base64InlineData, ChatMessage | undefined>({
-    source: () => this.#originalImage(),
-    computation: (source, previous) => this.conversationMessagesService.computeInitialMessage(source, previous)
+  imageMessagePayload = computed<OriginalImageMessage | undefined>(() => {
+    const hasValue = this.#originalImageResource.hasValue();
+    if (hasValue) {
+      const { base64, text, inlineData } = this.#originalImageResource.value();
+      if (!base64 || !inlineData) {
+        return undefined;
+      }
+
+      const message: ChatMessage = {
+        id: 1,
+        sender: 'AI',
+        text: text || 'Here is the original image you uploaded. How would you like to edit it?',
+        base64,
+        isError: false,
+      };
+
+      return {
+        blob: inlineData,
+        firstMessage: message
+      }
+    }
+
+    return undefined;
   });
 
   constructor() {
     effect(() => {
-      if (this.#originalImage().inlineData) {
-        this.lastEditedBlob.emit(this.#originalImage().inlineData);
-      }
-
-      const firstMessage = this.firstMessage();
-      if (firstMessage) {
-        this.originalImageMessage.emit(firstMessage);
+      const payload = this.imageMessagePayload();
+      if (payload) {
+        this.originalImageMessage.emit(payload);
       }
     });
   }
@@ -77,19 +100,19 @@ export class ConversationModeComponent {
       this.isLoading.set(true);
       const { image } = await this.firebaseService.generateImage(prompt, []);
 
-      const { data, mimeType, inlineData } = image;
-
+      const { data, mimeType, inlineData: base64 } = image;
       this.originalImageMessage.emit(
         {
-          id: 1,
-          sender: 'AI',
-          text: 'Here is the new image. How would you like to edit it?',
-          base64: inlineData,
-          isError: false,
-        } as ChatMessage
+          blob: { data, mimeType },
+          firstMessage: {
+            id: 1,
+            sender: 'AI',
+            text: 'Here is the new image. How would you like to edit it?',
+            base64,
+            isError: false,
+          }
+        }
       );
-
-      this.lastEditedBlob.emit({ data, mimeType });
     } finally {
       this.isLoading.set(false);
     }

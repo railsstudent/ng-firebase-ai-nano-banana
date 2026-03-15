@@ -4,10 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, take } from 'rxjs';
 import { LiveImageControlsComponent } from './live-image-controls/live-image-controls.component';
 import { LiveImagesStripeComponent } from './live-images-stripe/live-images-stripe.component';
-import { LiveImageService } from './services/live-image.service';
 import { LiveImageStripeService } from './services/live-image-stripe.service';
-
-const WIDTH = 320;
+import { LiveImageService } from './services/live-image.service';
 
 @Component({
   selector: 'app-live-image',
@@ -26,7 +24,7 @@ export class LiveImageComponent {
 
   currentImageURL = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
-  width = signal(WIDTH);
+  width = signal(320);
   height = signal(0);
 
   private stream: MediaStream | null = null;

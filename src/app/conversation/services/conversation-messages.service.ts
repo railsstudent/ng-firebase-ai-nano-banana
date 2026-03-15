@@ -19,10 +19,6 @@ async function originalImageLoader(params: NoInfer<File[]>) {
 })
 export class ConversationMessagesService {
   computeInitialMessage(source: Base64InlineData, previous: PreviousMessagesState) {
-      if (previous?.value) {
-        return  previous.value;
-      }
-
       const {
         base64,
         text = 'Here is the original image you uploaded. How would you like to edit it?'

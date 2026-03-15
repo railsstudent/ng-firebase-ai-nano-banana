@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, linkedSignal, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, linkedSignal, output, signal } from '@angular/core';
+import { LiveImageStripeService } from '../services/live-image-stripe.service';
 import { ThumbnailHolder } from './types/live-image-stripe.type';
 
 const CAPACITY = 5;
@@ -23,6 +24,7 @@ const CAPACITY = 5;
 })
 export class LiveImagesStripeComponent {
   newThumbnail = signal<string | null>(null);
+  liveImageStripeService = inject(LiveImageStripeService);
 
   thumbnailHolders = linkedSignal<string | null, ThumbnailHolder[]>({
     source: () => this.newThumbnail(),

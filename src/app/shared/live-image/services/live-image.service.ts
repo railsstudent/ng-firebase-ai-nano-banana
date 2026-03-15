@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class LiveImageService {
-  
+
   takePhoto(videoEl: HTMLVideoElement, canvasEl: HTMLCanvasElement): string | null {
     const context = canvasEl.getContext('2d');
     if (context) {

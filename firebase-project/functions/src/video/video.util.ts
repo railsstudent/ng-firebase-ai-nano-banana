@@ -42,48 +42,56 @@ export function validateVideoConfigFields() {
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {GenerateVideoRequest} request    Generate  Video Request
- * @return {string} video btyes in base64 format
+ * @return {Promise<string>} video uri
  */
 export async function generateVideoByPolling(
-  { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,
+  aiVideo: AIVideoBucket,
   request: GenerateVideoRequest,
 ) {
-  const genVideosParams: GenerateVideosParameters = {
-    model,
+  return processVideoPolling(aiVideo, {
     prompt: request.prompt,
-    config: {
-      ...request.config,
-      numberOfVideos: 1,
-      outputGcsUri: `gs://${storageBucket}`,
-    },
+    config: request.config,
     image: {
       imageBytes: request.imageBytes,
       mimeType: request.mimeType,
     },
-  };
-
-  return getVideoUri(ai, genVideosParams, pollingPeriod);
+  });
 }
 
 /**
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {ExtendVideoRequest} request    Generate  Video Request
- * @return {string} video btyes in base64 format
+ * @return {Promise<string>} video uri
  */
 export async function extendVideoByPolling(
-  { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,
+  aiVideo: AIVideoBucket,
   request: ExtendVideoRequest,
+) {
+  return processVideoPolling(aiVideo, {
+    prompt: request.prompt,
+    config: request.config,
+    video: request.video,
+  });
+}
+
+type VideoMediaParams = Pick<GenerateVideosParameters, "image" | "video" | "prompt" | "config">;
+
+/**
+ * Generic core function for handling video polling operations.
+ */
+async function processVideoPolling(
+  { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,
+  mediaParams: VideoMediaParams
 ) {
   const genVideosParams: GenerateVideosParameters = {
     model,
-    prompt: request.prompt,
+    ...mediaParams,
     config: {
-      ...request.config,
+      ...mediaParams.config,
       numberOfVideos: 1,
       outputGcsUri: `gs://${storageBucket}`,
     },
-    video: request.video,
   };
 
   return getVideoUri(ai, genVideosParams, pollingPeriod);

@@ -34,6 +34,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
   <app-video-player
     [isGeneratingVideo]="isGeneratingVideo()" [videoUrl]="videoUrl()"
     (extendVideo)="extendVideo()"
+    [loadingText]="loadingVideoText()"
   />
 }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +64,7 @@ export class GenMediaComponent {
   );
 
   isLoading = signal(false);
+  loadingVideoText = signal('Generating your video...');
 
   isShowViewerLoader = linkedSignal<{ tokenUsage: ImagesWithTokenUsage, isLoading: boolean }, boolean>({
     source: () => ({ tokenUsage: this.imagesWithTokenUsage(), isLoading: this.isLoading() }),
@@ -144,6 +146,13 @@ export class GenMediaComponent {
   }
 
   async extendVideo() {
-    await this.genVideoService.extendVideo(this.trimmedUserPrompt());
+    if (this.trimmedUserPrompt()) {
+      try {
+        this.loadingVideoText.set('Extending your video...');
+        await this.genVideoService.extendVideo(this.trimmedUserPrompt());
+      } finally {
+        this.loadingVideoText.set('Generating your video...');
+      }
+    }
   }
 }

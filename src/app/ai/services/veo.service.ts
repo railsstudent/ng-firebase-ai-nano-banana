@@ -20,7 +20,7 @@ export class VeoService {
 
       console.log('retrieveVideoUri -> functions region', functions.region);
       const downloadGcsUri = httpsCallable<T, DownloadVideoResponse>(
-        functions, methodName
+        functions, methodName, { timeout: 600000 }
       );
       const { data } = await downloadGcsUri(request);
       return data;

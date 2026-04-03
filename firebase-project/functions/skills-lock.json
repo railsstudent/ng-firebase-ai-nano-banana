@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "vertex-ai-api-dev": {
+      "source": "google-gemini/gemini-skills",
+      "sourceType": "github",
+      "computedHash": "050cf4e9a14ebc86120007c59ea5dd0cf3924037b8a78871d960e0d05a4bac17"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { AIVideoBucket, GenerateVideoRequest } from "./types/video.type";
+import { AIVideoBucket, ExtendVideoRequest, GenerateVideoRequest } from "./types/video.type";
 import { GenerateVideosParameters, GoogleGenAI } from "@google/genai";
 import { validate } from "../validate";
 
@@ -41,7 +41,7 @@ export function validateVideoConfigFields() {
 /**
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {string} request    Generate  Video Request
+ * @param {GenerateVideoRequest} request    Generate  Video Request
  * @return {string} video btyes in base64 format
  */
 export async function generateVideoByPolling(
@@ -60,6 +60,30 @@ export async function generateVideoByPolling(
       imageBytes: request.imageBytes,
       mimeType: request.mimeType,
     },
+  };
+
+  return getVideoUri(ai, genVideosParams, pollingPeriod);
+}
+
+/**
+ *
+ * @param {AIVideoBucket} aiVideo ai video bucket info
+ * @param {ExtendVideoRequest} request    Generate  Video Request
+ * @return {string} video btyes in base64 format
+ */
+export async function extendVideoByPolling(
+  { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,
+  request: ExtendVideoRequest,
+) {
+  const genVideosParams: GenerateVideosParameters = {
+    model,
+    prompt: request.prompt,
+    config: {
+      ...request.config,
+      numberOfVideos: 1,
+      outputGcsUri: `gs://${storageBucket}`,
+    },
+    video: request.video,
   };
 
   return getVideoUri(ai, genVideosParams, pollingPeriod);

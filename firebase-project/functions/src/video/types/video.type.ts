@@ -1,4 +1,4 @@
-import { GenerateVideosConfig, GoogleGenAI } from "@google/genai";
+import { GenerateVideosConfig, GoogleGenAI, Video } from "@google/genai";
 
 export type GenerateVideoRequest = {
   prompt: string;
@@ -19,3 +19,10 @@ export type GenerateVideoFromFramesRequest = GenerateVideoRequest & {
   lastFrameImageBytes: string;
   lastFrameMimeType: string;
 }
+
+export type ExtendVideoRequest = {
+  prompt: string;
+  video: Video;
+  config?: GenerateVideosConfig;
+}
+

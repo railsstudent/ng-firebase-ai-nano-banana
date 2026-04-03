@@ -76,6 +76,8 @@ type VideoMediaParams = Pick<GenerateVideosParameters, "image" | "video" | "prom
 
 /**
  * Generic core function for handling video polling operations.
+ *  @param {AIVideoBucket} ai      AI video bucket info
+ *  @param {VideoMediaParams} mediaParams    Media parameters for video generation
  */
 async function processVideoPolling(
   { ai, model, storageBucket, pollingPeriod }: AIVideoBucket,

@@ -5,6 +5,7 @@ import { tap } from 'rxjs';
 import { LoaderComponent } from '../loader/loader.component';
 import { ImageViewersComponent } from './image-viewers/image-viewers.component';
 import { GenMediaService } from './services/gen-media.service';
+import { GenVideoService } from './services/gen-video.service';
 import { GenMediaInput } from './types/gen-media-input.type';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 
@@ -38,13 +39,14 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 })
 export class GenMediaComponent {
   private readonly genMediaService = inject(GenMediaService);
+  private readonly genVideoService = inject(GenVideoService);
 
   loadingText = input('');
   genMediaInput = input<GenMediaInput>();
   showCurrentStep = input(false);
 
-  videoUrl = this.genMediaService.videoUrl.asReadonly();
-  isGeneratingVideo = this.genMediaService.isGeneratingVideo.asReadonly();
+  videoUrl = this.genVideoService.videoUrl;
+  isGeneratingVideo = this.genVideoService.isGeneratingVideo.asReadonly();
 
   trimmedUserPrompt = computed(() => this.genMediaInput()?.userPrompt.trim() || '');
 
@@ -56,7 +58,7 @@ export class GenMediaComponent {
   error = computed(() =>
     this.genMediaService.imageGenerationError() ||
     this.downloadImageError() ||
-    this.genMediaService.videoError()
+    this.genVideoService.videoError()
   );
 
   isLoading = signal(false);
@@ -101,13 +103,15 @@ export class GenMediaComponent {
       this.genMediaService.clearImage(id);
 
       if (this.imagesWithTokenUsage().images.length === 0) {
-        this.genMediaService.videoUrl.set('');
+        this.genVideoService.clearVideo();
         this.isLoading.set(false);
       }
     } else if (action === 'downloadImage') {
       this.downloadImageById(id);
     } else if (action === 'generateVideo') {
       await this.generateVideoById(id);
+    } else if (action === 'extendVideo') {
+      await this.extendVideo();
     }
   }
 
@@ -135,7 +139,11 @@ export class GenMediaComponent {
         imageBytes,
         mimeType,
       }
-      await this.genMediaService.generateVideo(imageRequest);
+      await this.genVideoService.generateVideo(imageRequest);
     }
+  }
+
+  private async extendVideo() {
+    // await this.genVideoService.extendVideo();
   }
 }

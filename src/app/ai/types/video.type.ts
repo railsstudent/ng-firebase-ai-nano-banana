@@ -9,5 +9,14 @@ export type GenerateVideoFromFramesRequest = GenerateVideoRequest & {
   lastFrameMimeType: string;
 }
 
+export type ExtendVideoRequest = {
+  prompt: string;
+  video: { uri: string };
+}
 
-export type CallableNames = "videos-generateVideo" | "videos-interpolateVideo" | "videos-extendVideo";
+export type VideoGenerationResponse = {
+  gcsUri: string;
+  url: string;
+}
+
+export type CallableNames = "videos-generateVideo" | "videos-interpolateVideo";

@@ -4,6 +4,7 @@ import { VideoPlayerComponent } from '@/shared/gen-media/video-player/video-play
 import { LoaderComponent } from '@/shared/loader/loader.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { VisualStoryService } from '../services/visual-story.service';
+import { VideoGenerationResponse } from '@/ai/types/video.type';
 
 @Component({
   selector: 'app-visual-story-video',
@@ -38,9 +39,10 @@ export default class VisualStoryVideoComponent {
   userPrompt = input.required<string>();
 
   isLoading = signal(false);
-  videoUrl = signal<string>('');
+  videoResponse = signal<VideoGenerationResponse>({ gcsUri: '', url: '' });
   error = signal('');
 
+  videoUrl = computed(() => this.videoResponse().url || '');
   firstImage = computed(() => this.images()?.[0]);
   lastImage = computed(() => {
     const numImages = this.images()?.length || 0;
@@ -56,7 +58,7 @@ export default class VisualStoryVideoComponent {
   async generateVideoFromFrames(): Promise<void> {
     try {
       this.isLoading.set(true);
-      this.videoUrl.set('');
+      this.videoResponse.set({ gcsUri: '', url: '' });
 
       if (!this.canGenerateVideoFromFirstLastFrames()) {
         return;
@@ -71,7 +73,7 @@ export default class VisualStoryVideoComponent {
         lastFrameImageBytes: lastImageData,
         lastFrameMimeType: lastImageMimeType,
       });
-      this.videoUrl.set(result);
+      this.videoResponse.set(result);
     } catch (e) {
       const strError = e instanceof Error ? e.message : `Error in interpolating video: ${e}`
       this.error.set(strError);

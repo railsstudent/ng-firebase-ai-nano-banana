@@ -1,9 +1,7 @@
 import { FirebaseService } from '@/ai/services/firebase.service';
-import { GeminiService } from '@/ai/services/gemini.service';
 import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
-import { GenerateVideoFromFramesRequest, GenerateVideoRequest } from '@/ai/types/video.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
@@ -12,12 +10,8 @@ import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.cons
 })
 export class GenMediaService {
   private readonly document = inject(DOCUMENT);
-  private readonly geminiService = inject(GeminiService);
   private readonly firebaseService = inject(FirebaseService);
 
-  videoError = signal('');
-  videoUrl = signal('');
-  isGeneratingVideo = signal(false);
   imageGenerationError = signal('');
 
   downloadImage(filename: string, imageUrl: string): void {
@@ -37,24 +31,6 @@ export class GenMediaService {
       this.document.body.appendChild(link);
       link.click();
       this.document.body.removeChild(link);
-  }
-
-  async generateVideo(imageParams: GenerateVideoRequest): Promise<void> {
-    try {
-      this.videoError.set('');
-      this.isGeneratingVideo.set(true);
-
-      const videoUrl = await this.geminiService.downloadVideoAsUrl(imageParams);
-      this.videoUrl.set(videoUrl);
-    } catch (e) {
-      console.error(e);
-      const errMsg = e instanceof Error ?
-        e.message :
-        'An unexpected error occurred in video generation.'
-      this.videoError.set(errMsg);
-    } finally {
-      this.isGeneratingVideo.set(false);
-    }
   }
 
   #currentStep = signal(0);
@@ -81,48 +57,6 @@ export class GenMediaService {
       }
     }
   }
-
-  // async generateImages(prompts: string[], imageFiles: File[]): Promise<ImagesWithTokenUsage> {
-  //   if (!prompts?.length) {
-  //     return DEFAULT_IMAGES_TOKEN_USAGE
-  //   }
-
-  //   let isFirstError = false;
-  //   const imageTokenUsages: ImageTokenUsage[] = [];
-  //   this.imageGenerationError.set('');
-  //   this.videoUrl.set('');
-
-  //   for (let i = 0; i < prompts.length; i=i+1) {
-  //     try {
-  //       const imageTokenUsage = await this.generateImage(prompts[i], imageFiles);
-  //       if (imageTokenUsage) {
-  //         imageTokenUsages.push(imageTokenUsage);
-  //       }
-  //     } catch (e) {
-  //       if (!isFirstError) {
-  //         if (e instanceof Error) {
-  //           this.imageGenerationError.set(e.message);
-  //         } else {
-  //           this.imageGenerationError.set('Unexpected error in image generation.');
-  //         }
-  //         isFirstError = true;
-  //       }
-  //     }
-  //   }
-
-  //   return imageTokenUsages.reduce((acc, { image, ...rest }, index) => {
-  //     const { tokenUsage, metadata, thoughtSummary } = rest;
-  //     return {
-  //       images: acc.images.concat({
-  //         ...image,
-  //         id: index
-  //       }),
-  //       tokenUsage: this.calculateTokenUsage(acc.tokenUsage, tokenUsage),
-  //       groundingMetadata: this.concatGrounding(acc.groundingMetadata, metadata),
-  //       thoughtSummary: thoughtSummary ? acc.thoughtSummary.concat(thoughtSummary) : acc.thoughtSummary,
-  //     };
-  //   }, DEFAULT_IMAGES_TOKEN_USAGE)
-  // }
 
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
@@ -197,9 +131,4 @@ export class GenMediaService {
       totalTokenCount: tokenUsage.totalTokenCount + otherTokenUsage.totalTokenCount,
     };
   }
-
-  async generateVideoFromFrames(request: GenerateVideoFromFramesRequest): Promise<string> {
-    return this.geminiService.downloadVideoAsUrl(request, 'videos-interpolateVideo');
-  }
-
 }

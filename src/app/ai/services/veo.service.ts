@@ -1,17 +1,17 @@
 import { inject, Injectable } from '@angular/core';
 import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import { GenerateVideoRequest } from '../types/video.type';
+import { CallableNames, GenerateVideoRequest, VideoGenerationResponse } from '../types/video.type';
 import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GeminiService {
+export class VeoService {
   private readonly storage = getStorage();
   private readonly configService = inject(ConfigService);
 
-  private async retrieveVideoUri(request: GenerateVideoRequest, methodName: string): Promise<string> {
+  private async retrieveVideoUri<T = GenerateVideoRequest>(request: T, methodName: string): Promise<string> {
     try {
       const { functions } = this.configService.firebaseObjects || {};
       if (!functions) {
@@ -19,7 +19,7 @@ export class GeminiService {
       }
 
       console.log('retrieveVideoUri -> functions region', functions.region);
-      const downloadGcsUri = httpsCallable<GenerateVideoRequest, string>(
+      const downloadGcsUri = httpsCallable<T, string>(
         functions, methodName
       );
       const { data: gcsUri } = await downloadGcsUri(request);
@@ -30,7 +30,7 @@ export class GeminiService {
     }
   }
 
-  async downloadVideoAsUrl(request: GenerateVideoRequest, methodName='videos-generateVideo'): Promise<string> {
+  async downloadVideoUriAndUrl<T = GenerateVideoRequest>(request: T, methodName: CallableNames = 'videos-generateVideo'): Promise<VideoGenerationResponse> {
     const gcsUri = await this.retrieveVideoUri(request, methodName);
 
     if (!gcsUri) {
@@ -40,7 +40,7 @@ export class GeminiService {
     return getDownloadURL(ref(this.storage, gcsUri))
       .then((url) => {
         console.log("download url", url);
-        return url;
+        return { gcsUri, url };
       })
       .catch((error) => {
         // A full list of error codes is available at
@@ -58,5 +58,4 @@ export class GeminiService {
         throw new Error("Unknown error occurred");
       });
   }
-
 }

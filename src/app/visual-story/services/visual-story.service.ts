@@ -1,5 +1,5 @@
-import { GenerateVideoFromFramesRequest } from '@/ai/types/video.type';
-import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
+import { GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/ai/types/video.type';
+import { GenVideoService } from '@/shared/gen-media/services/gen-video.service';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
 import { VisualStoryForm } from '../visual-story-form/types/visual-story-form.type';
@@ -9,7 +9,7 @@ import { VisualStoryForm } from '../visual-story-form/types/visual-story-form.ty
 })
 export class VisualStoryService {
   private readonly promptHistoryService = inject(PromptHistoryService);
-  private readonly genMediaService = inject(GenMediaService);
+  private readonly genVideoService = inject(GenVideoService);
 
   buildStepPrompts(genArgs: VisualStoryForm): string[] {
     const { userPrompt, numberOfImages } = genArgs;
@@ -74,9 +74,9 @@ export class VisualStoryService {
     this.promptHistoryService.addPrompt(key, strPrompt);
   }
 
-  interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<string> {
+  interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<VideoGenerationResponse> {
     try {
-      return this.genMediaService.generateVideoFromFrames(request);
+      return this.genVideoService.generateVideoFromFrames(request);
     } catch (e) {
       console.error(e);
       throw e;

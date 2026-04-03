@@ -1,14 +1,15 @@
+import { ConfigService } from '@/ai/services/config.service';
 import { VeoService } from '@/ai/services/veo.service';
 import { ExtendVideoRequest, GenerateVideoFromFramesRequest, GenerateVideoRequest, VideoGenerationResponse } from '@/ai/types/video.type';
 import { computed, inject, Injectable, signal } from '@angular/core';
-
-const MAXIMUM_EXTEND_ALLOWED = 5;
+import { getValue } from 'firebase/remote-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GenVideoService {
   private readonly veoService = inject(VeoService);
+  private readonly configService = inject(ConfigService);
 
   videoError = signal('');
   videoResponse = signal<VideoGenerationResponse>({ uri: '', url: '', mimeType: '' });
@@ -56,7 +57,15 @@ export class GenVideoService {
       return;
     }
 
-    if (this.#extendVideoCounter() >= MAXIMUM_EXTEND_ALLOWED) {
+
+    const remoteConfig = this.configService.firebaseObjects?.remoteConfig;
+    if (!remoteConfig) {
+      console.warn('Remote config does not exist.');
+      return;
+    }
+
+    const max_extend_allowed = getValue(remoteConfig,'maxVideoExtendAllowed').asNumber();
+    if (this.#extendVideoCounter() >= max_extend_allowed) {
       console.warn('Maximum extension limit reached.');
       return;
     }

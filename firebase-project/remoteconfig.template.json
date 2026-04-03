@@ -7,6 +7,12 @@
       "description": "whether to connect to firebase emulator",
       "valueType": "BOOLEAN"
     },
+    "maxVideoExtendAllowed": {
+      "defaultValue": {
+        "value": "4"
+      },
+      "valueType": "NUMBER"
+    },
     "geminiImageModelName": {
       "defaultValue": {
         "value": "gemini-3.1-flash-image-preview"
@@ -58,8 +64,8 @@
     }
   },
   "version": {
-    "versionNumber": "46",
-    "updateTime": "2026-04-03T04:02:55.025823Z",
+    "versionNumber": "50",
+    "updateTime": "2026-04-03T10:04:00.042888Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

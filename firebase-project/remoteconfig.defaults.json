@@ -1,5 +1,6 @@
 {
   "useEmulators": "true",
+  "maxVideoExtendAllowed": "4",
   "geminiImageModelName": "gemini-3.1-flash-image-preview",
   "functionEmulatorHost": "localhost",
   "glassBottleSouvenirTemplateId": "glass-bottle-souvenir-v0-0-1",

@@ -8,7 +8,7 @@ import { ExtendVideoIconComponent } from '../../icons/extend-video-icon.componen
   template: `
 @if (isGeneratingVideo()) {
   <div class="mt-6">
-    <app-loader loadingText="loadingText()">
+    <app-loader [loadingText]="loadingText()">
       <p class="text-sm">This can take several minutes. Please be patient.</p>
     </app-loader>
   </div>

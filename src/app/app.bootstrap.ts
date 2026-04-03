@@ -30,7 +30,7 @@ export async function bootstrapFirebase() {
         isTokenAutoRefreshEnabled: true,
       });
 
-      // connectEmulators(firebaseObjects);
+      connectEmulators(firebaseObjects);
       configService.loadConfig(firebaseObjects);
     } catch (err) {
       console.error(err);

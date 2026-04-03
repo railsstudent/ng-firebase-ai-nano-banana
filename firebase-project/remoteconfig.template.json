@@ -1,11 +1,11 @@
 {
   "parameters": {
-    "dbEmulatorHost": {
+    "useEmulators": {
       "defaultValue": {
-        "value": "localhost"
+        "value": "true"
       },
-      "description": "FireStore emulator host",
-      "valueType": "STRING"
+      "description": "whether to connect to firebase emulator",
+      "valueType": "BOOLEAN"
     },
     "geminiImageModelName": {
       "defaultValue": {
@@ -27,13 +27,6 @@
       },
       "description": "Glass bottle souvenir template id",
       "valueType": "STRING"
-    },
-    "dbEmulatorPort": {
-      "defaultValue": {
-        "value": "8089"
-      },
-      "description": "FireStore emulator port",
-      "valueType": "NUMBER"
     },
     "vertexAILocation": {
       "defaultValue": {
@@ -65,8 +58,8 @@
     }
   },
   "version": {
-    "versionNumber": "41",
-    "updateTime": "2026-02-28T03:05:04.955132Z",
+    "versionNumber": "46",
+    "updateTime": "2026-04-03T04:02:55.025823Z",
     "updateUser": {
       "email": "cleung334@gmail.com"
     },

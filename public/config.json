@@ -1,3 +1,4 @@
 {
-  "getFirebaseConfigUrl": "https://getfirebaseconfig-oakwfj3t5a-uc.a.run.app"
+  "getFirebaseConfigUrl": "http://127.0.0.1:5001/vertexai-firebase-6a64f/us-central1/getFirebaseConfig"
 }
+

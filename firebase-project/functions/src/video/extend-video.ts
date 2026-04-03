@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
-import { AIVideoBucket, ExtendVideoRequest } from "./types/video.type";
-import { extendVideoByPolling, validateVideoConfigFields } from "./video.util";
+import { ExtendVideoRequest } from "./types/video.type";
+import { extendVideoByPolling, VIDEO_CONFIG } from "./video.util";
 
 /**
  *
@@ -9,12 +9,7 @@ import { extendVideoByPolling, validateVideoConfigFields } from "./video.util";
  * @throws {Error} If configuration is invalid or video generation fails.
  */
 export async function extendVideoFunction(data: ExtendVideoRequest) {
-  const variables = validateVideoConfigFields();
-  if (!variables) {
-    return "";
-  }
-
-  const { genAIOptions, aiVideoOptions } = variables;
+  const { genAIOptions, aiVideoOptions } = VIDEO_CONFIG;
 
   try {
     if (!aiVideoOptions.isVeo31Used) {
@@ -23,23 +18,14 @@ export async function extendVideoFunction(data: ExtendVideoRequest) {
 
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    return await extendVideoURL({ ai, ...aiVideoOptions }, data);
+    return await extendVideoByPolling({ ai, ...aiVideoOptions }, {
+      prompt: data.prompt,
+      video: data.video,
+      config: data.config,
+    });
   } catch (error) {
     console.error("Error generating video:", error);
     throw new Error("Error generating video");
   }
 }
 
-/**
- *
- * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {ExtendVideoRequest} videoParams    Extend  Video Request
- * @return {string} video uri
- */
-async function extendVideoURL(aiVideo: AIVideoBucket, videoParams: ExtendVideoRequest) {
-  return extendVideoByPolling(aiVideo, {
-    prompt: videoParams.prompt,
-    video: videoParams.video,
-    config: videoParams.config,
-  });
-}

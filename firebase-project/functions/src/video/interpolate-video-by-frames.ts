@@ -1,6 +1,6 @@
 import { AIVideoBucket, GenerateVideoFromFramesRequest } from "./types/video.type";
 import { GoogleGenAI } from "@google/genai";
-import { generateVideoByPolling, validateVideoConfigFields } from "./video.util";
+import { generateVideoByPolling, VIDEO_CONFIG } from "./video.util";
 
 /**
  *
@@ -9,12 +9,7 @@ import { generateVideoByPolling, validateVideoConfigFields } from "./video.util"
  * @throws {Error} If configuration is invalid or video generation fails.
  */
 export async function generateVideoFromFramesFunction(data: GenerateVideoFromFramesRequest) {
-  const variables = validateVideoConfigFields();
-  if (!variables) {
-    return "";
-  }
-
-  const { genAIOptions, aiVideoOptions } = variables;
+  const { genAIOptions, aiVideoOptions } = VIDEO_CONFIG;
 
   try {
     // Video generation logic using Vertex AI would go here

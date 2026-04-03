@@ -11,7 +11,7 @@ export class GeminiService {
   private readonly storage = getStorage();
   private readonly configService = inject(ConfigService);
 
-  async retrieveVideoUri(request: GenerateVideoRequest, methodName: string): Promise<string> {
+  private async retrieveVideoUri(request: GenerateVideoRequest, methodName: string): Promise<string> {
     try {
       const { functions } = this.configService.firebaseObjects || {};
       if (!functions) {

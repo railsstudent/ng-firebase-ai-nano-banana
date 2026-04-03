@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
-import { AIVideoBucket, GenerateVideoRequest } from "./types/video.type";
-import { generateVideoByPolling, validateVideoConfigFields } from "./video.util";
+import { GenerateVideoRequest } from "./types/video.type";
+import { generateVideoByPolling, VIDEO_CONFIG } from "./video.util";
 
 /**
  *
@@ -9,17 +9,13 @@ import { generateVideoByPolling, validateVideoConfigFields } from "./video.util"
  * @throws {Error} If configuration is invalid or video generation fails.
  */
 export async function generateVideoFunction(data: GenerateVideoRequest) {
-  const variables = validateVideoConfigFields();
-  if (!variables) {
-    return "";
-  }
-
-  const { genAIOptions, aiVideoOptions } = variables;
+  const { genAIOptions, aiVideoOptions } = VIDEO_CONFIG;
 
   try {
     // Video generation logic using Vertex AI would go here
     const ai = new GoogleGenAI(genAIOptions);
-    return await generateVideoURL({ ai, ...aiVideoOptions }, data);
+    const args = constructVideoArguments(aiVideoOptions.isVeo31Used, data);
+    return await generateVideoByPolling({ ai, ...aiVideoOptions }, args);
   } catch (error) {
     console.error("Error generating video:", error);
     throw new Error("Error generating video");
@@ -46,15 +42,4 @@ function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVide
     mimeType: imageParams.mimeType,
     config: veoConfig,
   };
-}
-
-/**
- *
- * @param {AIVideoBucket} aiVideo ai video bucket info
- * @param {GenerateVideoRequest} imageParams    Generate  Video Request
- * @return {string} video uri
- */
-async function generateVideoURL(aiVideo: AIVideoBucket, imageParams: GenerateVideoRequest) {
-  const args = constructVideoArguments(aiVideo.isVeo31Used, imageParams);
-  return generateVideoByPolling(aiVideo, args);
 }

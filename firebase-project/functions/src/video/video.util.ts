@@ -2,11 +2,8 @@ import { AIVideoBucket, ExtendVideoRequest, GenerateVideoRequest } from "./types
 import { GenerateVideosParameters, GoogleGenAI } from "@google/genai";
 import { validate } from "../validate";
 
-/**
- *
- * @return {object} an object containing validated environment variables or undefined if validation fails
- */
-export function validateVideoConfigFields() {
+export const VIDEO_CONFIG = (() => {
+  console.log("VIDEO_CONFIG initialization: Loading environment variables and validating configuration...");
   process.loadEnvFile();
 
   const env = process.env;
@@ -36,7 +33,7 @@ export function validateVideoConfigFields() {
       pollingPeriod,
     },
   };
-}
+})();
 
 /**
  *

@@ -45,7 +45,7 @@ export function connectEmulators({ remoteConfig, functions, db }: FirebaseObject
 export async function loadFirebaseConfig() {
   const httpService = inject(HttpClient);
   const firebaseConfig$ =
-    httpService.get<FirebaseConfigResponse>(`${config.appUrl}/getFirebaseConfig`)
+    httpService.get<FirebaseConfigResponse>(`${config.getFirebaseConfigUrl}`)
       .pipe(
         catchError((e) => throwError(() => e))
       );

@@ -28,7 +28,7 @@ import { TokenUsageComponent } from './token-usage/token-usage.component';
               }
             </select>
           }
-          <div class="text-left bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+          <div class="text-left bg-slate-700/50 p-4 rounded-lg border border-slate-600 max-h-64 overflow-y-auto">
             <p class="thought text-slate-200 italic" [innerHTML]="thoughts[thoughtSummaryIndex()]"></p>
           </div>
         </div>

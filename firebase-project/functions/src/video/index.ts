@@ -1,4 +1,4 @@
-import { onCall } from "firebase-functions/https";
+import { onCall } from "firebase-functions/v2/https";
 import { generateVideoFunction } from "./generate-video";
 import { generateVideoFromFramesFunction } from "./interpolate-video-by-frames";
 
@@ -6,7 +6,7 @@ const cors = process.env.WHITELIST ? process.env.WHITELIST.split(",") : true;
 const options = {
   cors,
   enforceAppCheck: true,
-  timeoutSeconds: 180,
+  timeoutSeconds: 600,
 };
 
 export const generateVideo = onCall( options,

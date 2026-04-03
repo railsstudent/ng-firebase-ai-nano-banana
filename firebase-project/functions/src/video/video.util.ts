@@ -17,7 +17,7 @@ export function validateVideoConfigFields() {
   const missingKeys: string[] = [];
   const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location", missingKeys);
   const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
-  const project = validate(env.GOOGLE_CLOUD_QUOTA_PROJECT, "Project ID", missingKeys);
+  const project = validate(env.GCLOUD_PROJECT, "Project ID", missingKeys);
 
   if (missingKeys.length > 0) {
     throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);

@@ -1,0 +1,10 @@
+@reference "../../../../styles.css";
+
+.video-container {
+  @apply bg-gray-800 rounded-lg shadow-xl p-4;
+}
+
+.extend-btn {
+  @apply flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-md transition-colors cursor-pointer;
+}
+

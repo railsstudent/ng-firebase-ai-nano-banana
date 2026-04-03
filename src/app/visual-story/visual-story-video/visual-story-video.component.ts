@@ -39,7 +39,7 @@ export default class VisualStoryVideoComponent {
   userPrompt = input.required<string>();
 
   isLoading = signal(false);
-  videoResponse = signal<VideoGenerationResponse>({ gcsUri: '', url: '' });
+  videoResponse = signal<VideoGenerationResponse>({ uri: '', mimeType: '', url: '' });
   error = signal('');
 
   videoUrl = computed(() => this.videoResponse().url || '');
@@ -58,7 +58,7 @@ export default class VisualStoryVideoComponent {
   async generateVideoFromFrames(): Promise<void> {
     try {
       this.isLoading.set(true);
-      this.videoResponse.set({ gcsUri: '', url: '' });
+      this.videoResponse.set({ uri: '', url: '', mimeType: '' });
 
       if (!this.canGenerateVideoFromFirstLastFrames()) {
         return;

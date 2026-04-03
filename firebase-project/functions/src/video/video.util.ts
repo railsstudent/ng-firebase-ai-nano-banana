@@ -59,7 +59,7 @@ export async function generateVideoByPolling(
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {ExtendVideoRequest} request    Generate  Video Request
- * @return {Promise<string>} video uri
+ * @return {Promise<{ uri: string, mimeType: string }>} video uri and mime type
  */
 export async function extendVideoByPolling(
   aiVideo: AIVideoBucket,
@@ -107,7 +107,7 @@ async function getVideoUri(
   ai: GoogleGenAI,
   genVideosParams: GenerateVideosParameters,
   pollingPeriod: number,
-): Promise<string> {
+): Promise<{ uri: string, mimeType: string }> {
   let operation = await ai.models.generateVideos(genVideosParams);
 
   while (!operation.done) {
@@ -121,10 +121,11 @@ async function getVideoUri(
     throw new Error(strError);
   }
 
-  const uri = operation.response?.generatedVideos?.[0]?.video?.uri;
-  if (uri) {
-    console.log("video uri", uri);
-    return uri;
+  const video = operation.response?.generatedVideos?.[0]?.video || {};
+  const { uri, mimeType } = video;
+  if (uri && mimeType) {
+    console.log("video uri", uri, mimeType);
+    return { uri, mimeType };
   }
 
   const strError = "Video generation finished but no uri was provided.";

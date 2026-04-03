@@ -11,12 +11,18 @@ export type GenerateVideoFromFramesRequest = GenerateVideoRequest & {
 
 export type ExtendVideoRequest = {
   prompt: string;
-  video: { uri: string };
+  video?: { uri: string, mimeType: string };
 }
 
 export type VideoGenerationResponse = {
-  gcsUri: string;
+  uri: string;
   url: string;
+  mimeType: string;
 }
 
-export type CallableNames = "videos-generateVideo" | "videos-interpolateVideo";
+export type DownloadVideoResponse = {
+  uri: string;
+  mimeType: string;
+}
+
+export type CallableNames = "videos-generateVideo" | "videos-interpolateVideo" | "videos-extendVideo";

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
-import { CallableNames, GenerateVideoRequest, VideoGenerationResponse } from '../types/video.type';
+import { CallableNames, DownloadVideoResponse, GenerateVideoRequest, VideoGenerationResponse } from '../types/video.type';
 import { ConfigService } from './config.service';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class VeoService {
   private readonly storage = getStorage();
   private readonly configService = inject(ConfigService);
 
-  private async retrieveVideoUri<T = GenerateVideoRequest>(request: T, methodName: string): Promise<string> {
+  private async retrieveVideoUri<T = GenerateVideoRequest>(request: T, methodName: string): Promise<DownloadVideoResponse> {
     try {
       const { functions } = this.configService.firebaseObjects || {};
       if (!functions) {
@@ -19,11 +19,11 @@ export class VeoService {
       }
 
       console.log('retrieveVideoUri -> functions region', functions.region);
-      const downloadGcsUri = httpsCallable<T, string>(
+      const downloadGcsUri = httpsCallable<T, DownloadVideoResponse>(
         functions, methodName
       );
-      const { data: gcsUri } = await downloadGcsUri(request);
-      return gcsUri;
+      const { data } = await downloadGcsUri(request);
+      return data;
     } catch (err) {
         console.error(err);
         throw err;
@@ -31,16 +31,16 @@ export class VeoService {
   }
 
   async downloadVideoUriAndUrl<T = GenerateVideoRequest>(request: T, methodName: CallableNames = 'videos-generateVideo'): Promise<VideoGenerationResponse> {
-    const gcsUri = await this.retrieveVideoUri(request, methodName);
+    const { uri, mimeType } = await this.retrieveVideoUri(request, methodName);
 
-    if (!gcsUri) {
+    if (!uri) {
       throw new Error('Video operation completed but no URI was returned.');
     }
 
-    return getDownloadURL(ref(this.storage, gcsUri))
+    return getDownloadURL(ref(this.storage, uri))
       .then((url) => {
         console.log("download url", url);
-        return { gcsUri, url };
+        return { uri, url, mimeType };
       })
       .catch((error) => {
         // A full list of error codes is available at

@@ -11,7 +11,7 @@ export class GenVideoService {
   private readonly veoService = inject(VeoService);
 
   videoError = signal('');
-  videoResponse = signal<VideoGenerationResponse>({ gcsUri: '', url: '' });
+  videoResponse = signal<VideoGenerationResponse>({ uri: '', url: '', mimeType: '' });
   #extendVideoCounter = signal(0);
   isGeneratingVideo = signal(false);
 
@@ -41,13 +41,18 @@ export class GenVideoService {
   }
 
   clearVideo() {
-    this.videoResponse.set({ gcsUri: '', url: '' });
+    this.videoResponse.set({ uri: '', url: '', mimeType: '' });
     this.#extendVideoCounter.set(0);
   }
 
-  async extendVideo(request: ExtendVideoRequest) {
+  async extendVideo(prompt: string) {
     if (!this.videoUrl()) {
       console.warn('No video to extend. Please generate a video first.');
+      return;
+    }
+
+    if (!prompt) {
+      console.warn('Prompt is required to extend the video.');
       return;
     }
 
@@ -60,12 +65,13 @@ export class GenVideoService {
       this.videoError.set('');
       this.isGeneratingVideo.set(true);
 
+      const { uri, mimeType } = this.videoResponse();
       const extendVideoParams: ExtendVideoRequest = {
-        prompt: request.prompt,
-        video: { uri: this.videoResponse().gcsUri },
+        prompt,
+        video: { uri, mimeType },
       }
 
-      const videoResponse = await this.veoService.downloadVideoUriAndUrl(extendVideoParams);
+      const videoResponse = await this.veoService.downloadVideoUriAndUrl(extendVideoParams, 'videos-extendVideo');
       this.videoResponse.set(videoResponse);
       this.#extendVideoCounter.update(count => count + 1);
       console.log(`Video extended successfully. Current extension count: ${this.#extendVideoCounter()}`);

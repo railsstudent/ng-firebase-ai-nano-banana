@@ -33,6 +33,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
   />
   <app-video-player
     [isGeneratingVideo]="isGeneratingVideo()" [videoUrl]="videoUrl()"
+    (extendVideo)="extendVideo()"
   />
 }`,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,6 +90,7 @@ export class GenMediaComponent {
           const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
           if (multiPrompts.length) {
             this.isLoading.set(true);
+            this.genVideoService.clearVideo();
             this.genMediaService.streamImages(multiPrompts, imageFiles)
               .finally(() => this.isLoading.set(false));
           }
@@ -110,8 +112,6 @@ export class GenMediaComponent {
       this.downloadImageById(id);
     } else if (action === 'generateVideo') {
       await this.generateVideoById(id);
-    } else if (action === 'extendVideo') {
-      await this.extendVideo();
     }
   }
 
@@ -143,7 +143,7 @@ export class GenMediaComponent {
     }
   }
 
-  private async extendVideo() {
-    // await this.genVideoService.extendVideo();
+  async extendVideo() {
+    await this.genVideoService.extendVideo(this.trimmedUserPrompt());
   }
 }

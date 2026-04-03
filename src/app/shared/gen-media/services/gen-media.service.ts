@@ -66,7 +66,6 @@ export class GenMediaService {
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
     this.imageGenerationError.set('');
-    this.videoUrl.set('');
 
     if (!prompts?.length) {
       return;

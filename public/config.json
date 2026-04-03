@@ -1,4 +1,4 @@
 {
-  "getFirebaseConfigUrl": "http://127.0.0.1:5001/vertexai-firebase-6a64f/us-central1/getFirebaseConfig"
+  "getFirebaseConfigUrl": "https://us-central1-vertexai-firebase-6a64f.cloudfunctions.net/getFirebaseConfig"
 }
 

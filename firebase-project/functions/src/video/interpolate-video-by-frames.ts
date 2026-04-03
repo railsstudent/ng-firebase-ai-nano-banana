@@ -51,7 +51,7 @@ function constructVideoArguments(isVeo31Used: boolean, imageParams: GenerateVide
  *
  * @param {AIVideoBucket} aiVideo ai video bucket info
  * @param {GenerateVideoFromFramesRequest} imageParams    Generate Video from Frames Request
- * @return {string} video uri
+ * @return {object} video uri and mime type
  */
 async function interpolateVideo(aiVideo: AIVideoBucket, imageParams: GenerateVideoFromFramesRequest) {
   try {

@@ -1,7 +1,7 @@
-import { GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/ai/types/video.type';
+import { ExtendVideoRequest, GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/ai/types/video.type';
 import { GenVideoService } from '@/shared/gen-media/services/gen-video.service';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
-import { inject, Injectable, linkedSignal, Signal } from '@angular/core';
+import { inject, Injectable, linkedSignal, Signal, WritableSignal } from '@angular/core';
 import { VisualStoryForm } from '../visual-story-form/types/visual-story-form.type';
 
 @Injectable({
@@ -77,6 +77,21 @@ export class VisualStoryService {
   interpolateVideo(request: GenerateVideoFromFramesRequest): Promise<VideoGenerationResponse> {
     try {
       return this.genVideoService.generateVideoFromFrames(request);
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  extendInterpolatedVideo(
+    prompt: string,
+    counter: number,
+    customVideo: VideoGenerationResponse,
+    generatingingSignal: WritableSignal<boolean>,
+    error: WritableSignal<string>
+  ) {
+    try {
+      return this.genVideoService.extendInterpolatedVideo(prompt, counter, customVideo, generatingingSignal, error);
     } catch (e) {
       console.error(e);
       throw e;

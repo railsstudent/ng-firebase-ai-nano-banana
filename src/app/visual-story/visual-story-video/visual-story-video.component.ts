@@ -24,9 +24,11 @@ import { VideoGenerationResponse } from '@/ai/types/video.type';
 
       <app-error-display [error]="error()" />
       @if (isLoading()) {
-        <app-loader />
+        <app-loader [loadingText]="loadingText()" />
       } @else if (videoUrl(); as videoUrl) {
-        <app-video-player class="block" [videoUrl]="videoUrl" />
+        <app-video-player class="block" [videoUrl]="videoUrl"
+          (extendVideo)="extendInterpolatedVideo()"
+        />
       }
     }
   `,
@@ -41,6 +43,8 @@ export default class VisualStoryVideoComponent {
   isLoading = signal(false);
   videoResponse = signal<VideoGenerationResponse>({ uri: '', mimeType: '', url: '' });
   error = signal('');
+  extendVideoCounter = signal(0);
+  loadingText = signal('Interpolating your video...');
 
   videoUrl = computed(() => this.videoResponse().url || '');
   firstImage = computed(() => this.images()?.[0]);
@@ -79,6 +83,33 @@ export default class VisualStoryVideoComponent {
       this.error.set(strError);
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  async extendInterpolatedVideo() {
+    try {
+      const trimmedUserPrompt = this.userPrompt().trim();
+      if (trimmedUserPrompt) {
+        this.loadingText.set('Extending your video...');
+        const result = await this.visualStoryService.extendInterpolatedVideo(
+          trimmedUserPrompt,
+          this.extendVideoCounter(),
+          this.videoResponse(),
+          this.isLoading,
+          this.error
+        );
+
+        if (result){
+          this.videoResponse.set(result);
+          this.extendVideoCounter.update(count => count + 1);
+          console.log(`Video extended successfully. Current extension count: ${this.extendVideoCounter()}`);
+        }
+      }
+    } catch (e) {
+      const strError = e instanceof Error ? e.message : `Error in extending video: ${e}`
+      this.error.set(strError);
+    } finally {
+      this.loadingText.set('Interpolating your video...');
     }
   }
 }

@@ -1,7 +1,7 @@
 import { ConfigService } from '@/ai/services/config.service';
 import { VeoService } from '@/ai/services/veo.service';
 import { ExtendVideoRequest, GenerateVideoFromFramesRequest, GenerateVideoRequest, VideoGenerationResponse } from '@/ai/types/video.type';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { getValue } from 'firebase/remote-config';
 
 @Injectable({
@@ -46,42 +46,35 @@ export class GenVideoService {
     this.#extendVideoCounter.set(0);
   }
 
-  async extendVideo(prompt: string) {
-    if (!this.videoUrl()) {
-      console.warn('No video to extend. Please generate a video first.');
-      return;
-    }
-
-    if (!prompt) {
-      console.warn('Prompt is required to extend the video.');
-      return;
-    }
-
-
+  isVideoExtensionAllowed(counter: number) {
     const remoteConfig = this.configService.firebaseObjects?.remoteConfig;
     if (!remoteConfig) {
       console.warn('Remote config does not exist.');
-      return;
+      return false;
     }
 
     const max_extend_allowed = getValue(remoteConfig,'maxVideoExtendAllowed').asNumber();
-    if (this.#extendVideoCounter() >= max_extend_allowed) {
+    if (counter >= max_extend_allowed) {
       console.warn('Maximum extension limit reached.');
-      return;
+      return false;
     }
 
-    try {
-      this.videoError.set('');
-      this.isGeneratingVideo.set(true);
+    return true;
+  }
 
-      const { uri, mimeType } = this.videoResponse();
-      const extendVideoParams: ExtendVideoRequest = {
+  async extendVideo(prompt: string): Promise<void> {
+    try {
+      const result = await this.extendInterpolatedVideo(
         prompt,
-        video: { uri, mimeType },
+        this.#extendVideoCounter(),
+        this.videoResponse()
+      );
+
+      if (!result) {
+        return;
       }
 
-      const videoResponse = await this.veoService.downloadVideoUriAndUrl(extendVideoParams, 'videos-extendVideo');
-      this.videoResponse.set(videoResponse);
+      this.videoResponse.set(result);
       this.#extendVideoCounter.update(count => count + 1);
       console.log(`Video extended successfully. Current extension count: ${this.#extendVideoCounter()}`);
     } catch (e) {
@@ -92,6 +85,49 @@ export class GenVideoService {
       this.videoError.set(errMsg);
     } finally {
       this.isGeneratingVideo.set(false);
+    }
+  }
+
+  async extendInterpolatedVideo(
+    prompt: string,
+    counter: number,
+    customVideo: Pick<VideoGenerationResponse, 'uri' | 'mimeType'>,
+    generatingingSignal?: WritableSignal<boolean>,
+    error?: WritableSignal<string>
+  ) {
+    const { uri, mimeType } = customVideo;
+
+    if (!mimeType || !uri) {
+      console.warn('No video to extend. Please generate a video first.');
+      return null;
+    }
+
+    if (!prompt) {
+      console.warn('Prompt is required to extend the video.');
+      return null;
+    }
+
+    if (!this.isVideoExtensionAllowed(counter)) {
+      return null;
+    }
+
+    const actualErrorSignal = error || this.videoError;
+    const actualGeneratingSignal = generatingingSignal || this.isGeneratingVideo;
+    try {
+      actualErrorSignal.set('');
+      actualGeneratingSignal.set(true);
+
+      const extendVideoParams: ExtendVideoRequest = {
+        prompt,
+        video: { uri, mimeType },
+      }
+
+      return await this.veoService.downloadVideoUriAndUrl(extendVideoParams, 'videos-extendVideo');
+    } catch (e) {
+      console.error(e);
+      throw e;
+    } finally {
+      actualGeneratingSignal.set(false);
     }
   }
 }

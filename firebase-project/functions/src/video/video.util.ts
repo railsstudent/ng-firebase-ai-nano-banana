@@ -9,22 +9,22 @@ export const VIDEO_CONFIG = (() => {
   const env = process.env;
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";
   const pollingPeriod = Number(env.POLLING_PERIOD_MS || "10000");
-  const vertexai = (env.GOOGLE_GENAI_USE_VERTEXAI || "false") === "true";
 
   const missingKeys: string[] = [];
   const model = validate(env.GEMINI_VIDEO_MODEL_NAME, "Gemini Video Model Name", missingKeys);
   const project = validate(env.GCLOUD_PROJECT, "Project ID", missingKeys);
-
-  const apiOptions = constructGenAIOptions(env, vertexai, missingKeys);
+  const location = validate(env.GOOGLE_CLOUD_LOCATION, "Google Cloud Location", missingKeys);
 
   if (missingKeys.length > 0) {
     throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
   }
 
-  const genAIOptions = vertexai ? { project, ...apiOptions } : apiOptions;
-
   return {
-    genAIOptions,
+    genAIOptions: {
+      project,
+      location,
+      vertexai: true,
+    },
     aiVideoOptions: {
       model,
       storageBucket: `${project}.firebasestorage.app`,
@@ -33,30 +33,6 @@ export const VIDEO_CONFIG = (() => {
     },
   };
 })();
-
-/**
- *
- * @param {NodeJS.ProcessEnv} env  Environment variables
- * @param {boolean} vertexai  Flag indicating whether Vertex AI is used
- * @param {string[]} missingKeys  Array to collect missing environment variable keys
- * @return {object} GenAI options based on the environment configuration
- */
-function constructGenAIOptions(env: NodeJS.ProcessEnv, vertexai: boolean, missingKeys: string[]) {
-  if (vertexai) {
-    const location = validate(env.GOOGLE_CLOUD_LOCATION, "Vertex Location", missingKeys);
-    return {
-      vertexai,
-      location,
-    };
-  }
-
-  // For GenAI API, we need to validate the API key as well.
-  const apiKey = validate(env.GOOGLE_API_KEY, "Google API Key", missingKeys);
-  return {
-    vertexai,
-    apiKey,
-  };
-}
 
 /**
  *

@@ -12,7 +12,7 @@ function getGenerativeAIImageModel(configService: ConfigService) {
     const { firebaseApp, remoteConfig } = configService.firebaseObjects;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
     const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
-    const thinkingConfig = createThinkingConfig(remoteConfig,modelName);
+    const { thinkingConfig = undefined, tools = [] } = createThinkingConfig(remoteConfig,modelName) || {};
 
     const modelParams: ModelParams = {
       model: modelName,
@@ -20,11 +20,7 @@ function getGenerativeAIImageModel(configService: ConfigService) {
           candidateCount: 1,
           thinkingConfig,
       },
-      tools: [
-        {
-          googleSearch: {}
-        }
-      ],
+      tools,
     };
 
     const ai = getAI(firebaseApp, {
@@ -35,11 +31,20 @@ function getGenerativeAIImageModel(configService: ConfigService) {
 }
 
 function createThinkingConfig(remoteConfig: RemoteConfig, modelName: string) {
-  if (modelName === 'gemini-3.1-flash-image-preview') {
+  if (['gemini-3.1-flash-image-preview'].includes(modelName)) {
     const rawThinkingLevel = getValue(remoteConfig, 'thinkingLevel').asString();
     const thinkingLevel = ThinkingLevel[rawThinkingLevel as keyof typeof ThinkingLevel];
-    return {
+    const thinkingConfig = {
       thinkingLevel
+    };
+
+    return {
+      thinkingConfig,
+      tools: [
+        {
+          googleSearch: {}
+        }
+      ]
     };
   }
 

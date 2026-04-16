@@ -4,6 +4,42 @@ This project demonstrates a Generative AI application built with **Angular** and
 
 ## 🏗️ Architecture
 
+```mermaid
+graph TD
+    subgraph Frontend
+        A[Angular Client]
+    end
+
+    subgraph Firebase Services
+        B[Firebase AI Logic <br/> Gemini]
+        C[Cloud Functions <br/> Backend Logic]
+        D[(Firebase Storage <br/> Default Bucket)]
+    end
+
+    subgraph Google Cloud
+        E[Vertex AI <br/> Veo Model]
+    end
+
+    %% Image Generation Flow
+    A -->|1. Generate Images directly| B
+    B -.->|2. Immediate Image Response| A
+
+    %% Video Generation Flow
+    A -->|3. Call Generate Video| C
+    C -->|4. Trigger Video Task| E
+    E -->|5. Save Video Output| D
+    C -.->|6. Return Video URI & MimeType| A
+    A -->|7. Fetch Video File via URI| D
+    
+    classDef frontend fill:#dd0031,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef firebase fill:#ffca28,stroke:#fff,stroke-width:2px,color:#333;
+    classDef gcp fill:#4285f4,stroke:#fff,stroke-width:2px,color:#fff;
+    
+    class A frontend;
+    class B,C,D firebase;
+    class E gcp;
+```
+
 The application follows a modern serverless architecture:
 
 * **Frontend:** Angular (v21) standalone components, providing a rich, responsive UI.
@@ -27,7 +63,7 @@ The application follows a modern serverless architecture:
 
 ## ⚙️ Configuration Details
 
-* **Google Cloud Project ID:** `vertexai-firebase-6a64f`
+* **Google Cloud Project ID:** `<YOUR_PROJECT_ID>`
 * **Global Location / Region:** `us-central1`
 * **Firebase API Key:** (Configured in Firebase environment)
 
@@ -45,9 +81,14 @@ The application follows a modern serverless architecture:
 2. **Install dependencies:**
 
     ```bash
+    # Install Angular frontend dependencies
     npm install
+
+    # Navigate to Firebase functions and install backend dependencies
     cd firebase-project/functions
     npm install
+
+    # Return to the root Angular directory
     cd ../..
     ```
 
@@ -67,17 +108,21 @@ The application follows a modern serverless architecture:
 To run the application locally with full functionality:
 
 1. **Start Firebase Emulators:**
+
     ```bash
     cd firebase-project/functions
     npm run serve
     ```
+
     This will build the functions and start the Functions emulator.
 
 2. **Start Angular Development Server:**
     In the root directory, run:
+
     ```bash
     npm start
     ```
+
     Open your browser at `http://localhost:4200`.
 
 ## 🧪 Deployment

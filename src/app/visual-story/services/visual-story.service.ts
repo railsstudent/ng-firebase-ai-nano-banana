@@ -87,11 +87,11 @@ export class VisualStoryService {
     prompt: string,
     counter: number,
     customVideo: VideoGenerationResponse,
-    generatingingSignal: WritableSignal<boolean>,
+    generatingSignal: WritableSignal<boolean>,
     error: WritableSignal<string>
   ) {
     try {
-      return this.genVideoService.extendInterpolatedVideo(prompt, counter, customVideo, generatingingSignal, error);
+      return this.genVideoService.extendInterpolatedVideo(prompt, counter, customVideo, generatingSignal, error);
     } catch (e) {
       console.error(e);
       throw e;

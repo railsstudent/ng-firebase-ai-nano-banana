@@ -92,7 +92,7 @@ export class GenVideoService {
     prompt: string,
     counter: number,
     customVideo: Pick<VideoGenerationResponse, 'uri' | 'mimeType'>,
-    generatingingSignal?: WritableSignal<boolean>,
+    generatingSignal?: WritableSignal<boolean>,
     error?: WritableSignal<string>
   ) {
     const { uri, mimeType } = customVideo;
@@ -112,7 +112,7 @@ export class GenVideoService {
     }
 
     const actualErrorSignal = error || this.videoError;
-    const actualGeneratingSignal = generatingingSignal || this.isGeneratingVideo;
+    const actualGeneratingSignal = generatingSignal || this.isGeneratingVideo;
     try {
       actualErrorSignal.set('');
       actualGeneratingSignal.set(true);

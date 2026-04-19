@@ -1,5 +1,5 @@
 import { inject, makeEnvironmentProviders } from '@angular/core';
-import { getAI, getGenerativeModel, ModelParams, ThinkingLevel, VertexAIBackend } from 'firebase/ai';
+import { getAI, getGenerativeModel, ModelParams, ThinkingConfig, ThinkingLevel, VertexAIBackend } from 'firebase/ai';
 import { getValue, RemoteConfig } from 'firebase/remote-config';
 import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
@@ -34,7 +34,7 @@ function createThinkingConfig(remoteConfig: RemoteConfig, modelName: string) {
   if (['gemini-3.1-flash-image-preview'].includes(modelName)) {
     const rawThinkingLevel = getValue(remoteConfig, 'thinkingLevel').asString();
     const thinkingLevel = ThinkingLevel[rawThinkingLevel as keyof typeof ThinkingLevel];
-    const thinkingConfig = {
+    const thinkingConfig: ThinkingConfig = {
       thinkingLevel
     };
 
@@ -45,6 +45,15 @@ function createThinkingConfig(remoteConfig: RemoteConfig, modelName: string) {
           googleSearch: {}
         }
       ]
+    };
+  } else if ('gemini-3-pro-image-preview' == modelName) {
+    const fallbackThinkingConfig: ThinkingConfig = {
+      includeThoughts: true,
+      thinkingBudget: 512,
+    };
+
+    return {
+      thinkingConfig: fallbackThinkingConfig,
     };
   }
 

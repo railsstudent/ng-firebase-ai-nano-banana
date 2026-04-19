@@ -14,8 +14,5 @@ export const MODEL_ICON_MAP: Record<string, any> = {
     '3d-map': MapIconComponent,
     bottle:  GlassBottleIconComponent,
     dome: DomeIconComponent,
-};
-
-export const TEMPLATE_ICON_MAP: Record<string, any> = {
-    bottle:  GlassBottleIconComponent,
+    diecast:  GlassBottleIconComponent,
 };

@@ -1,3 +1,4 @@
+import "./env";
 /**
  * Import function triggers from their respective submodules:
  *
@@ -9,17 +10,10 @@
 
 import { setGlobalOptions } from "firebase-functions";
 import { onRequest } from "firebase-functions/v2/https";
-import { getFirebaseConfigFunction } from "./firebase";
-
-process.loadEnvFile();
+import { FIREBASE_APP_CONFIG } from "./firebase";
+import { cors, refererList, whitelist } from "./util";
 
 setGlobalOptions({ maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || "us-central1" });
-
-const splitList = (whitelist?: string) => (whitelist || '').split(",").map((origin) => origin.trim());
-
-const whitelist = splitList(process.env.WHITELIST);
-const cors = whitelist.length > 0 ? whitelist : true;
-const refererList = splitList(process.env.REFERER);
 
 export const getFirebaseConfig = onRequest( { cors },
   (request, response) => {
@@ -51,10 +45,8 @@ export const getFirebaseConfig = onRequest( { cors },
         return;
       }
 
-      const config = getFirebaseConfigFunction();
-
       response.set("Cache-Control", "public, max-age=3600, s-maxage=3600");
-      response.json(config);
+      response.json(FIREBASE_APP_CONFIG);
     } catch (err) {
       console.error(err);
       response.status(401).send(err);

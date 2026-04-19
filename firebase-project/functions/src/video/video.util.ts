@@ -1,10 +1,10 @@
-import { AIVideoBucket, ExtendVideoRequest, GenerateVideoRequest } from "./types/video.type";
 import { GenerateVideosParameters, GoogleGenAI } from "@google/genai";
+import logger from "firebase-functions/logger";
 import { validate } from "../validate";
+import { AIVideoBucket, ExtendVideoRequest, GenerateVideoRequest } from "./types/video.type";
 
 export const VIDEO_CONFIG = (() => {
-  console.log("VIDEO_CONFIG initialization: Loading environment variables and validating configuration...");
-  process.loadEnvFile();
+  logger.info("VIDEO_CONFIG initialization: Loading environment variables and validating configuration...");
 
   const env = process.env;
   const isVeo31Used = (env.IS_VEO31_USED || "false") === "true";

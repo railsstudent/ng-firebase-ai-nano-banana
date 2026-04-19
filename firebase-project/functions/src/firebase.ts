@@ -10,12 +10,11 @@
 import logger from "firebase-functions/logger";
 import { validate } from "./validate";
 
-/**
- *
- * @param {NodeJS.ProcessEnv} env         a dicitonary of environment variables
- * @return {object} an object containing validated environment variables or undefined if validation fails
- */
-function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
+export const FIREBASE_APP_CONFIG = (() => {
+  logger.info("FIREBASE_APP_CONFIG initialization: Loading environment variables and validating configuration...");
+  process.loadEnvFile();
+
+  const env = process.env;
   const missingKeys: string[] = [];
   const apiKey = validate(env.APP_API_KEY, "API Key", missingKeys);
   const appId = validate(env.APP_ID, "App Id", missingKeys);
@@ -38,17 +37,45 @@ function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
     },
     recaptchaSiteKey,
   };
-}
+})();
 
-export const getFirebaseConfigFunction = () => {
-  logger.info("getFirebaseConfig called");
+// /**
+//  *
+//  * @param {NodeJS.ProcessEnv} env         a dicitonary of environment variables
+//  * @return {object} an object containing validated environment variables or undefined if validation fails
+//  */
+// function validateFirebaseConfigFields(env: NodeJS.ProcessEnv) {
+//   const missingKeys: string[] = [];
+//   const apiKey = validate(env.APP_API_KEY, "API Key", missingKeys);
+//   const appId = validate(env.APP_ID, "App Id", missingKeys);
+//   const messagingSenderId = validate(env.APP_MESSAGING_SENDER_ID, "Messaging Sender ID", missingKeys);
+//   const recaptchaSiteKey = validate(env.RECAPTCHA_ENTERPRISE_SITE_KEY, "Recaptcha site key", missingKeys);
+//   const projectId = validate(env.GCLOUD_PROJECT, "Project ID", missingKeys);
 
-  process.loadEnvFile();
+//   if (missingKeys.length > 0) {
+//     throw new Error(`Missing environment variables: ${missingKeys.join(", ")}`);
+//   }
 
-  const variables = validateFirebaseConfigFields(process.env);
-  if (!variables) {
-    return undefined;
-  }
+//   return {
+//     app: {
+//       apiKey,
+//       appId,
+//       projectId,
+//       messagingSenderId,
+//       authDomain: `${projectId}.firebaseapp.com`,
+//       storageBucket: `${projectId}.firebasestorage.app`,
+//     },
+//     recaptchaSiteKey,
+//   };
+// }
 
-  return variables;
-};
+// export const getFirebaseConfigFunction = () => {
+//   logger.info("getFirebaseConfig called");
+
+//   const variables = validateFirebaseConfigFields(process.env);
+//   if (!variables) {
+//     return undefined;
+//   }
+
+//   return variables;
+// };

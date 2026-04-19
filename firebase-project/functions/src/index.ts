@@ -15,9 +15,11 @@ process.loadEnvFile();
 
 setGlobalOptions({ maxInstances: 2, region: process.env.GOOGLE_FUNCTION_LOCATION || "us-central1" });
 
-const cors = process.env.WHITELIST ? process.env.WHITELIST.split(",") : true;
-const whitelist = process.env.WHITELIST?.split(",") || [];
-const refererList = process.env.REFERER?.split(",") || [];
+const splitList = (whitelist?: string) => (whitelist || '').split(",").map((origin) => origin.trim());
+
+const whitelist = splitList(process.env.WHITELIST);
+const cors = whitelist.length > 0 ? whitelist : true;
+const refererList = splitList(process.env.REFERER);
 
 export const getFirebaseConfig = onRequest( { cors },
   (request, response) => {

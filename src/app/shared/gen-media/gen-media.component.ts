@@ -50,7 +50,7 @@ export class GenMediaComponent {
   videoUrl = this.genVideoService.videoUrl;
   isGeneratingVideo = this.genVideoService.isGeneratingVideo.asReadonly();
 
-  trimmedUserPrompt = computed(() => this.genMediaInput()?.userPrompt.trim() || '');
+  trimmedUserPrompt = computed(() => this.genMediaInput()?.userPrompt?.trim() || '');
 
   downloadImageError = signal('');
 
@@ -87,13 +87,16 @@ export class GenMediaComponent {
             return;
           }
 
-          const { userPrompt, prompts = [], imageFiles = [] } = params;
+          const { userPrompt = '', prompts = [], imageFiles = [], templateId = '' } = params;
+          const trimmedTemplateId = templateId.trim();
           const rawPrompts = prompts.length ? prompts : [userPrompt];
           const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
-          if (multiPrompts.length) {
+          const promptsOrTemplateId = multiPrompts.length ? multiPrompts :  trimmedTemplateId ? [trimmedTemplateId] : [];
+
+          if (promptsOrTemplateId.length) {
             this.isLoading.set(true);
             this.genVideoService.clearVideo();
-            this.genMediaService.streamImages(multiPrompts, imageFiles)
+            this.genMediaService.streamImages(promptsOrTemplateId, imageFiles)
               .finally(() => this.isLoading.set(false));
           }
         }),

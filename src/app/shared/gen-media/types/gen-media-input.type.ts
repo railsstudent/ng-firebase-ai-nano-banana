@@ -1,5 +1,6 @@
 export type GenMediaInput = {
-  userPrompt: string;
+  userPrompt?: string;
   prompts?: string[];
   imageFiles?: File[];
+  templateId?: string;
 }

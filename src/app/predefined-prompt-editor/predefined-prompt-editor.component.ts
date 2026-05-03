@@ -1,3 +1,4 @@
+import { ConfigService } from '@/ai/services/config.service';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/card/card.component';
@@ -8,7 +9,8 @@ import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
 import { GenerateOptionsFormComponent } from '@/shared/generate-options-form/generate-options-form.component';
 import { GenerateOptions } from '@/shared/generate-options-form/types/generate-options.type';
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
-import { ChangeDetectionStrategy, Component, computed, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
+import { getValue } from 'firebase/remote-config';
 
 @Component({
   selector: 'app-predefined-prompt-editor',
@@ -28,15 +30,32 @@ export default class PredefinedPromptComponent {
   featureId = input.required<string>();
   feature = input.required<FeatureDetails>();
 
+  configService = inject(ConfigService);
+
   imageFiles = signal<File[]>([]);
 
   customPrompt = computed(() => this.feature().customPrompt || '');
   dropzoneMode = computed(() => this.feature()?.mode ?? 'single');
 
+  templateId = linkedSignal({
+    source: () => ({
+      remoteConfig: this.configService.firebaseObjects?.remoteConfig,
+      templateConfigName: this.feature().templateConfigName,
+    }),
+    computation: ({ remoteConfig, templateConfigName }) => {
+      if (remoteConfig && templateConfigName) {
+        const templateId = getValue(remoteConfig, templateConfigName).asString();
+        return templateId;
+      }
+      return undefined;
+    }
+  });
+
   genMediaInput = signal<GenMediaInput>({
     userPrompt: '',
     prompts: undefined,
     imageFiles: [],
+    templateId: undefined,
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
@@ -53,21 +72,24 @@ export default class PredefinedPromptComponent {
     event.preventDefault();
 
     let userPrompt = this.customPrompt().trim();
-    const aspectRatio = this.genConfigValues()?.aspectRatio || '';
-    const resolution = this.genConfigValues()?.resolution || '';
+    if (userPrompt) {
+      const aspectRatio = this.genConfigValues()?.aspectRatio || '';
+      const resolution = this.genConfigValues()?.resolution || '';
 
-    if (aspectRatio) {
-      userPrompt = `${userPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
-    }
+      if (aspectRatio) {
+        userPrompt = `${userPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
+      }
 
-    if (resolution) {
-      userPrompt = `${userPrompt}\nApply this resolution to the image: ${resolution}`;
+      if (resolution) {
+        userPrompt = `${userPrompt}\nApply this resolution to the image: ${resolution}`;
+      }
     }
 
     this.genMediaInput.set({
       userPrompt,
       prompts: undefined,
       imageFiles: this.imageFiles(),
+      templateId: this.templateId(),
     });
   }
 }

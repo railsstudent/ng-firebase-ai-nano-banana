@@ -6,4 +6,5 @@ export type FeatureDetails = {
   name: string;
   path: string;
   mode?: 'single' | 'multiple'
+  templateConfigName?: string;
 };

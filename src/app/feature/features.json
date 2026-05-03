@@ -51,7 +51,6 @@
     "figurine": {
       "name": "Figurine",
       "path": "/predefined-prompt/figurine",
-      "mode": "single",
       "buttonText": "Make a 3D model",
       "loadingText": "Generating 3D model...",
       "description": "Transform your 2D images into 3D models ready for any project.",
@@ -60,7 +59,6 @@
     "3d-map": {
       "name": "3D Map",
       "path": "/predefined-prompt/3d-map",
-      "mode": "single",
       "buttonText": "Make a 3D map",
       "loadingText": "Generating 3D map...",
       "description": "Transform your 2D maps into 3D models ready for any project.",
@@ -69,7 +67,6 @@
     "dome": {
       "name": "Domes on the Moon",
       "path": "/predefined-prompt/dome",
-      "mode": "single",
       "buttonText": "Make a colony",
       "loadingText": "Generating a colony on the moon...",
       "description": "Transform your 2D maps into 3D colonies ready for any project.",
@@ -77,17 +74,15 @@
     },
     "bottle": {
       "name": "Glass Bottle Souvenir",
-      "path": "/predefined-prompt/bottle",
-      "mode": "single",
+      "path": "/template-prompt/bottle",
       "buttonText": "Make a souvenir",
       "loadingText": "Generating a souvenir...",
       "description": "Transform your 2D images into 3D glass bottle souvenirs for any project.",
-      "customPrompt": "A 1/7 scale commercialized collectible figure of the character from the photo, crafted in a highly realistic style. The figure is placed in a detailed beach environment with sand, seashells, and gentle ocean waves. The entire toy display is enclosed inside a clear souvenir glass bottle, giving it a premium miniature diorama look, with realistic lighting and shadows"
+      "templateConfigName": "glassBottleSouvenirTemplateId"
     },
     "diecast": {
       "name": "Diecast Vehicle",
       "path": "/predefined-prompt/diecast",
-      "mode": "single",
       "buttonText": "Make a diecast",
       "loadingText": "Generating a diecast...",
       "description": "Transform your 2D images into 1:24 diecast vehicle.",

@@ -1,8 +1,8 @@
-import { FirebaseService } from '@/ai/services/firebase.service';
 import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
+import { IMAGE_GENERATOR_TOKEN } from '../constants/image-generator.token';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.cons
 })
 export class GenMediaService {
   private readonly document = inject(DOCUMENT);
-  private readonly firebaseService = inject(FirebaseService);
+  private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 
   imageGenerationError = signal('');
 
@@ -47,7 +47,7 @@ export class GenMediaService {
     console.log('Prompt', trimmedPrompt);
 
     try {
-      return await this.firebaseService.generateImage(trimmedPrompt, imageFiles);
+      return await this.imageGenerator.generateImage(trimmedPrompt, imageFiles);
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {

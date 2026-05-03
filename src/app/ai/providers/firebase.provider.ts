@@ -1,17 +1,16 @@
 import { inject, makeEnvironmentProviders } from '@angular/core';
-import { getAI, getGenerativeModel, ModelParams, ThinkingConfig, ThinkingLevel, VertexAIBackend } from 'firebase/ai';
+import { AI, getAI, getGenerativeModel, getTemplateGenerativeModel, ModelParams, ThinkingConfig, ThinkingLevel, VertexAIBackend } from 'firebase/ai';
 import { getValue, RemoteConfig } from 'firebase/remote-config';
-import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
+import { GEMINI_IMAGE_MODEL, SERVER_TEMPLATE_MODEL, VERTEX_AI_BACKEND } from '../constants/firebase.constant';
 import { ConfigService } from '../services/config.service';
 
-function getGenerativeAIImageModel(configService: ConfigService) {
+function getGenerativeAIImageModel(ai: AI, configService: ConfigService) {
     if (!configService.firebaseObjects) {
       throw new Error('Firebase objects do not exist.');
     }
 
-    const { firebaseApp, remoteConfig } = configService.firebaseObjects;
+    const { remoteConfig } = configService.firebaseObjects;
     const modelName = getValue(remoteConfig, 'geminiImageModelName').asString();
-    const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
     const { thinkingConfig = undefined, tools = [] } = createThinkingConfig(remoteConfig,modelName) || {};
 
     const modelParams: ModelParams = {
@@ -22,10 +21,6 @@ function getGenerativeAIImageModel(configService: ConfigService) {
       },
       tools,
     };
-
-    const ai = getAI(firebaseApp, {
-      backend: new VertexAIBackend(vertexAILocation)
-    });
 
     return getGenerativeModel(ai, modelParams);
 }
@@ -63,16 +58,38 @@ function createThinkingConfig(remoteConfig: RemoteConfig, modelName: string) {
 export function provideFirebase() {
     return makeEnvironmentProviders([
         {
+          provide: VERTEX_AI_BACKEND,
+          useFactory: () => {
+            const configService = inject(ConfigService);
+
+            if (!configService.firebaseObjects) {
+              throw new Error('Firebase objects do not exist.');
+            }
+
+            const { firebaseApp, remoteConfig } = configService.firebaseObjects;
+            const vertexAILocation = getValue(remoteConfig, 'vertexAILocation'). asString();
+            const ai = getAI(firebaseApp, {
+              backend: new VertexAIBackend(vertexAILocation)
+            });
+
+            return ai;
+          }
+        },
+        {
             provide: GEMINI_IMAGE_MODEL,
             useFactory: () => {
               const configService = inject(ConfigService);
 
-              if (!configService.firebaseObjects) {
-                throw new Error('Firebase objects do not exist.');
-              }
-
-              return getGenerativeAIImageModel(configService);
+              const ai = inject(VERTEX_AI_BACKEND); // Ensure Vertex AI backend is initialized before the model
+              return getGenerativeAIImageModel(ai, configService);
             }
+        },
+        {
+          provide: SERVER_TEMPLATE_MODEL,
+          useFactory: () => {
+            const ai = inject(VERTEX_AI_BACKEND); // Ensure Vertex AI backend is initialized before the model
+            return getTemplateGenerativeModel(ai);
+          }
         }
     ]);
 }

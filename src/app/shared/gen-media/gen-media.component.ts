@@ -1,3 +1,4 @@
+import { TemplateParam } from '@/ai/types/generate-image-param.type';
 import { ImagesWithTokenUsage } from '@/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -100,12 +101,12 @@ export class GenMediaComponent {
       .subscribe();
   }
 
-  getPromptsOrTemplateParam(params: GenMediaInput | undefined) {
+  getPromptsOrTemplateParam(params: GenMediaInput | undefined): TemplateParam | string[] | undefined {
     if (!params) {
       return undefined;
     }
 
-    const { userPrompt = '', prompts = [], templateParam = {} } = params;
+    const { userPrompt = '', prompts = [], templateParam } = params;
     const rawPrompts = prompts.length ? prompts : [userPrompt];
     const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
 
@@ -113,17 +114,8 @@ export class GenMediaComponent {
       return multiPrompts;
     }
 
-    const { templateId = '', aspectRatio = '', resolution = ''} = templateParam;
-    const trimmedTemplateId = templateId.trim();
-    if (trimmedTemplateId) {
-      return {
-        templateId: trimmedTemplateId,
-        aspectRatio,
-        resolution,
-      }
-    }
-
-    return undefined;
+    const trimmedTemplateId = templateParam?.templateId?.trim() || '';
+    return trimmedTemplateId ? templateParam : undefined;
   }
 
   async handleAction({ action, id }: { action: string, id: number }) {

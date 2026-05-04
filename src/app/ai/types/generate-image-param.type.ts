@@ -1,5 +1,5 @@
 export type TemplateParam = {
-    templateId?: string;
+    templateId: string;
     aspectRatio?: string;
     resolution?: string;
 }

@@ -11,13 +11,13 @@ import { resolveImageParts } from '../utils/inline-image-data.util';
 export class ServerTemplateService  {
     private readonly serverTemplateModel = inject(SERVER_TEMPLATE_MODEL);
 
-    async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage> {
+    async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage | undefined> {
         try {
-          const { templateParam = undefined, imageFiles } = genImageParameter
-          const templateId = templateParam?.templateId;
+          const { templateParam, imageFiles } = genImageParameter
+          const templateId = templateParam?.templateId?.trim();
 
           if (!templateId) {
-            throw Error('Template ID is required to generate an image.');
+            return undefined;
           }
 
           const aspectRatio = templateParam?.aspectRatio || '';

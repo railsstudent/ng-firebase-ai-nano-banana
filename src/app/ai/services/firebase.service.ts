@@ -12,29 +12,11 @@ import { resolveImageParts } from '../utils/inline-image-data.util';
 export class FirebaseService  {
     private readonly geminiModel = inject(GEMINI_IMAGE_MODEL);
 
-    async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage> {
+    async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage | undefined> {
         try {
           const { prompt, imageFiles } = genImageParameter;
           if (!prompt) {
-            throw Error('Prompt is required to generate an image.');
-          }
-
-          const imageParts = await resolveImageParts(imageFiles);
-          const parts = [prompt, ...imageParts];
-          return await getBase64Images(this.geminiModel, parts);
-        } catch (err) {
-          console.error('Prompt or candidate was blocked:', err);
-          if (err instanceof Error) {
-            throw err;
-          }
-          throw new Error('Error in generating the image.');
-        }
-    }
-
-    async asyncGenerateImage(prompt: string, imageFiles: File[]) {
-      try {
-          if (!prompt) {
-            throw Error('Prompt is required to generate an image.');
+            return undefined;
           }
 
           const imageParts = await resolveImageParts(imageFiles);

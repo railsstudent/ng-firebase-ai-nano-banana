@@ -96,10 +96,9 @@ export class GenMediaService {
         }
       }
     } else {
-      const templateParam = promptsOrTemplateParam;
       const imageTokenUsage = await this.generateImage({
         imageFiles,
-        templateParam,
+        templateParam: promptsOrTemplateParam,
       });
 
       if (imageTokenUsage) {

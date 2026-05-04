@@ -47,7 +47,7 @@ export default class PredefinedPromptComponent {
         const templateId = getValue(remoteConfig, templateConfigName).asString();
         return templateId;
       }
-      return undefined;
+      return '';
     }
   });
 

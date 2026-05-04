@@ -18,7 +18,7 @@ export class GenerateOptionsFormComponent {
 
   readonly resolutionOptions = RESOLUTION_OPTIONS;
 
-  readonly reasolutionKeys = Object.keys(RESOLUTION_OPTIONS);
+  readonly resolutionKeys = Object.keys(RESOLUTION_OPTIONS);
 
   generateConfigForm = form(GenerateOptionsModel);
 

@@ -10,7 +10,7 @@
   <label for="resolution">
     <span>Resolution:</span>
     <select id="resolution" [formField]="generateConfigForm.resolution" class="px-2 py-2">
-      @for (o of reasolutionKeys; track o) {
+      @for (o of resolutionKeys; track o) {
         <option [value]="o">{{ resolutionOptions[o] }}</option>
       }
     </select>

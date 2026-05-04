@@ -20,8 +20,8 @@ export class ServerTemplateService  {
             return undefined;
           }
 
-          const aspectRatio = templateParam?.aspectRatio || '';
-          const resolution = templateParam?.resolution || '';
+          const aspectRatio = templateParam?.aspectRatio;
+          const resolution = templateParam?.resolution;
           console.log('Template id', templateId, 'aspect ratio', aspectRatio, 'resolution', resolution)
 
           const imageParts = await resolveImageParts(imageFiles)

@@ -115,7 +115,7 @@ export class GenMediaComponent {
     }
 
     const trimmedTemplateId = templateParam?.templateId?.trim() || '';
-    return trimmedTemplateId ? templateParam : undefined;
+    return trimmedTemplateId ?  { ...templateParam, templateId: trimmedTemplateId } : undefined;
   }
 
   async handleAction({ action, id }: { action: string, id: number }) {

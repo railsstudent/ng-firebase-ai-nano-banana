@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ChatSession } from 'firebase/ai';
 import { GEMINI_IMAGE_MODEL } from '../constants/firebase.constant';
+import { GenerateImageParam } from '../types/generate-image-param.type';
 import { ImageTokenUsage } from '../types/image-response.type';
 import { getBase64Images } from '../utils/generate-image.util';
 import { resolveImageParts } from '../utils/inline-image-data.util';
@@ -11,8 +12,9 @@ import { resolveImageParts } from '../utils/inline-image-data.util';
 export class FirebaseService  {
     private readonly geminiModel = inject(GEMINI_IMAGE_MODEL);
 
-    async generateImage(prompt: string, imageFiles: File[]): Promise<ImageTokenUsage> {
+    async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage> {
         try {
+          const { prompt, imageFiles } = genImageParameter;
           if (!prompt) {
             throw Error('Prompt is required to generate an image.');
           }

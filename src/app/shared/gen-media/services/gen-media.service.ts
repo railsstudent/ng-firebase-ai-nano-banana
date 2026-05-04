@@ -1,3 +1,4 @@
+import { GenerateImageParam, TemplateParam } from '@/ai/types/generate-image-param.type';
 import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
 import { TokenUsage } from '@/ai/types/token-usage.type';
@@ -36,69 +37,89 @@ export class GenMediaService {
   #currentStep = signal(0);
   currentStep = this.#currentStep.asReadonly();
 
-  private async generateImage(prompt: string, imageFiles: File[], step = 0): Promise<ImageTokenUsage | undefined> {
+  private async generateImage(param: GenerateImageParam, step = 0): Promise<ImageTokenUsage | undefined> {
     this.#currentStep.set(step);
 
-    if (!prompt || !prompt.trim()) {
-      return undefined;
-    }
+    const { prompt, templateParam } = param;
+    const promptOrTemplateId = prompt || templateParam?.templateId || '';
+    console.log('promptOrTemplateId', promptOrTemplateId);
 
-    const trimmedPrompt = prompt.trim();
-    console.log('Prompt', trimmedPrompt);
-
-    try {
-      return await this.imageGenerator.generateImage(trimmedPrompt, imageFiles);
-    } catch (e) {
-      console.error(e);
-      if (e instanceof Error) {
-        throw e;
-      } else {
-        throw new Error('Unexpected error in image generation.')
+    if (promptOrTemplateId) {
+      try {
+        return await this.imageGenerator.generateImage(param);
+      } catch (e) {
+        console.error(e);
+        if (e instanceof Error) {
+          throw e;
+        } else {
+          throw new Error('Unexpected error in image generation.')
+        }
       }
     }
+
+    return undefined;
   }
 
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
 
-  async streamImages(prompts: string[], imageFiles: File[]): Promise<void> {
+  async streamImages(promptsOrTemplateParam: string[] | TemplateParam, imageFiles: File[]): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
     this.imageGenerationError.set('');
 
-    if (!prompts?.length) {
-      return;
-    }
+    if (Array.isArray(promptsOrTemplateParam)) {
+      const prompts = promptsOrTemplateParam
+      if (!prompts?.length) {
+        return;
+      }
+      for (let i = 0; i < prompts.length; i=i+1) {
+        try {
+          const imageTokenUsage = await this.generateImage({
+            prompt: prompts[i].trim(),
+            imageFiles,
+          }, i + 1);
 
-    for (let i = 0; i < prompts.length; i=i+1) {
-      try {
-        const imageTokenUsage = await this.generateImage(prompts[i], imageFiles, i + 1);
-
-        if (imageTokenUsage) {
-          this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary }) => {
-            return {
-              images: images.concat({
-                ...imageTokenUsage?.image,
-                id: i
-              }),
-              tokenUsage: this.calculateTokenUsage(tokenUsage, imageTokenUsage.tokenUsage),
-              groundingMetadata: this.concatGrounding(groundingMetadata, imageTokenUsage.metadata),
-              thoughtSummary: imageTokenUsage.thoughtSummary ? thoughtSummary.concat(imageTokenUsage.thoughtSummary) : thoughtSummary
-            }
-          });
-        }
-      } catch (e) {
-        if (!isFirstError) {
-          if (e instanceof Error) {
-            this.imageGenerationError.set(e.message);
-          } else {
-            this.imageGenerationError.set('Unexpected error in image generation.');
+          if (imageTokenUsage) {
+            this.appendFinishedImage(imageTokenUsage, i);
           }
-          isFirstError = true;
+        } catch (e) {
+          if (!isFirstError) {
+            if (e instanceof Error) {
+              this.imageGenerationError.set(e.message);
+            } else {
+              this.imageGenerationError.set('Unexpected error in image generation.');
+            }
+            isFirstError = true;
+          }
         }
       }
+    } else {
+      const templateParam = promptsOrTemplateParam;
+      const imageTokenUsage = await this.generateImage({
+        imageFiles,
+        templateParam,
+      });
+
+      if (imageTokenUsage) {
+        this.appendFinishedImage(imageTokenUsage);
+      }
     }
+  }
+
+  private appendFinishedImage(imageTokenUsage: ImageTokenUsage, id = 1) {
+    this.#currentImagesAccumulator.update(({ images, tokenUsage, groundingMetadata, thoughtSummary }) => {
+      return {
+        images: images.concat({
+          ...imageTokenUsage?.image,
+          id,
+        }),
+        tokenUsage: this.calculateTokenUsage(tokenUsage, imageTokenUsage.tokenUsage),
+        groundingMetadata: this.concatGrounding(groundingMetadata, imageTokenUsage.metadata),
+        thoughtSummary: imageTokenUsage.thoughtSummary ? thoughtSummary.concat(imageTokenUsage.thoughtSummary) : thoughtSummary
+      };
+    });
   }
 
   clearImage(id: number) {

@@ -1,7 +1,7 @@
-import { FirebaseService } from '@/ai/services/firebase.service';
 import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
+import { IMAGE_GENERATOR_TOKEN } from '@/shared/gen-media/constants/image-generator.token';
 import { LiveImageComponent } from '@/shared/live-image/live-image.component';
 import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
@@ -41,7 +41,7 @@ export class ConversationModeComponent {
   imageFiles = signal<File[]>([]);
   isLoading = signal(false);
 
-  private readonly firebaseService = inject(FirebaseService);
+  private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 
   originalImageMessage = output<OriginalImageMessage>();
 
@@ -98,8 +98,12 @@ export class ConversationModeComponent {
   async handleGenerate({ prompt }: { prompt: string; inputValue: string }) {
     try {
       this.isLoading.set(true);
-      const { image } = await this.firebaseService.generateImage(prompt, []);
+      const imageTokenUsageResponse = await this.imageGenerator.generateImage({ prompt, imageFiles: [] });
+      if (!imageTokenUsageResponse) {
+        return;
+      }
 
+      const { image } = imageTokenUsageResponse;
       const { data, mimeType, inlineData: base64 } = image;
       this.originalImageMessage.emit(
         {

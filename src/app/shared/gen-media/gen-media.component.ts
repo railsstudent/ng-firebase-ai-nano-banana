@@ -83,26 +83,47 @@ export class GenMediaComponent {
     toObservable(this.genMediaInput)
       .pipe(
         tap((params) => {
-          if (!params) {
+
+          const promptsOrTemplateParam = this.getPromptsOrTemplateParam(params)
+          if (!promptsOrTemplateParam) {
             return;
           }
 
-          const { userPrompt = '', prompts = [], imageFiles = [], templateId = '' } = params;
-          const trimmedTemplateId = templateId.trim();
-          const rawPrompts = prompts.length ? prompts : [userPrompt];
-          const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
-          const promptsOrTemplateId = multiPrompts.length ? multiPrompts :  trimmedTemplateId ? [trimmedTemplateId] : [];
-
-          if (promptsOrTemplateId.length) {
-            this.isLoading.set(true);
-            this.genVideoService.clearVideo();
-            this.genMediaService.streamImages(promptsOrTemplateId, imageFiles)
-              .finally(() => this.isLoading.set(false));
-          }
+          const { imageFiles = [] } = params || {};
+          this.isLoading.set(true);
+          this.genVideoService.clearVideo();
+          this.genMediaService.streamImages(promptsOrTemplateParam, imageFiles)
+            .finally(() => this.isLoading.set(false));
         }),
         takeUntilDestroyed(this.destroyRef$),
       )
       .subscribe();
+  }
+
+  getPromptsOrTemplateParam(params: GenMediaInput | undefined) {
+    if (!params) {
+      return undefined;
+    }
+
+    const { userPrompt = '', prompts = [], templateParam = {} } = params;
+    const rawPrompts = prompts.length ? prompts : [userPrompt];
+    const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
+
+    if (multiPrompts.length) {
+      return multiPrompts;
+    }
+
+    const { templateId = '', aspectRatio = '', resolution = ''} = templateParam;
+    const trimmedTemplateId = templateId.trim();
+    if (trimmedTemplateId) {
+      return {
+        templateId: trimmedTemplateId,
+        aspectRatio,
+        resolution,
+      }
+    }
+
+    return undefined;
   }
 
   async handleAction({ action, id }: { action: string, id: number }) {

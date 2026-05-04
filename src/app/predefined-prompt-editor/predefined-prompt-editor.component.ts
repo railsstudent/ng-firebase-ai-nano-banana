@@ -55,7 +55,7 @@ export default class PredefinedPromptComponent {
     userPrompt: '',
     prompts: undefined,
     imageFiles: [],
-    templateId: undefined,
+    templateParam: undefined,
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
@@ -72,9 +72,9 @@ export default class PredefinedPromptComponent {
     event.preventDefault();
 
     let userPrompt = this.customPrompt().trim();
+    const aspectRatio = this.genConfigValues()?.aspectRatio || '';
+    const resolution = this.genConfigValues()?.resolution || '';
     if (userPrompt) {
-      const aspectRatio = this.genConfigValues()?.aspectRatio || '';
-      const resolution = this.genConfigValues()?.resolution || '';
 
       if (aspectRatio) {
         userPrompt = `${userPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
@@ -89,7 +89,11 @@ export default class PredefinedPromptComponent {
       userPrompt,
       prompts: undefined,
       imageFiles: this.imageFiles(),
-      templateId: this.templateId(),
+      templateParam: {
+        templateId: this.templateId(),
+        aspectRatio,
+        resolution
+      },
     });
   }
 }

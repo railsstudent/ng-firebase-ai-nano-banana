@@ -1,6 +1,6 @@
-import { ExtendVideoRequest, GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/features/ai/types/video.type';
-import { GenVideoService } from '@/shared/ui/gen-media/services/gen-video.service';
+import { GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/features/ai/types/video.type';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
+import { GenVideoService } from '@/shared/ui/gen-media/services/gen-video.service';
 import { inject, Injectable, linkedSignal, Signal, WritableSignal } from '@angular/core';
 import { VisualStoryForm } from '../visual-story-form/types/visual-story-form.type';
 

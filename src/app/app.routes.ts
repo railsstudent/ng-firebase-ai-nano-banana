@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   {
     path: 'visual-story',
-    loadComponent: () => import('./visual-story/visual-story.component'),
+    loadComponent: () => import('./features/visual-story/visual-story.component'),
     title: 'Visual Story',
   },
   {

@@ -1,6 +1,6 @@
-import { MetadataGroup } from '@/ai/types/grounding-metadata.type';
-import { ImageResponse, ImagesWithTokenUsage } from '@/ai/types/image-response.type';
-import { TokenUsage } from '@/ai/types/token-usage.type';
+import { MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
+import { ImageResponse, ImagesWithTokenUsage } from '@/features/ai/types/image-response.type';
+import { TokenUsage } from '@/features/ai/types/token-usage.type';
 
 export const DEFAULT_IMAGES_TOKEN_USAGE: ImagesWithTokenUsage = {
     images: [] as ImageResponse[],

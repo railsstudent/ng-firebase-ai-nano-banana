@@ -1,6 +1,6 @@
-import { FirebaseService } from '@/ai/services/firebase.service';
-import { GenerateImageParam } from '@/ai/types/generate-image-param.type';
-import { ImageTokenUsage } from '@/ai/types/image-response.type';
+import { FirebaseService } from '@/features/ai/services/firebase.service';
+import { GenerateImageParam } from '@/features/ai/types/generate-image-param.type';
+import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { InjectionToken, inject } from '@angular/core';
 
 export interface ImageGenerator {

@@ -1,4 +1,4 @@
-import { ImagesWithTokenUsage } from '@/ai/types/image-response.type';
+import { ImagesWithTokenUsage } from '@/features/ai/types/image-response.type';
 import { ImageActions } from '@/shared/types/actions.type';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { ImageViewerComponent } from '../image-viewer/image-viewer.component';

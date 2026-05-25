@@ -1,8 +1,8 @@
+import { ServerTemplateService } from '@/features/ai/services/server-template.service';
+import { IMAGE_GENERATOR_TOKEN } from '@/shared/ui/gen-media/constants/image-generator.token';
+import { GenMediaService } from '@/shared/ui/gen-media/services/gen-media.service';
 import { Routes } from '@angular/router';
-import { ServerTemplateService } from './ai/services/server-template.service';
 import { featureNameResolver, featureResolver } from './resolvers/feature-name.resolver';
-import { IMAGE_GENERATOR_TOKEN } from './shared/ui/gen-media/constants/image-generator.token';
-import { GenMediaService } from './shared/ui/gen-media/services/gen-media.service';
 
 export const routes: Routes = [
   {

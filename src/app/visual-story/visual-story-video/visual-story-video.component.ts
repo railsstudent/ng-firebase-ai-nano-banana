@@ -1,10 +1,10 @@
-import { ImageResponse } from '@/ai/types/image-response.type';
+import { ImageResponse } from '@/features/ai/types/image-response.type';
 import { ErrorDisplayComponent } from '@/shared/ui/error-display/error-display.component';
 import { VideoPlayerComponent } from '@/shared/ui/gen-media/video-player/video-player.component';
 import { LoaderComponent } from '@/shared/ui/loader/loader.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { VisualStoryService } from '../services/visual-story.service';
-import { VideoGenerationResponse } from '@/ai/types/video.type';
+import { VideoGenerationResponse } from '@/features/ai/types/video.type';
 
 @Component({
   selector: 'app-visual-story-video',

@@ -17,7 +17,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@/firebase/*": ["./firebase/*"],
-      "@/*": ["./src/app/*"]
+      "@/*": ["./src/app/*"],
+      "@/public/*": ["./public/*"]
     }
   },
   "angularCompilerOptions": {

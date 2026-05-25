@@ -1,4 +1,4 @@
-import { MetadataGroup } from '@/ai/types/grounding-metadata.type';
+import { MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { afterRenderEffect, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, Renderer2 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 

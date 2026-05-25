@@ -3,7 +3,7 @@ import { isDevMode } from '@angular/core';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'firebase/remote-config';
-import { FirebaseObjects } from './ai/types/firebase-objects';
+import { FirebaseObjects } from '@/features/ai/types/firebase-objects';
 
 async function fetchRemoteConfig(firebaseApp: FirebaseApp): Promise<RemoteConfig> {
   const remoteConfig = getRemoteConfig(firebaseApp);

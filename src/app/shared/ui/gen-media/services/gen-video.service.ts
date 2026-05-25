@@ -1,6 +1,6 @@
-import { ConfigService } from '@/ai/services/config.service';
-import { VeoService } from '@/ai/services/veo.service';
-import { ExtendVideoRequest, GenerateVideoFromFramesRequest, GenerateVideoRequest, VideoGenerationResponse } from '@/ai/types/video.type';
+import { ConfigService } from '@/features/ai/services/config.service';
+import { VeoService } from '@/features/ai/services/veo.service';
+import { ExtendVideoRequest, GenerateVideoFromFramesRequest, GenerateVideoRequest, VideoGenerationResponse } from '@/features/ai/types/video.type';
 import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { getValue } from 'firebase/remote-config';
 

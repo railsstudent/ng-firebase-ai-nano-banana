@@ -1,4 +1,4 @@
-import { ExtendVideoRequest, GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/ai/types/video.type';
+import { ExtendVideoRequest, GenerateVideoFromFramesRequest, VideoGenerationResponse } from '@/features/ai/types/video.type';
 import { GenVideoService } from '@/shared/ui/gen-media/services/gen-video.service';
 import { PromptHistoryService } from '@/shared/services/prompt-history.service';
 import { inject, Injectable, linkedSignal, Signal, WritableSignal } from '@angular/core';

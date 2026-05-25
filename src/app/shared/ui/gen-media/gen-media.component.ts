@@ -1,5 +1,5 @@
-import { TemplateParam } from '@/ai/types/generate-image-param.type';
-import { ImagesWithTokenUsage } from '@/ai/types/image-response.type';
+import { TemplateParam } from '@/features/ai/types/generate-image-param.type';
+import { ImagesWithTokenUsage } from '@/features/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';

@@ -1,5 +1,5 @@
-import { MetadataGroup } from '@/ai/types/grounding-metadata.type';
-import { TokenUsage } from '@/ai/types/token-usage.type';
+import { MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
+import { TokenUsage } from '@/features/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { marked } from 'marked';

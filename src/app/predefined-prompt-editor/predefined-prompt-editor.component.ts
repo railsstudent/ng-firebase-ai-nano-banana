@@ -1,4 +1,4 @@
-import { ConfigService } from '@/ai/services/config.service';
+import { ConfigService } from '@/features/ai/services/config.service';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';

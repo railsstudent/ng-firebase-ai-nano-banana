@@ -1,4 +1,4 @@
-import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
+import { getBase64InlineData } from '@/features/ai/utils/inline-image-data.util';
 import { LiveImageComponent } from '@/conversation/live-image/live-image.component';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';

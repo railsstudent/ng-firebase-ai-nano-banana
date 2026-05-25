@@ -1,7 +1,7 @@
-import { GenerateImageParam, TemplateParam } from '@/ai/types/generate-image-param.type';
-import { Metadata, MetadataGroup } from '@/ai/types/grounding-metadata.type';
-import { ImagesWithTokenUsage, ImageTokenUsage } from '@/ai/types/image-response.type';
-import { TokenUsage } from '@/ai/types/token-usage.type';
+import { GenerateImageParam, TemplateParam } from '@/features/ai/types/generate-image-param.type';
+import { Metadata, MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
+import { ImagesWithTokenUsage, ImageTokenUsage } from '@/features/ai/types/image-response.type';
+import { TokenUsage } from '@/features/ai/types/token-usage.type';
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
 import { IMAGE_GENERATOR_TOKEN } from '../constants/image-generator.token';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';

@@ -1,4 +1,4 @@
-import { TokenUsage } from '@/ai/types/token-usage.type';
+import { TokenUsage } from '@/features/ai/types/token-usage.type';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({

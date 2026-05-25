@@ -1,6 +1,6 @@
+import { ConfigService } from '@/features/ai/services/config.service';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ConfigService } from './ai/services/config.service';
 import { NavigationComponent } from './navigation/navigation.component';
 
 @Component({

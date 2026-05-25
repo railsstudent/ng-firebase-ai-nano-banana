@@ -1,4 +1,4 @@
-import { TemplateParam } from '@/ai/types/generate-image-param.type';
+import { TemplateParam } from '@/features/ai/types/generate-image-param.type';
 
 export type GenMediaInput = {
   userPrompt?: string;

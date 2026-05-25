@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { catchError, lastValueFrom, throwError } from 'rxjs';
-import config from '../../public/config.json';
-import { ConfigService } from './ai/services/config.service';
-import { FirebaseConfigResponse } from './ai/types/firebase-config.type';
+import config from '@/public/config.json';
+import { ConfigService } from '@/features/ai/services/config.service';
+import { FirebaseConfigResponse } from '@/features/ai/types/firebase-config.type';
 import { connectEmulators, initFirebaseApp } from './firebase.util';
 
 async function loadFirebaseConfig() {

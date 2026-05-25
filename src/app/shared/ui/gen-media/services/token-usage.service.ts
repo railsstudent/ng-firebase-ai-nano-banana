@@ -1,5 +1,5 @@
-import { ImageTokenUsage } from '@/ai/types/image-response.type';
-import { TokenUsage } from '@/ai/types/token-usage.type';
+import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
+import { TokenUsage } from '@/features/ai/types/token-usage.type';
 import { Injectable } from '@angular/core';
 
 @Injectable({

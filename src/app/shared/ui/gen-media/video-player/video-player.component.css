@@ -1,4 +1,4 @@
-@reference "../../../../styles.css";
+@reference "../../../../../styles.css";
 
 .video-container {
   @apply bg-gray-800 rounded-lg shadow-xl p-4;

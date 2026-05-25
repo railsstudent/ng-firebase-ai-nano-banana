@@ -1,4 +1,4 @@
-import { ImageViewerComponent } from '@/shared/gen-media/image-viewer/image-viewer.component';
+import { ImageViewerComponent } from '@/shared/ui/gen-media/image-viewer/image-viewer.component';
 import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ImageActions } from '@/shared/types/actions.type';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';

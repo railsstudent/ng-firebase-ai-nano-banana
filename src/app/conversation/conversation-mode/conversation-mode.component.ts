@@ -1,10 +1,10 @@
 import { getBase64InlineData } from '@/ai/utils/inline-image-data.util';
 import { FeatureDetails } from '@/feature/types/feature-details.type';
-import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
-import { IMAGE_GENERATOR_TOKEN } from '@/shared/gen-media/constants/image-generator.token';
+import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
+import { IMAGE_GENERATOR_TOKEN } from '@/shared/ui/gen-media/constants/image-generator.token';
 import { LiveImageComponent } from '@/shared/live-image/live-image.component';
-import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
-import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
+import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';
+import { PromptForm } from '@/shared/ui/prompt-form/types/prompt-form.type';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, resource, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';

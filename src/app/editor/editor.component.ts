@@ -1,13 +1,13 @@
 import { FeatureDetails } from '@/feature/types/feature-details.type';
-import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
-import { CardComponent } from '@/shared/card/card.component';
-import { DropzoneComponent } from '@/shared/dropzone/dropzone.component';
-import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
-import { GenMediaComponent } from '@/shared/gen-media/gen-media.component';
-import { GenMediaInput } from '@/shared/gen-media/types/gen-media-input.type';
-import { PromptFormComponent } from '@/shared/prompt-form/prompt-form.component';
-import { PromptForm } from '@/shared/prompt-form/types/prompt-form.type';
-import { PromptHistoryComponent } from '@/shared/prompt-history/prompt-history.component';
+import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
+import { CardComponent } from '@/shared/ui/card/card.component';
+import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
+import { ErrorDisplayComponent } from '@/shared/ui/error-display/error-display.component';
+import { GenMediaComponent } from '@/shared/ui/gen-media/gen-media.component';
+import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
+import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';
+import { PromptForm } from '@/shared/ui/prompt-form/types/prompt-form.type';
+import { PromptHistoryComponent } from '@/shared/ui/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { EditorService } from './services/editor.service';
 

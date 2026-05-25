@@ -1,7 +1,7 @@
 import { FeatureService } from '@/feature/services/feature.service';
-import { CardHeaderComponent } from '@/shared/card/card-header/card-header.component';
-import { CardComponent } from '@/shared/card/card.component';
-import { GenMediaService } from '@/shared/gen-media/services/gen-media.service';
+import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
+import { CardComponent } from '@/shared/ui/card/card.component';
+import { GenMediaService } from '@/shared/ui/gen-media/services/gen-media.service';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';

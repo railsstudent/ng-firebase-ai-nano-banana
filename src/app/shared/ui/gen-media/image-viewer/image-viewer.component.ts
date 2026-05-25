@@ -1,7 +1,7 @@
 import { DownloadIconComponent } from '@/shared/icons/download-icon.component';
 import { TrashIconComponent } from '@/shared/icons/trash-icon.component';
 import { VideoIconComponent } from '@/shared/icons/video-icon.component';
-import { LoaderComponent } from '@/shared/loader/loader.component';
+import { LoaderComponent } from '@/shared/ui/loader/loader.component';
 import { ImageActions } from '@/shared/types/actions.type';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ImageViewerCapabilities } from '../types/image-viewer-capabilities.type';

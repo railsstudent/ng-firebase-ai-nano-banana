@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 @Component({
   selector: 'app-prompt-history',
   templateUrl: './prompt-history.component.html',
-  styleUrl: '../tailwind-utilities.css',
+  styleUrl: '../../tailwind-utilities.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromptHistoryComponent {

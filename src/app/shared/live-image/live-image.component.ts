@@ -1,4 +1,4 @@
-import { ErrorDisplayComponent } from '@/shared/error-display/error-display.component';
+import { ErrorDisplayComponent } from '@/shared/ui/error-display/error-display.component';
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, output, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent, take } from 'rxjs';

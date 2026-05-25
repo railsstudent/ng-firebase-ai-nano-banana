@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, computed, input, output, signal, viewChild } from '@angular/core';
-import { UploadCloudIconComponent } from '../icons/upload-cloud-icon.component';
-import { TrashIconComponent } from '../icons/trash-icon.component';
+import { UploadCloudIconComponent } from '@/shared/icons/upload-cloud-icon.component';
+import { TrashIconComponent } from '@/shared/icons/trash-icon.component';
 import { UploadedFile } from './types/uploaded-file';
 
 const KILOBYTE = 1024;

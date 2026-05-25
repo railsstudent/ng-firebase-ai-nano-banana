@@ -1,8 +1,8 @@
+import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
+import { GenerateOptionsFormComponent } from '@/shared/ui/generate-options-form/generate-options-form.component';
+import { GenerateOptions } from '@/shared/ui/generate-options-form/types/generate-options.type';
 import { ChangeDetectionStrategy, Component, computed, input, model, output, signal } from '@angular/core';
 import { debounce, form, FormField, FormRoot, required } from '@angular/forms/signals';
-import { GenerateOptionsFormComponent } from '../generate-options-form/generate-options-form.component';
-import { GenerateOptions } from '../generate-options-form/types/generate-options.type';
-import { SpinnerIconComponent } from '../icons/spinner-icon.component';
 import { PromptForm } from './types/prompt-form.type';
 
 @Component({

@@ -1,6 +1,6 @@
-import { LoaderComponent } from '@/shared/loader/loader.component';
+import { LoaderComponent } from '@/shared/ui/loader/loader.component';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ExtendVideoIconComponent } from '../../icons/extend-video-icon.component';
+import { ExtendVideoIconComponent } from '../../../icons/extend-video-icon.component';
 
 @Component({
   selector: 'app-video-player',

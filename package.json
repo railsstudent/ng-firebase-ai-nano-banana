@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "firebase:remoteconfig": "node firebase/scripts/download-remote-config.js"
   },
   "prettier": {
     "printWidth": 100,

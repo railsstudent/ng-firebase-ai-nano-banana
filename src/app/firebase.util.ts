@@ -1,4 +1,4 @@
-import remoteConfigDefaults from '@/firebase-project/remoteconfig.defaults.json';
+import remoteConfigDefaults from '@/firebase/remote_config_defaults.json';
 import { isDevMode } from '@angular/core';
 import { FirebaseApp, FirebaseOptions, initializeApp } from 'firebase/app';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';

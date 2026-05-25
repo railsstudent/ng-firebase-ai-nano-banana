@@ -16,8 +16,7 @@
     "module": "preserve",
     "resolveJsonModule": true,
     "paths": {
-      "@/shared-libs/*": ["./shared-libs/*"],
-      "@/firebase-project/*": ["./firebase-project/*"],
+      "@/firebase/*": ["./firebase/*"],
       "@/*": ["./src/app/*"]
     }
   },

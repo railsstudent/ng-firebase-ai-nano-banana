@@ -1,6 +1,6 @@
 import { getBase64InlineData } from '@/features/ai/utils/inline-image-data.util';
-import { LiveImageComponent } from '@/conversation/live-image/live-image.component';
-import { FeatureDetails } from '@/feature/types/feature-details.type';
+import { LiveImageComponent } from '@/features/conversation/live-image/live-image.component';
+import { FeatureDetails } from '@/core/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
 import { IMAGE_GENERATOR_TOKEN } from '@/shared/ui/gen-media/constants/image-generator.token';
 import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';

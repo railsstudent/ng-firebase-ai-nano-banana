@@ -1,4 +1,4 @@
-import { MagicWandIconComponent } from '@/navigation/icons/icons.component';
+import { MagicWandIconComponent } from '@/features/navigation/icons/icons.component';
 import { FEATURES, MODELING_FEATURES } from '../constants/features.const';
 import { FEATURE_ICON_MAP, MODEL_ICON_MAP } from '../constants/icon_map.const';
 import { FeatureDetails } from '../types/feature-details.type';

@@ -1,5 +1,5 @@
 import { ConfigService } from '@/features/ai/services/config.service';
-import { FeatureDetails } from '@/feature/types/feature-details.type';
+import { FeatureDetails } from '@/core/feature/types/feature-details.type';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';

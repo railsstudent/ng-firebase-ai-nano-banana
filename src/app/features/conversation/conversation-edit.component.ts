@@ -1,4 +1,4 @@
-import { FeatureService } from '@/feature/services/feature.service';
+import { FeatureService } from '@/core/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';
 import { GenMediaService } from '@/shared/ui/gen-media/services/gen-media.service';

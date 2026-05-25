@@ -1,4 +1,4 @@
-import { Base64InlineData } from '@/conversation/types/base64-inline-data.type';
+import { Base64InlineData } from '@/features/conversation/types/base64-inline-data.type';
 import { GenerativeContentBlob, InlineDataPart } from 'firebase/ai';
 
 async function fileToGenerativePart(file: File): Promise<InlineDataPart> {

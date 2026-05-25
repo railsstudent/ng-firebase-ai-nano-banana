@@ -7,12 +7,12 @@ import { featureNameResolver, featureResolver } from './resolvers/feature-name.r
 export const routes: Routes = [
   {
     path: 'home',
-    loadComponent: () => import('./home/home.component'),
+    loadComponent: () => import('./features/home/home.component'),
     title: 'Home'
   },
   {
     path: 'conversation',
-    loadComponent: () => import('./conversation/conversation-edit.component'),
+    loadComponent: () => import('./features/conversation/conversation-edit.component'),
     title: 'Conversation Editing',
   },
   {
@@ -22,7 +22,7 @@ export const routes: Routes = [
   },
   {
     path: 'predefined-prompt/:featureId',
-    loadComponent: () => import('./predefined-prompt-editor/predefined-prompt-editor.component'),
+    loadComponent: () => import('./features/predefined-prompt-editor/predefined-prompt-editor.component'),
     title: featureNameResolver,
     resolve: {
       feature: featureResolver,
@@ -30,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'template-prompt/:featureId',
-    loadComponent: () => import('./predefined-prompt-editor/predefined-prompt-editor.component'),
+    loadComponent: () => import('./features/predefined-prompt-editor/predefined-prompt-editor.component'),
     providers: [
       GenMediaService,
       { provide: IMAGE_GENERATOR_TOKEN, useExisting: ServerTemplateService }
@@ -42,7 +42,7 @@ export const routes: Routes = [
   },
   {
     path: 'editor/:featureId',
-    loadComponent: () => import('./editor/editor.component'),
+    loadComponent: () => import('./features/editor/editor.component'),
     title: featureNameResolver,
     resolve: {
       feature: featureResolver,

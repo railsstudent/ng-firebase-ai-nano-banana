@@ -1,7 +1,7 @@
 import { NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { FeatureService } from '../feature/services/feature.service';
+import { FeatureService } from '../../core/feature/services/feature.service';
 import { ChevronDownIconComponent, HomeIconComponent, PhotoIconComponent } from './icons/icons.component';
 
 @Component({

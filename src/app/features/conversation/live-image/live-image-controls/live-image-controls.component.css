@@ -1,4 +1,4 @@
-@reference "../../../../styles.css";
+@reference "../../../../../styles.css";
 
 .controls-container {
   @apply mt-4 flex justify-center gap-2;

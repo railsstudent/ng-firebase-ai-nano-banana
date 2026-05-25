@@ -1,4 +1,4 @@
-import { ChatIconComponent, CubeIconComponent, DomeIconComponent, GlassBottleIconComponent, HistoryIconComponent, MagicWandIconComponent, MapIconComponent, ScissorsIconComponent, SparklesIconComponent } from '@/navigation/icons/icons.component';
+import { ChatIconComponent, CubeIconComponent, DomeIconComponent, GlassBottleIconComponent, HistoryIconComponent, MagicWandIconComponent, MapIconComponent, ScissorsIconComponent, SparklesIconComponent } from '@/features/navigation/icons/icons.component';
 
 export const FEATURE_ICON_MAP: Record<string, any> = {
     create: MagicWandIconComponent,

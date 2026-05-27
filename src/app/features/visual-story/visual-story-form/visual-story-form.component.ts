@@ -12,7 +12,7 @@ import { VisualStoryForm } from './types/visual-story-form.type';
     FormRoot,
   ],
   templateUrl: './visual-story-form.component.html',
-  styleUrl: '../../shared/tailwind-utilities.css',
+  styleUrl: '../../../shared/tailwind-utilities.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisualStoryFormComponent {

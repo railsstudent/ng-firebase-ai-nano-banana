@@ -54,8 +54,10 @@ export default class VisualStoryVideoComponent {
   });
 
   canGenerateVideoFromFirstLastFrames = computed(() => {
-    const hasFirstImage = !!this.firstImage()?.data && !!this.firstImage()?.mimeType;
-    const hasLastImage = !!this.lastImage()?.data && !!this.lastImage()?.mimeType;
+    const firstImage = this.firstImage();
+    const lastImage = this.lastImage();
+    const hasFirstImage = !!firstImage?.data && !!firstImage?.mimeType;
+    const hasLastImage = !!lastImage?.data && !!lastImage?.mimeType;
     return hasFirstImage && hasLastImage;
   });
 
@@ -63,6 +65,7 @@ export default class VisualStoryVideoComponent {
     try {
       this.isLoading.set(true);
       this.videoResponse.set({ uri: '', url: '', mimeType: '' });
+      this.error.set('');
 
       if (!this.canGenerateVideoFromFirstLastFrames()) {
         return;

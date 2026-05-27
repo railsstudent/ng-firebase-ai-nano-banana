@@ -4,7 +4,7 @@ import { CardComponent } from '@/shared/ui/card/card.component';
 import { ErrorDisplayComponent } from '@/shared/ui/error-display/error-display.component';
 import { GenMediaComponent } from '@/shared/ui/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
-import { PromptHistoryComponent } from '@/shared/ui/prompt-history/prompt-history.component';
+import { PromptHistoryComponent } from '@/shared/domain/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { VisualStoryService } from './services/visual-story.service';
 import { DEFAULT_VISUAL_STORY_FORM_VALUES } from './visual-story-form/constants/visual-story-form-values.const';

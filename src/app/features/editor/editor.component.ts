@@ -7,7 +7,7 @@ import { GenMediaComponent } from '@/shared/ui/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
 import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/ui/prompt-form/types/prompt-form.type';
-import { PromptHistoryComponent } from '@/shared/ui/prompt-history/prompt-history.component';
+import { PromptHistoryComponent } from '@/shared/domain/prompt-history/prompt-history.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { EditorService } from './services/editor.service';
 

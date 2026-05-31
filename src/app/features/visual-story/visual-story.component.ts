@@ -39,8 +39,8 @@ export default class VisualStoryComponent {
     userPrompt: '',
     prompts: undefined,
     imageFiles: [],
-    aspectRatio: '4:3',
-    resolution: '1K',
+    aspectRatio: '',
+    resolution: '',
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');

@@ -24,7 +24,7 @@ export class FirebaseService  {
             candidateCount: 1,
             thinkingConfig: this.#configService.thinkingConfig,
             imageConfig: {
-              aspectRatio: isValidAspectRatio ? (aspectRatio as ImageConfigAspectRatio) : ImageConfigAspectRatio.SQUARE_1x1,
+              aspectRatio: isValidAspectRatio ? (aspectRatio as ImageConfigAspectRatio) : ImageConfigAspectRatio.LANDSCAPE_4x3,
               imageSize: isValidImageSize ? imageSize as ImageConfigImageSize : ImageConfigImageSize.SIZE_1K,
             }
         },

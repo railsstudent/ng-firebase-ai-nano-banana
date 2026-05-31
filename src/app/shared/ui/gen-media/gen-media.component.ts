@@ -90,10 +90,10 @@ export class GenMediaComponent {
             return;
           }
 
-          const { imageFiles = [] } = params || {};
+          const { imageFiles = [], aspectRatio = '', resolution = '' } = params || {};
           this.isLoading.set(true);
           this.genVideoService.clearVideo();
-          this.genMediaService.streamImages(promptsOrTemplateParam, imageFiles)
+          this.genMediaService.streamImages(promptsOrTemplateParam, imageFiles, aspectRatio, resolution)
             .finally(() => this.isLoading.set(false));
         }),
         takeUntilDestroyed(this.destroyRef$),

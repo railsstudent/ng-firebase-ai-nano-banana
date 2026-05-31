@@ -5,7 +5,9 @@ export type TemplateParam = {
 }
 
 export type GenerateImageParam = {
-   prompt?: string;
-   imageFiles: File[];
-   templateParam?: TemplateParam;
+    prompt?: string;
+    aspectRatio?: string;
+    resolution?: string;
+    imageFiles: File[];
+    templateParam?: TemplateParam;
 }

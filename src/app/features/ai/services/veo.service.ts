@@ -13,14 +13,8 @@ export class VeoService {
 
   private async retrieveVideoUri<T = GenerateVideoRequest>(request: T, methodName: string): Promise<DownloadVideoResponse> {
     try {
-      const { functions } = this.configService.firebaseObjects || {};
-      if (!functions) {
-        throw new Error('Functions does not exist.');
-      }
-
-      console.log('retrieveVideoUri -> functions region', functions.region);
       const downloadGcsUri = httpsCallable<T, DownloadVideoResponse>(
-        functions, methodName, { timeout: 600000 }
+        this.configService.functions, methodName, { timeout: 600000 }
       );
       const { data } = await downloadGcsUri(request);
       return data;

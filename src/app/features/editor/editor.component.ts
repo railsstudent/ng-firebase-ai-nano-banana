@@ -1,4 +1,5 @@
 import { FeatureDetails } from '@/core/feature/types/feature-details.type';
+import { PromptHistoryComponent } from '@/shared/domain/prompt-history/prompt-history.component';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
@@ -7,7 +8,7 @@ import { GenMediaComponent } from '@/shared/ui/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
 import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/ui/prompt-form/types/prompt-form.type';
-import { PromptHistoryComponent } from '@/shared/domain/prompt-history/prompt-history.component';
+import { PromptImageConfig } from '@/shared/ui/prompt-form/types/prompt-image-config.type';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { EditorService } from './services/editor.service';
 
@@ -46,6 +47,8 @@ export default class EditorComponent {
 
   genMediaInput = signal<GenMediaInput>({
     userPrompt: '',
+    aspectRatio: '',
+    resolution: '',
   });
 
   hasImageFiles = linkedSignal({
@@ -58,7 +61,7 @@ export default class EditorComponent {
     return !this.hasImageFiles() || isGeneratingVideo;
   });
 
-  async handleGenerate({ prompt, inputValue }: { prompt: string; inputValue: string }): Promise<void> {
+  async handleGenerate({ prompt, aspectRatio, resolution }: PromptImageConfig): Promise<void> {
     if (!this.featureNeedsImage()) {
       if (this.imageFiles().length > 0) {
         this.imageFiles.set([]);
@@ -72,10 +75,12 @@ export default class EditorComponent {
       return;
     }
 
-    this.editorService.addPrompt(this.featureId(), inputValue);
+    this.editorService.addPrompt(this.featureId(), prompt);
     this.genMediaInput.set({
       userPrompt: prompt,
       imageFiles: this.imageFiles(),
+      aspectRatio,
+      resolution,
     });
   }
 

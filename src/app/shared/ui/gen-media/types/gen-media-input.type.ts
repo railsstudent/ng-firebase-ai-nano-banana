@@ -5,4 +5,6 @@ export type GenMediaInput = {
   prompts?: string[];
   imageFiles?: File[];
   templateParam?: TemplateParam;
+  aspectRatio: string;
+  resolution: string;
 }

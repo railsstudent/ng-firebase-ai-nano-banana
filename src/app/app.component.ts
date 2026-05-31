@@ -30,5 +30,12 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
   private readonly configService = inject(ConfigService);
 
-  hasNoFirebase = computed(() => !this.configService.firebaseObjects);
+  hasNoFirebase = computed(() => {
+    try {
+      return !this.configService.app;
+    } catch (e) {
+      console.error('Firebase initialization error:', e);
+      return true;
+    }
+  });
 }

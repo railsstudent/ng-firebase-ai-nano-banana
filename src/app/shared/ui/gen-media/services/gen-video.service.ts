@@ -47,13 +47,7 @@ export class GenVideoService {
   }
 
   isVideoExtensionAllowed(counter: number) {
-    const remoteConfig = this.configService.firebaseObjects?.remoteConfig;
-    if (!remoteConfig) {
-      console.warn('Remote config does not exist.');
-      return false;
-    }
-
-    const max_extend_allowed = getValue(remoteConfig,'maxVideoExtendAllowed').asNumber();
+    const max_extend_allowed = getValue(this.configService.remoteConfig,'maxVideoExtendAllowed').asNumber();
     if (counter >= max_extend_allowed) {
       console.warn('Maximum extension limit reached.');
       return false;

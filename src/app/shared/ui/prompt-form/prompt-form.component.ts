@@ -4,6 +4,7 @@ import { GenerateOptions } from '@/shared/ui/generate-options-form/types/generat
 import { ChangeDetectionStrategy, Component, computed, input, model, output, signal } from '@angular/core';
 import { debounce, form, FormField, FormRoot, required } from '@angular/forms/signals';
 import { PromptForm } from './types/prompt-form.type';
+import { PromptImageConfig } from './types/prompt-image-config.type';
 
 @Component({
   selector: 'app-prompt-form',
@@ -24,13 +25,12 @@ export class PromptFormComponent {
 
   isGenerationDisabled = computed(
     () => {
-      const isFormInvalid = this.promptForm().invalid();
       const isEmptyInput = this.promptForm.value().value().trim().length <= 0;
-      return this.isLoading() || isFormInvalid || isEmptyInput || this.additionalDisabledConditions()
+      return this.isLoading() || this.promptForm().invalid() || isEmptyInput || this.additionalDisabledConditions()
     }
   );
 
-  generate = output<{ prompt: string; inputValue: string }>();
+  generate = output<PromptImageConfig>();
 
   genConfigValues = signal<GenerateOptions | undefined>(undefined);
 
@@ -42,20 +42,9 @@ export class PromptFormComponent {
   onGenerateClick(event: Event): void {
     event.preventDefault();
     if (!this.isGenerationDisabled()) {
-      const inputValue = this.promptForm.value().value();
-      let trimmedPrompt = inputValue;
       const aspectRatio = this.genConfigValues()?.aspectRatio || '';
       const resolution = this.genConfigValues()?.resolution || '';
-
-      if (aspectRatio) {
-        trimmedPrompt = `${trimmedPrompt}\nApply this aspect ratio to the image: ${aspectRatio}`;
-      }
-
-      if (resolution) {
-        trimmedPrompt = `${trimmedPrompt}\nApply this resolution to the image: ${resolution}`;
-      }
-
-      this.generate.emit({ prompt: trimmedPrompt, inputValue });
+      this.generate.emit({ prompt: this.promptForm.value().value(), aspectRatio, resolution });
     }
   }
 

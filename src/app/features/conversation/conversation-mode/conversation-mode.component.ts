@@ -1,10 +1,11 @@
+import { FeatureDetails } from '@/core/feature/types/feature-details.type';
 import { getBase64InlineData } from '@/features/ai/utils/inline-image-data.util';
 import { LiveImageComponent } from '@/features/conversation/live-image/live-image.component';
-import { FeatureDetails } from '@/core/feature/types/feature-details.type';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
 import { IMAGE_GENERATOR_TOKEN } from '@/shared/ui/gen-media/constants/image-generator.token';
 import { PromptFormComponent } from '@/shared/ui/prompt-form/prompt-form.component';
 import { PromptForm } from '@/shared/ui/prompt-form/types/prompt-form.type';
+import { PromptImageConfig } from '@/shared/ui/prompt-form/types/prompt-image-config.type';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, resource, signal } from '@angular/core';
 import { form, FormField, required } from '@angular/forms/signals';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
@@ -95,7 +96,7 @@ export class ConversationModeComponent {
     });
   }
 
-  async handleGenerate({ prompt }: { prompt: string; inputValue: string }) {
+  async handleGenerate({ prompt }: PromptImageConfig) {
     try {
       this.isLoading.set(true);
       const imageTokenUsageResponse = await this.imageGenerator.generateImage({ prompt, imageFiles: [] });

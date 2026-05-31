@@ -1,5 +1,6 @@
-import { ConfigService } from '@/features/ai/services/config.service';
 import { FeatureDetails } from '@/core/feature/types/feature-details.type';
+import { ConfigService } from '@/features/ai/services/config.service';
+import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';
 import { DropzoneComponent } from '@/shared/ui/dropzone/dropzone.component';
@@ -8,7 +9,6 @@ import { GenMediaComponent } from '@/shared/ui/gen-media/gen-media.component';
 import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
 import { GenerateOptionsFormComponent } from '@/shared/ui/generate-options-form/generate-options-form.component';
 import { GenerateOptions } from '@/shared/ui/generate-options-form/types/generate-options.type';
-import { SpinnerIconComponent } from '@/shared/icons/spinner-icon.component';
 import { ChangeDetectionStrategy, Component, computed, inject, input, linkedSignal, signal, viewChild } from '@angular/core';
 import { getValue } from 'firebase/remote-config';
 
@@ -39,7 +39,7 @@ export default class PredefinedPromptComponent {
 
   templateId = linkedSignal({
     source: () => ({
-      remoteConfig: this.configService.firebaseObjects?.remoteConfig,
+      remoteConfig: this.configService.remoteConfig,
       templateConfigName: this.feature().templateConfigName,
     }),
     computation: ({ remoteConfig, templateConfigName }) => {
@@ -56,6 +56,8 @@ export default class PredefinedPromptComponent {
     prompts: undefined,
     imageFiles: [],
     templateParam: undefined,
+    aspectRatio: '',
+    resolution: '',
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
@@ -74,26 +76,19 @@ export default class PredefinedPromptComponent {
     let userPrompt = this.customPrompt().trim();
     const aspectRatio = this.genConfigValues()?.aspectRatio || '';
     const resolution = this.genConfigValues()?.resolution || '';
-    if (userPrompt) {
 
-      if (aspectRatio) {
-        userPrompt = `${userPrompt}\Apply this aspect ratio to the image: ${aspectRatio}`;
-      }
-
-      if (resolution) {
-        userPrompt = `${userPrompt}\nApply this resolution to the image: ${resolution}`;
-      }
-    }
-
-    this.genMediaInput.set({
+    this.genMediaInput.update((prev) => ({
+      ...prev,
       userPrompt,
       prompts: undefined,
       imageFiles: this.imageFiles(),
+      aspectRatio,
+      resolution,
       templateParam: {
         templateId: this.templateId(),
         aspectRatio,
         resolution
       },
-    });
+    }));
   }
 }

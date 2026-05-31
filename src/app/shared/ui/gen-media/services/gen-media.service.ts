@@ -63,7 +63,7 @@ export class GenMediaService {
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
 
-  async streamImages(promptsOrTemplateParam: string[] | TemplateParam, imageFiles: File[]): Promise<void> {
+  async streamImages(promptsOrTemplateParam: string[] | TemplateParam, imageFiles: File[], aspectRatio: string, resolution: string): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
@@ -79,6 +79,8 @@ export class GenMediaService {
           const imageTokenUsage = await this.generateImage({
             prompt: prompts[i].trim(),
             imageFiles,
+            aspectRatio,
+            resolution
           }, i + 1);
 
           if (imageTokenUsage) {
@@ -99,6 +101,8 @@ export class GenMediaService {
       const imageTokenUsage = await this.generateImage({
         imageFiles,
         templateParam: promptsOrTemplateParam,
+        aspectRatio,
+        resolution,
       });
 
       if (imageTokenUsage) {

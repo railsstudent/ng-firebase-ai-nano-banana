@@ -39,6 +39,8 @@ export default class VisualStoryComponent {
     userPrompt: '',
     prompts: undefined,
     imageFiles: [],
+    aspectRatio: '4:3',
+    resolution: '1K',
   });
 
   genmedia = viewChild<GenMediaComponent>('genmedia');
@@ -63,11 +65,12 @@ export default class VisualStoryComponent {
       this.visualStoryModel()
     );
 
-    this.genMediaInput.set({
+    this.genMediaInput.update((prev) => ({
+      ...prev,
       userPrompt,
       prompts: stepPrompts,
       imageFiles: [],
-    });
+    }));
   }
 
   private savePromptArgs(trimmedPrompt: string) {

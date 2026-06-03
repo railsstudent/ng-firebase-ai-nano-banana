@@ -12,7 +12,6 @@ import { validate } from "./validate";
 
 export const FIREBASE_APP_CONFIG = (() => {
   logger.info("FIREBASE_APP_CONFIG initialization: Loading environment variables and validating configuration...");
-  process.loadEnvFile();
 
   const env = process.env;
   const missingKeys: string[] = [];

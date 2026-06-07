@@ -124,6 +124,7 @@ export class ConfigService  {
 
         this.#appInstance = initializeApp(app);
         if (recaptchaSiteKey) {
+          (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = isDevMode();
           initializeAppCheck(this.#appInstance, {
             provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey),
             isTokenAutoRefreshEnabled: true,

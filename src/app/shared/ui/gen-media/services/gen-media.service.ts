@@ -13,7 +13,14 @@ export class GenMediaService {
   private readonly document = inject(DOCUMENT);
   private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 
-  imageGenerationError = signal('');
+  #currentStep = signal(0);
+  currentStep = this.#currentStep.asReadonly();
+
+  #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
+  currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
+
+  #imageGenerationError = signal('');
+  imageGenerationError = this.#imageGenerationError.asReadonly();
 
   downloadImage(filename: string, imageUrl: string): void {
       if (!imageUrl) {
@@ -34,9 +41,6 @@ export class GenMediaService {
       this.document.body.removeChild(link);
   }
 
-  #currentStep = signal(0);
-  currentStep = this.#currentStep.asReadonly();
-
   private async generateImage(param: GenerateImageParam, step = 0): Promise<ImageTokenUsage | undefined> {
     this.#currentStep.set(step);
 
@@ -44,30 +48,14 @@ export class GenMediaService {
     const promptOrTemplateId = prompt || templateId || '';
     console.log('promptOrTemplateId', promptOrTemplateId);
 
-    if (promptOrTemplateId) {
-      try {
-        return await this.imageGenerator.generateImage(param);
-      } catch (e) {
-        console.error(e);
-        if (e instanceof Error) {
-          throw e;
-        } else {
-          throw new Error('Unexpected error in image generation.')
-        }
-      }
-    }
-
-    return undefined;
+    return promptOrTemplateId ? await this.imageGenerator.generateImage(param) : undefined;
   }
-
-  #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
-  currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
 
   async streamImages(promptsOrTemplateId: string[] | string, imageFiles: File[], aspectRatio: string, resolution: string): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
-    this.imageGenerationError.set('');
+    this.#imageGenerationError.set('');
 
     if (Array.isArray(promptsOrTemplateId)) {
       const prompts = promptsOrTemplateId
@@ -89,24 +77,30 @@ export class GenMediaService {
         } catch (e) {
           if (!isFirstError) {
             if (e instanceof Error) {
-              this.imageGenerationError.set(e.message);
+              this.#imageGenerationError.set(e.message);
             } else {
-              this.imageGenerationError.set('Unexpected error in image generation.');
+              this.#imageGenerationError.set('Unexpected error in image generation.');
             }
             isFirstError = true;
           }
         }
       }
     } else {
-      const imageTokenUsage = await this.generateImage({
-        imageFiles,
-        templateId: promptsOrTemplateId,
-        aspectRatio,
-        resolution,
-      });
+      try {
+        const imageTokenUsage = await this.generateImage({
+          imageFiles,
+          templateId: promptsOrTemplateId,
+          aspectRatio,
+          resolution,
+        });
 
-      if (imageTokenUsage) {
-        this.appendFinishedImage(imageTokenUsage);
+        if (imageTokenUsage) {
+          this.appendFinishedImage(imageTokenUsage);
+        }
+      } catch (e) {
+        console.error(e);
+        const msg = e instanceof Error ? e.message : 'Unexpected error in image generation.'
+        this.#imageGenerationError.set(msg);
       }
     }
   }
@@ -126,11 +120,11 @@ export class GenMediaService {
   }
 
   clearImage(id: number) {
-    this.#currentImagesAccumulator.update((item) => {
-      const updatedImages = item.images.filter((item) => item.id !== id)
+    this.#currentImagesAccumulator.update((holder) => {
+      const updatedImages = holder.images.filter((image) => image.id !== id)
 
       return {
-        ...item,
+        ...holder,
         images: updatedImages,
       }
     });

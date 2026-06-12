@@ -1,4 +1,3 @@
-import { TemplateParam } from '@/features/ai/types/generate-image-param.type';
 import { ImagesWithTokenUsage } from '@/features/ai/types/image-response.type';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, linkedSignal, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -85,15 +84,15 @@ export class GenMediaComponent {
       .pipe(
         tap((params) => {
 
-          const promptsOrTemplateParam = this.getPromptsOrTemplateParam(params)
-          if (!promptsOrTemplateParam) {
+          const promptsOrTemplateId = this.getPromptsOrTemplateId(params)
+          if (!promptsOrTemplateId) {
             return;
           }
 
           const { imageFiles = [], aspectRatio = '', resolution = '' } = params || {};
           this.isLoading.set(true);
           this.genVideoService.clearVideo();
-          this.genMediaService.streamImages(promptsOrTemplateParam, imageFiles, aspectRatio, resolution)
+          this.genMediaService.streamImages(promptsOrTemplateId, imageFiles, aspectRatio, resolution)
             .finally(() => this.isLoading.set(false));
         }),
         takeUntilDestroyed(this.destroyRef$),
@@ -101,12 +100,12 @@ export class GenMediaComponent {
       .subscribe();
   }
 
-  getPromptsOrTemplateParam(params: GenMediaInput | undefined): TemplateParam | string[] | undefined {
+  private getPromptsOrTemplateId(params: GenMediaInput | undefined): string | string[] | undefined {
     if (!params) {
       return undefined;
     }
 
-    const { userPrompt = '', prompts = [], templateParam } = params;
+    const { userPrompt = '', prompts = [], templateId } = params;
     const rawPrompts = prompts.length ? prompts : [userPrompt];
     const multiPrompts = rawPrompts.filter((prompt) => !!prompt.trim());
 
@@ -114,8 +113,8 @@ export class GenMediaComponent {
       return multiPrompts;
     }
 
-    const trimmedTemplateId = templateParam?.templateId?.trim() || '';
-    return trimmedTemplateId ?  { ...templateParam, templateId: trimmedTemplateId } : undefined;
+    const trimmedTemplateId = templateId?.trim() || '';
+    return trimmedTemplateId || undefined;
   }
 
   async handleAction({ action, id }: { action: string, id: number }) {

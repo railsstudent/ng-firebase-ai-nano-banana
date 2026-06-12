@@ -55,7 +55,7 @@ export default class PredefinedPromptComponent {
     userPrompt: '',
     prompts: undefined,
     imageFiles: [],
-    templateParam: undefined,
+    templateId: undefined,
     aspectRatio: '',
     resolution: '',
   });
@@ -84,11 +84,7 @@ export default class PredefinedPromptComponent {
       imageFiles: this.imageFiles(),
       aspectRatio,
       resolution,
-      templateParam: {
-        templateId: this.templateId(),
-        aspectRatio,
-        resolution
-      },
+      templateId: this.templateId(),
     }));
   }
 }

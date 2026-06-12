@@ -13,15 +13,12 @@ export class ServerTemplateService  {
 
     async generateImage(genImageParameter: GenerateImageParam): Promise<ImageTokenUsage | undefined> {
         try {
-          const { templateParam, imageFiles } = genImageParameter
-          const templateId = templateParam?.templateId?.trim();
+          const { templateId, imageFiles, aspectRatio, resolution } = genImageParameter
 
           if (!templateId) {
             return undefined;
           }
 
-          const aspectRatio = templateParam?.aspectRatio;
-          const resolution = templateParam?.resolution;
           console.log('Template id', templateId, 'aspect ratio', aspectRatio, 'resolution', resolution)
 
           const imageParts = await resolveImageParts(imageFiles)

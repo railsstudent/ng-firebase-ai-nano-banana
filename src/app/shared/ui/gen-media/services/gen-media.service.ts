@@ -1,4 +1,4 @@
-import { GenerateImageParam, TemplateParam } from '@/features/ai/types/generate-image-param.type';
+import { GenerateImageParam } from '@/features/ai/types/generate-image-param.type';
 import { Metadata, MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { TokenUsage } from '@/features/ai/types/token-usage.type';
@@ -40,8 +40,8 @@ export class GenMediaService {
   private async generateImage(param: GenerateImageParam, step = 0): Promise<ImageTokenUsage | undefined> {
     this.#currentStep.set(step);
 
-    const { prompt, templateParam } = param;
-    const promptOrTemplateId = prompt || templateParam?.templateId || '';
+    const { prompt, templateId } = param;
+    const promptOrTemplateId = prompt || templateId || '';
     console.log('promptOrTemplateId', promptOrTemplateId);
 
     if (promptOrTemplateId) {
@@ -63,14 +63,14 @@ export class GenMediaService {
   #currentImagesAccumulator = signal<ImagesWithTokenUsage>(DEFAULT_IMAGES_TOKEN_USAGE);
   currentFinishedImages = this.#currentImagesAccumulator.asReadonly();
 
-  async streamImages(promptsOrTemplateParam: string[] | TemplateParam, imageFiles: File[], aspectRatio: string, resolution: string): Promise<void> {
+  async streamImages(promptsOrTemplateId: string[] | string, imageFiles: File[], aspectRatio: string, resolution: string): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
     this.imageGenerationError.set('');
 
-    if (Array.isArray(promptsOrTemplateParam)) {
-      const prompts = promptsOrTemplateParam
+    if (Array.isArray(promptsOrTemplateId)) {
+      const prompts = promptsOrTemplateId
       if (!prompts?.length) {
         return;
       }
@@ -100,7 +100,7 @@ export class GenMediaService {
     } else {
       const imageTokenUsage = await this.generateImage({
         imageFiles,
-        templateParam: promptsOrTemplateParam,
+        templateId: promptsOrTemplateId,
         aspectRatio,
         resolution,
       });

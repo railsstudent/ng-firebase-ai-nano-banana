@@ -1,5 +1,6 @@
 import { Base64InlineData } from '@/features/conversation/types/base64-inline-data.type';
 import { GenerativeContentBlob, InlineDataPart } from 'firebase/ai';
+import { GenerateImageParam } from '../types/generate-image-param.type';
 
 async function fileToGenerativePart(file: File): Promise<InlineDataPart> {
   return await new Promise<InlineDataPart>((resolve) => {
@@ -42,4 +43,14 @@ export async function getBase64InlineData(imageFiles?: File[]) : Promise<Base64I
 
 export function getBase64EncodedString({mimeType, data}: GenerativeContentBlob) {
   return `data:${mimeType};base64,${data}`;
+}
+
+export async function makeTemplateVaraibles({ imageFiles, aspectRatio, resolution }: GenerateImageParam) {
+  const imageParts = await resolveImageParts(imageFiles);
+  const inlineImages = imageParts.map(part => part.inlineData);
+  return {
+    inlineImages,
+    aspectRatio,
+    resolution
+  }
 }

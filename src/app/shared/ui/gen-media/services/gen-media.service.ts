@@ -1,4 +1,4 @@
-import { GenerateImageParam } from '@/features/ai/types/generate-image-param.type';
+import { GenerateFromPrompts, GenerateFromTemplate, GenerateImageParam } from '@/features/ai/types/generate-image-param.type';
 import { Metadata, MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { TokenUsage } from '@/features/ai/types/token-usage.type';
@@ -51,56 +51,54 @@ export class GenMediaService {
     return promptOrTemplateId ? await this.imageGenerator.generateImage(param) : undefined;
   }
 
-  async streamImages(promptsOrTemplateId: string[] | string, imageFiles: File[], aspectRatio: string, resolution: string): Promise<void> {
+  async generateFromTemplate(generateImageParam: GenerateFromTemplate): Promise<void> {
+    this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
+    this.#imageGenerationError.set('');
+
+    try {
+      const imageTokenUsage = await this.generateImage(generateImageParam);
+      if (imageTokenUsage) {
+        this.appendFinishedImage(imageTokenUsage);
+      }
+    } catch (e) {
+      console.error(e);
+      const msg = e instanceof Error ? e.message : 'Unexpected error in image generation.'
+      this.#imageGenerationError.set(msg);
+    }
+  }
+
+  async generateFromPrompts(generateImageParam: GenerateFromPrompts): Promise<void> {
 
     this.#currentImagesAccumulator.set(DEFAULT_IMAGES_TOKEN_USAGE);
     let isFirstError = false;
     this.#imageGenerationError.set('');
 
-    if (Array.isArray(promptsOrTemplateId)) {
-      const prompts = promptsOrTemplateId
-      if (!prompts?.length) {
-        return;
-      }
-      for (let i = 0; i < prompts.length; i=i+1) {
-        try {
-          const imageTokenUsage = await this.generateImage({
-            prompt: prompts[i].trim(),
-            imageFiles,
-            aspectRatio,
-            resolution
-          }, i + 1);
+    const prompts = generateImageParam.prompts;
+    if (!prompts?.length) {
+      return;
+    }
 
-          if (imageTokenUsage) {
-            this.appendFinishedImage(imageTokenUsage, i);
-          }
-        } catch (e) {
-          if (!isFirstError) {
-            if (e instanceof Error) {
-              this.#imageGenerationError.set(e.message);
-            } else {
-              this.#imageGenerationError.set('Unexpected error in image generation.');
-            }
-            isFirstError = true;
-          }
-        }
-      }
-    } else {
+    for (const [i, prompt] of prompts.entries()) {
       try {
         const imageTokenUsage = await this.generateImage({
-          imageFiles,
-          templateId: promptsOrTemplateId,
-          aspectRatio,
-          resolution,
-        });
+          prompt: prompt.trim(),
+          imageFiles: generateImageParam.imageFiles,
+          aspectRatio: generateImageParam.aspectRatio,
+          resolution: generateImageParam.resolution
+        }, i + 1);
 
         if (imageTokenUsage) {
-          this.appendFinishedImage(imageTokenUsage);
+          this.appendFinishedImage(imageTokenUsage, i);
         }
       } catch (e) {
-        console.error(e);
-        const msg = e instanceof Error ? e.message : 'Unexpected error in image generation.'
-        this.#imageGenerationError.set(msg);
+        if (!isFirstError) {
+          if (e instanceof Error) {
+            this.#imageGenerationError.set(e.message);
+          } else {
+            this.#imageGenerationError.set('Unexpected error in image generation.');
+          }
+          isFirstError = true;
+        }
       }
     }
   }

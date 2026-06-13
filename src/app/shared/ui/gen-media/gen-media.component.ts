@@ -16,27 +16,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     VideoPlayerComponent,
     ImageViewersComponent,
   ],
-  template: `
-@if (showCurrentStep() && currentStep() > 0) {
-  <div class="mb-2 text-lg text-gray-400">Generating step: {{ currentStep() }}</div>
-}
-@if (isShowViewerLoader()) {
-  <div class="w-full h-48 bg-gray-800 rounded-lg flex flex-col justify-center items-center text-gray-500 border-2 border-dashed border-gray-700">
-    <app-loader [loadingText]="loadingText()">
-      <ng-content />
-    </app-loader>
-  </div>
-} @else {
-  <app-image-viewers
-    [imagesWithTokenUsage]="imagesWithTokenUsage()"
-    (handleMediaAction)="handleAction($event)"
-  />
-  <app-video-player
-    [isGeneratingVideo]="isGeneratingVideo()" [videoUrl]="videoUrl()"
-    (extendVideo)="extendVideo()"
-    [loadingText]="loadingVideoText()"
-  />
-}`,
+  templateUrl: './gen-media.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenMediaComponent {
@@ -92,8 +72,13 @@ export class GenMediaComponent {
           const { imageFiles = [], aspectRatio = '', resolution = '' } = params || {};
           this.isLoading.set(true);
           this.genVideoService.clearVideo();
-          this.genMediaService.streamImages(promptsOrTemplateId, imageFiles, aspectRatio, resolution)
-            .finally(() => this.isLoading.set(false));
+          if (typeof promptsOrTemplateId === 'string') {
+            this.genMediaService.generateFromTemplate({ templateId: promptsOrTemplateId, imageFiles, aspectRatio, resolution })
+              .finally(() => this.isLoading.set(false));
+          } else {
+            this.genMediaService.generateFromPrompts({ prompts: promptsOrTemplateId, imageFiles, aspectRatio, resolution })
+              .finally(() => this.isLoading.set(false));
+          }
         }),
         takeUntilDestroyed(this.destroyRef$),
       )

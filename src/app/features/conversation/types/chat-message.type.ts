@@ -16,8 +16,18 @@ export type PreviousMessagesState = {
   value: NoInfer<ChatMessage | undefined>;
 } | undefined;
 
-export type OriginalImageMessage = {
+export type BaseImageSession = {
   blob:  GenerativeContentBlob;
   firstMessage: ChatMessage;
 }
 
+export type ErrorMessageParams = {
+  oldMessage: ChatMessage;
+  errorMessage: string;
+}
+
+export type SuccessMessageParams =  {
+  oldMessage: ChatMessage;
+  base64: string;
+  text?: string;
+}

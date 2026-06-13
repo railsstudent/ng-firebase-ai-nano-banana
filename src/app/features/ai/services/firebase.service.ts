@@ -45,7 +45,7 @@ export class FirebaseService  {
 
           const imageParts = await resolveImageParts(imageFiles);
           const parts = [prompt, ...imageParts];
-          return await getBase64Images(geminiModel, parts);
+          return await getBase64Images({ model: geminiModel, parts });
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);
           if (err instanceof Error) {

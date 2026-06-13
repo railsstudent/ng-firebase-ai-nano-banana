@@ -9,7 +9,7 @@ import { ConversationMessagesComponent } from './conversation-messages/conversat
 import { ConversationModeComponent } from './conversation-mode/conversation-mode.component';
 import { makeAIResponsePair, makeErrorMessage, makeSuccessMessage } from './helpers/message.helper';
 import { ConversationEditService } from './services/conversation-edit.service';
-import { ChatMessage, OriginalImageMessage } from './types/chat-message.type';
+import { ChatMessage, BaseImageSession } from './types/chat-message.type';
 
 @Component({
   selector: 'app-conversation-edit',
@@ -52,7 +52,7 @@ export default class ConversationEditComponent {
         = await this.conversationEditService.editImage(prompt, this.lastEditedImage());
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId  ?
-          message : makeSuccessMessage(message, base64)
+          message : makeSuccessMessage({ oldMessage: message, base64, text: undefined })
         );
       });
 
@@ -61,7 +61,7 @@ export default class ConversationEditComponent {
       const errorMessage =  e instanceof Error ? e.message: 'An unexpected error occurred in converational image editing.';
       this.messages.update(messages => {
         return messages.map(message => message.id !== aiMessageId ? message :
-          makeErrorMessage(message, errorMessage));
+          makeErrorMessage({ oldMessage: message, errorMessage }));
       });
     } finally {
       this.isLoading.set(false);
@@ -81,8 +81,8 @@ export default class ConversationEditComponent {
       this.isEditing.update((prev) => !prev);
   }
 
-  handleOriginalImage(originalImageMessage: OriginalImageMessage) {
-    this.lastEditedImage.set(originalImageMessage.blob);
-    this.messages.update(messages => [originalImageMessage.firstMessage]);
+  initializeSessionWithBaseImage(session: BaseImageSession) {
+    this.lastEditedImage.set(session.blob);
+    this.messages.update(messages => [session.firstMessage]);
   }
 }

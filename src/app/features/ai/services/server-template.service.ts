@@ -21,13 +21,11 @@ export class ServerTemplateService  {
 
           console.log('Template id', templateId, 'aspect ratio', aspectRatio, 'resolution', resolution)
 
-          const imageParts = await resolveImageParts(imageFiles)
-          const inlineImages = imageParts.map(part => part.inlineData);
-          return getTemplateBase64Images(this.serverTemplateModel, templateId,
-            {
-              inlineImages,
-              aspectRatio,
-              resolution
+          const templateVariables = await makeTemplateVaraibles(genImageParameter);
+          return getTemplateBase64Images({
+            model: this.serverTemplateModel,
+            templateId,
+            templateVariables,
           });
         } catch (err) {
           console.error('Prompt or candidate was blocked:', err);
@@ -38,3 +36,14 @@ export class ServerTemplateService  {
         }
     }
 }
+
+async function makeTemplateVaraibles({ imageFiles, aspectRatio, resolution }: GenerateImageParam) {
+  const imageParts = await resolveImageParts(imageFiles);
+  const inlineImages = imageParts.map(part => part.inlineData);
+  return {
+    inlineImages,
+    aspectRatio,
+    resolution
+  }
+}
+

@@ -1,6 +1,6 @@
-import { ChatMessage } from '../types/chat-message.type';
+import { ChatMessage, ErrorMessageParams, SuccessMessageParams } from '../types/chat-message.type';
 
-export function makeErrorMessage(oldMessage: ChatMessage, errorMessage: string): ChatMessage {
+export function makeErrorMessage({ oldMessage, errorMessage }: ErrorMessageParams): ChatMessage {
   return {
     ...oldMessage,
     isLoading: false,
@@ -10,7 +10,7 @@ export function makeErrorMessage(oldMessage: ChatMessage, errorMessage: string):
   }
 }
 
-export function makeSuccessMessage(oldMessage: ChatMessage, base64: string, text?: string): ChatMessage {
+export function makeSuccessMessage({ oldMessage, base64, text }: SuccessMessageParams): ChatMessage {
   return {
     ...oldMessage,
     isLoading: false,

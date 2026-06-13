@@ -11,7 +11,7 @@ import { form, FormField, required } from '@angular/forms/signals';
 import { DEFAULT_BASE64_INLINE_DATA } from '../constants/base64-inline-data.const';
 import { IMAGE_CHANNEL_LIST } from '../constants/image-channel.const';
 import { Base64InlineData } from '../types/base64-inline-data.type';
-import { ChatMessage, OriginalImageMessage } from '../types/chat-message.type';
+import { ChatMessage, BaseImageSession } from '../types/chat-message.type';
 import { ImageChannel } from '../types/conversation-model.type';
 
 @Component({
@@ -44,7 +44,7 @@ export class ConversationModeComponent {
 
   private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 
-  originalImageMessage = output<OriginalImageMessage>();
+  sessionInitialized = output<BaseImageSession>();
 
   #originalImageResource =resource<Base64InlineData, File[]>(
     {
@@ -62,7 +62,7 @@ export class ConversationModeComponent {
     }
   );
 
-  imageMessagePayload = computed<OriginalImageMessage | undefined>(() => {
+  imageMessagePayload = computed<BaseImageSession | undefined>(() => {
     const hasValue = this.#originalImageResource.hasValue();
     if (hasValue) {
       const { base64, text, inlineData } = this.#originalImageResource.value();
@@ -91,7 +91,7 @@ export class ConversationModeComponent {
     effect(() => {
       const payload = this.imageMessagePayload();
       if (payload) {
-        this.originalImageMessage.emit(payload);
+        this.sessionInitialized.emit(payload);
       }
     });
   }
@@ -106,7 +106,7 @@ export class ConversationModeComponent {
 
       const { image } = imageTokenUsageResponse;
       const { data, mimeType, inlineData: base64 } = image;
-      this.originalImageMessage.emit(
+      this.sessionInitialized.emit(
         {
           blob: { data, mimeType },
           firstMessage: {

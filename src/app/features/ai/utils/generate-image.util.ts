@@ -1,5 +1,6 @@
-import { EnhancedGenerateContentResponse, FinishReason, GenerateContentResult, GenerativeModel, Part, TemplateGenerativeModel } from 'firebase/ai';
-import { ImageTokenUsage } from '../types/image-response.type';
+import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
+import { Base64ImageOptions, TemplateImageOptions } from '@/features/ai/types/model-image-options.type';
+import { EnhancedGenerateContentResponse, FinishReason, GenerateContentResult } from 'firebase/ai';
 import { getBase64EncodedString } from './inline-image-data.util';
 import { constructCitations, getTokenUsage } from './reponse-metadata.util';
 
@@ -58,12 +59,12 @@ function throwResponseError(response: EnhancedGenerateContentResponse) {
   });
 }
 
-export async function getBase64Images(model: GenerativeModel, parts: Array<string | Part>): Promise<ImageTokenUsage> {
+export async function getBase64Images({ model, parts }: Base64ImageOptions): Promise<ImageTokenUsage> {
   const result = await model.generateContent(parts);
   return processImageGeneratedContent(result);
 }
 
-export async function getTemplateBase64Images(model: TemplateGenerativeModel, templateId: string, templateVariables: Record<string, unknown>): Promise<ImageTokenUsage> {
+export async function getTemplateBase64Images({ model, templateId, templateVariables }: TemplateImageOptions): Promise<ImageTokenUsage> {
   const result = await model.generateContent(templateId, templateVariables);
   return processImageGeneratedContent(result);
 }

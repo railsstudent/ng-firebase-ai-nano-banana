@@ -32,6 +32,16 @@ export default class VisualStoryComponent {
   genmedia = viewChild<GenMediaComponent>('genmedia');
   images = computed(() => this.genmedia()?.imagesWithTokenUsage().images.map((item) => item));
 
+  genMediaInput = this.imageFacade.genMediaInput;
+  visualStoryForm = this.imageFacade.visualStoryForm;
+
   isLoading = computed(() => this.genmedia()?.isLoading() || false);
   error = computed(() => this.genmedia()?.error() || '');
+  type = computed(() => this.visualStoryForm().type);
+  userPrompt = computed(() => this.visualStoryForm().userPrompt);
+  promptHistory = computed(() => this.imageFacade.promptHistory());
+
+  handleVisualStoryArgs(stringifyPromptArgs: string) {
+    this.imageFacade.handleVisualStoryArgs(stringifyPromptArgs)
+  }
 }

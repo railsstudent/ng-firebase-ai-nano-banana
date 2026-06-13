@@ -1,7 +1,7 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
 import { VideoGenerationResponse } from '@/features/ai/types/video.type';
+import { GenerateVideoFromFramesParams } from '@/features/visual-story/types/generate-video-from-frames-params.type';
 import { GenVideoService } from '@/shared/ui/gen-media/services/gen-video.service';
-import { ImageResponse } from '@/features/ai/types/image-response.type';
+import { computed, inject, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class VisualStoryVideoFacade {
 
   readonly videoUrl = computed(() => this.videoResponse().url || '');
 
-  async generateVideoFromFrames(userPrompt: string, firstImage: ImageResponse | undefined, lastImage: ImageResponse | undefined): Promise<void> {
+  async generateVideoFromFrames({ userPrompt, firstImage, lastImage }: GenerateVideoFromFramesParams): Promise<void> {
     try {
       this.isLoading.set(true);
       this.videoResponse.set({ uri: '', url: '', mimeType: '' });
@@ -53,7 +53,7 @@ export class VisualStoryVideoFacade {
         this.error.set('');
         this.isLoading.set(true);
         this.loadingText.set('Extending your video...');
-        
+
         const result = await this.genVideoService.extendInterpolatedVideo(
           trimmedUserPrompt,
           this.extendVideoCounter(),

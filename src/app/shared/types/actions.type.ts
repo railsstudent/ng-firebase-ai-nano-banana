@@ -1,1 +1,1 @@
-export type ImageActions = 'downloadImage' | 'clearImage' | 'generateVideo';
+export type ImageActions =  'clearImage' | 'generateVideo';

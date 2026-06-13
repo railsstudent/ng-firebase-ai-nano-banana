@@ -1,7 +1,6 @@
 import { FeatureService } from '@/core/feature/services/feature.service';
 import { CardHeaderComponent } from '@/shared/ui/card/card-header/card-header.component';
 import { CardComponent } from '@/shared/ui/card/card.component';
-import { GenMediaService } from '@/shared/ui/gen-media/services/gen-media.service';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { GenerativeContentBlob } from 'firebase/ai';
 import { DEFAULT_BASE64_INLINE_DATA } from './constants/base64-inline-data.const';
@@ -27,7 +26,6 @@ import { ChatMessage, OriginalImageMessage } from './types/chat-message.type';
 export default class ConversationEditComponent {
   private readonly conversationEditService = inject(ConversationEditService);
   private readonly featureService = inject(FeatureService);
-  private readonly genMediaService = inject(GenMediaService);
 
   feature = computed(() => this.featureService.getFeatureDetails('conversation'));
 
@@ -81,10 +79,6 @@ export default class ConversationEditComponent {
         this.messages.set([]);
       }
       this.isEditing.update((prev) => !prev);
-  }
-
-  handleDownloadImage(event: { base64: string, filename: string }) {
-    this.genMediaService.downloadImage(event.filename, event.base64);
   }
 
   handleOriginalImage(originalImageMessage: OriginalImageMessage) {

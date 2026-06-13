@@ -110,8 +110,7 @@ export class GenMediaComponent {
         this.genVideoService.clearVideo();
         this.isLoading.set(false);
       }
-    } else if (action === 'downloadImage') {
-      this.downloadImageById(id);
+
     } else if (action === 'generateVideo') {
       await this.generateVideoById(id);
     }
@@ -119,17 +118,6 @@ export class GenMediaComponent {
 
   private findImageTokenUsage(id: number) {
     return this.imagesWithTokenUsage()?.images?.find((item) => item?.id === id);
-  }
-
-  private downloadImageById(id: number) {
-    this.downloadImageError.set('');
-    const generatedImage = this.findImageTokenUsage(id);
-    if (!generatedImage?.inlineData) {
-      this.downloadImageError.set('No image to download.');
-      return;
-    }
-    const filename = this.trimmedUserPrompt() || 'generated_image';
-    this.genMediaService.downloadImage(filename, generatedImage?.inlineData);
   }
 
   private async generateVideoById(id: number) {

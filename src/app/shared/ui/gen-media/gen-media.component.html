@@ -10,6 +10,7 @@
 } @else {
   <app-image-viewers
     [imagesWithTokenUsage]="imagesWithTokenUsage()"
+    [filename]="trimmedUserPrompt() || 'generated_image'"
     (handleMediaAction)="handleAction($event)"
   />
   <app-video-player

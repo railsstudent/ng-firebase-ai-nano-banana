@@ -2,7 +2,7 @@ import { GenerateFromPrompts, GenerateFromTemplate, GenerateImageParam } from '@
 import { Metadata, MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { TokenUsage } from '@/features/ai/types/token-usage.type';
-import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { IMAGE_GENERATOR_TOKEN } from '../constants/image-generator.token';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
@@ -10,7 +10,6 @@ import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.cons
   providedIn: 'root'
 })
 export class GenMediaService {
-  private readonly document = inject(DOCUMENT);
   private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 
   #currentStep = signal(0);
@@ -21,25 +20,6 @@ export class GenMediaService {
 
   #imageGenerationError = signal('');
   imageGenerationError = this.#imageGenerationError.asReadonly();
-
-  downloadImage(filename: string, imageUrl: string): void {
-      if (!imageUrl) {
-        return;
-      }
-
-      const link = this.document.createElement('a');
-      link.href = imageUrl;
-
-      // Create a filename from the prompt
-      const safeFilename = filename
-        .replace(/[^a-z0-9]/gi, '_')
-        .toLowerCase().substring(0, 50);
-
-      link.download = `${safeFilename}.png`;
-      this.document.body.appendChild(link);
-      link.click();
-      this.document.body.removeChild(link);
-  }
 
   private async generateImage(param: GenerateImageParam, step = 0): Promise<ImageTokenUsage | undefined> {
     this.#currentStep.set(step);

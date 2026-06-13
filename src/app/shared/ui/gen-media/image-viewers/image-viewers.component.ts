@@ -18,6 +18,7 @@ import { ThoughtSummaryComponent } from './thought-summary/thought-summary.compo
       <app-image-viewer class="block mt-4"
         [url]="image.inlineData"
         [id]="image.id"
+        [filename]="filename()"
         (imageAction)="handleActions($event)"
       />
     }
@@ -32,6 +33,7 @@ import { ThoughtSummaryComponent } from './thought-summary/thought-summary.compo
 })
 export class ImageViewersComponent {
   imagesWithTokenUsage = input.required<ImagesWithTokenUsage>();
+  filename = input('generated_image');
 
   handleMediaAction = output<{ action: string, id: number }>();
 

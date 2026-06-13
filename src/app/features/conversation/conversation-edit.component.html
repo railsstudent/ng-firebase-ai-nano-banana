@@ -25,7 +25,6 @@
       class="flex-grow p-6 space-y-6 overflow-y-auto"
       [messages]="messages()"
       [isLoading]="isLoading()"
-      (downloadImage)="handleDownloadImage($event)"
     />
     <app-conversation-input-form
       [pauseSendPrompt]="!isEditing() || isLoading()"

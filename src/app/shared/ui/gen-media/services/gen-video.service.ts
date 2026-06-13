@@ -58,6 +58,9 @@ export class GenVideoService {
 
   async extendVideo(prompt: string): Promise<void> {
     try {
+      this.videoError.set('');
+      this.isGeneratingVideo.set(true);
+
       const result = await this.extendInterpolatedVideo(
         prompt,
         this.#extendVideoCounter(),
@@ -85,9 +88,7 @@ export class GenVideoService {
   async extendInterpolatedVideo(
     prompt: string,
     counter: number,
-    customVideo: Pick<VideoGenerationResponse, 'uri' | 'mimeType'>,
-    generatingSignal?: WritableSignal<boolean>,
-    error?: WritableSignal<string>
+    customVideo: Pick<VideoGenerationResponse, 'uri' | 'mimeType'>
   ) {
     const { uri, mimeType } = customVideo;
 
@@ -105,12 +106,7 @@ export class GenVideoService {
       return null;
     }
 
-    const actualErrorSignal = error || this.videoError;
-    const actualGeneratingSignal = generatingSignal || this.isGeneratingVideo;
     try {
-      actualErrorSignal.set('');
-      actualGeneratingSignal.set(true);
-
       const extendVideoParams: ExtendVideoRequest = {
         prompt,
         video: { uri, mimeType },
@@ -120,8 +116,6 @@ export class GenVideoService {
     } catch (e) {
       console.error(e);
       throw e;
-    } finally {
-      actualGeneratingSignal.set(false);
     }
   }
 }

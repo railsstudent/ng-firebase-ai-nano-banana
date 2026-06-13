@@ -2,9 +2,8 @@ import { ImageResponse } from '@/features/ai/types/image-response.type';
 import { ErrorDisplayComponent } from '@/shared/ui/error-display/error-display.component';
 import { VideoPlayerComponent } from '@/shared/ui/gen-media/video-player/video-player.component';
 import { LoaderComponent } from '@/shared/ui/loader/loader.component';
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
-import { VisualStoryService } from '../services/visual-story.service';
-import { VideoGenerationResponse } from '@/features/ai/types/video.type';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { VisualStoryVideoFacade } from '../services/visual-story-video.facade';
 
 @Component({
   selector: 'app-visual-story-video',
@@ -17,17 +16,17 @@ import { VideoGenerationResponse } from '@/features/ai/types/video.type';
     @if (canGenerateVideoFromFirstLastFrames()) {
       <button
         type="button"
-        (click)="generateVideoFromFrames()"
+        (click)="videoFacade.generateVideoFromFrames(userPrompt(), firstImage(), lastImage())"
         class="px-6 py-3 mr-4 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition duration-200">
           Interpolate video
       </button>
 
-      <app-error-display [error]="error()" />
-      @if (isLoading()) {
-        <app-loader [loadingText]="loadingText()" />
-      } @else if (videoUrl(); as videoUrl) {
+      <app-error-display [error]="videoFacade.error()" />
+      @if (videoFacade.isLoading()) {
+        <app-loader [loadingText]="videoFacade.loadingText()" />
+      } @else if (videoFacade.videoUrl(); as videoUrl) {
         <app-video-player class="block" [videoUrl]="videoUrl"
-          (extendVideo)="extendInterpolatedVideo()"
+          (extendVideo)="videoFacade.extendInterpolatedVideo(userPrompt())"
         />
       }
     }
@@ -35,18 +34,11 @@ import { VideoGenerationResponse } from '@/features/ai/types/video.type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisualStoryVideoComponent {
-  private readonly visualStoryService = inject(VisualStoryService);
+  readonly videoFacade = inject(VisualStoryVideoFacade);
 
   images = input<ImageResponse[] | undefined>(undefined);
   userPrompt = input.required<string>();
 
-  isLoading = signal(false);
-  videoResponse = signal<VideoGenerationResponse>({ uri: '', mimeType: '', url: '' });
-  error = signal('');
-  extendVideoCounter = signal(0);
-  loadingText = signal('Interpolating your video...');
-
-  videoUrl = computed(() => this.videoResponse().url || '');
   firstImage = computed(() => this.images()?.[0]);
   lastImage = computed(() => {
     const numImages = this.images()?.length || 0;
@@ -54,65 +46,10 @@ export default class VisualStoryVideoComponent {
   });
 
   canGenerateVideoFromFirstLastFrames = computed(() => {
-    const firstImage = this.firstImage();
-    const lastImage = this.lastImage();
-    const hasFirstImage = !!firstImage?.data && !!firstImage?.mimeType;
-    const hasLastImage = !!lastImage?.data && !!lastImage?.mimeType;
+    const firstImg = this.firstImage();
+    const lastImg = this.lastImage();
+    const hasFirstImage = !!firstImg?.data && !!firstImg?.mimeType;
+    const hasLastImage = !!lastImg?.data && !!lastImg?.mimeType;
     return hasFirstImage && hasLastImage;
   });
-
-  async generateVideoFromFrames(): Promise<void> {
-    try {
-      this.isLoading.set(true);
-      this.videoResponse.set({ uri: '', url: '', mimeType: '' });
-      this.error.set('');
-
-      if (!this.canGenerateVideoFromFirstLastFrames()) {
-        return;
-      }
-
-      const { data: firstImageData, mimeType: firstImageMimeType } = this.firstImage() || { data: '', mimeType: '' };
-      const { data: lastImageData, mimeType: lastImageMimeType } = this.lastImage() || { data: '', mimeType: '' };
-      const result = await this.visualStoryService.interpolateVideo({
-        prompt: this.userPrompt(),
-        imageBytes: firstImageData,
-        mimeType: firstImageMimeType,
-        lastFrameImageBytes: lastImageData,
-        lastFrameMimeType: lastImageMimeType,
-      });
-      this.videoResponse.set(result);
-    } catch (e) {
-      const strError = e instanceof Error ? e.message : `Error in interpolating video: ${e}`
-      this.error.set(strError);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
-  async extendInterpolatedVideo() {
-    try {
-      const trimmedUserPrompt = this.userPrompt().trim();
-      if (trimmedUserPrompt) {
-        this.loadingText.set('Extending your video...');
-        const result = await this.visualStoryService.extendInterpolatedVideo(
-          trimmedUserPrompt,
-          this.extendVideoCounter(),
-          this.videoResponse(),
-          this.isLoading,
-          this.error
-        );
-
-        if (result){
-          this.videoResponse.set(result);
-          this.extendVideoCounter.update(count => count + 1);
-          console.log(`Video extended successfully. Current extension count: ${this.extendVideoCounter()}`);
-        }
-      }
-    } catch (e) {
-      const strError = e instanceof Error ? e.message : `Error in extending video: ${e}`
-      this.error.set(strError);
-    } finally {
-      this.loadingText.set('Interpolating your video...');
-    }
-  }
 }

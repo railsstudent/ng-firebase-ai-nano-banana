@@ -4,17 +4,18 @@
   <div class="w-full max-w-2xl mx-auto">
     <app-visual-story-form
       [isLoading]="isLoading()"
-      [(visualStoryModel)]="visualStoryModel"
-      (generate)="handleGenerate()"
+      [visualStoryModel]="imageFacade.visualStoryForm()"
+      (visualStoryModelChange)="imageFacade.visualStoryForm.set($event)"
+      (generate)="imageFacade.generateImages()"
     >
       <span loading-text>{{ feature.loadingText }}</span>
       <span button-text>{{ feature.buttonText }}</span>
     </app-visual-story-form>
 
     <app-prompt-history
-      [history]="promptHistory()"
-      (promptSelected)="handleVisualStoryArgs($event)"
-      (historyCleared)="onClearHistory()"
+      [history]="imageFacade.promptHistory()"
+      (promptSelected)="imageFacade.handleVisualStoryArgs($event)"
+      (historyCleared)="imageFacade.clearHistory()"
     />
   </div>
 
@@ -23,15 +24,15 @@
   <app-gen-media
     class="block mb-2"
     [loadingText]="feature.loadingText"
-    [genMediaInput]="genMediaInput()"
+    [genMediaInput]="imageFacade.genMediaInput()"
     [showCurrentStep]="true"
     #genmedia
   >
-    <p class="text-sm">Your generated {{ visualStoryModel().type }} will appear here. Please be patient.</p>
+    <p class="text-sm">Your generated {{ imageFacade.visualStoryForm().type }} will appear here. Please be patient.</p>
   </app-gen-media>
 
   <app-visual-story-video
-    [userPrompt]="this.visualStoryModel().userPrompt"
-    [images]="this.images()"
+    [userPrompt]="imageFacade.visualStoryForm().userPrompt"
+    [images]="images()"
   />
 </app-card>

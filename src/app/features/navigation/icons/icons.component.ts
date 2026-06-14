@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-miniature-store-icon',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="8" width="18" height="13" rx="2" ry="2" />
@@ -16,6 +17,7 @@ export class MiniatureStoreIconComponent {}
 
 @Component({
   selector: 'app-miniature-store-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 2h6a1 1 0 011 1v3a1 1 0 01-1 1v10a3 3 0 11-6 0V7a1 1 0 01-1-1V3a1 1 0 011-1z" />
@@ -27,6 +29,7 @@ export class GlassBottleIconComponent {}
 
 @Component({
   selector: 'app-cube-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -39,6 +42,7 @@ export class CubeIconComponent {}
 
 @Component({
   selector: 'app-history-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
@@ -49,6 +53,7 @@ export class HistoryIconComponent {}
 
 @Component({
   selector: 'app-sparkles-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M19 3v4M17 5h4M14 11l-1.5-1.5L11 11l1.5 1.5L14 11zM10 21l-1.5-1.5L7 21l1.5 1.5L10 21zM21 14l-1.5-1.5L18 14l1.5 1.5L21 14zM3 14l1.5-1.5L6 14l-1.5 1.5L3 14z" />
@@ -59,6 +64,7 @@ export class SparklesIconComponent {}
 
 @Component({
   selector: 'app-home-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -70,6 +76,7 @@ export class HomeIconComponent {}
 
 @Component({
   selector: 'app-magic-wand-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M14 12L5 3m0 9l9-9M3 21l6-6m-3 0l6-6"/>
@@ -80,6 +87,7 @@ export class MagicWandIconComponent {}
 
 @Component({
   selector: 'app-map-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="4 6 10 3 14 6 20 3 20 18 14 21 10 18 4 21 4 6" />
@@ -93,6 +101,7 @@ export class MapIconComponent {}
 
 @Component({
   selector: 'app-message-circle-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
@@ -103,6 +112,7 @@ export class MessageCircleIconComponent {}
 
 @Component({
   selector: 'app-scissors-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="7" cy="7" r="3"></circle>
@@ -116,6 +126,7 @@ export class ScissorsIconComponent {}
 
 @Component({
   selector: 'app-photo-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
@@ -129,6 +140,7 @@ export class PhotoIconComponent {}
 
 @Component({
   selector: 'app-chevron-down-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
@@ -139,6 +151,7 @@ export class ChevronDownIconComponent {}
 
 @Component({
   selector: 'app-dome-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a6 6 0 1 1-9-5.196" />
@@ -152,6 +165,7 @@ export class DomeIconComponent {}
 
 @Component({
   selector: 'app-chat-icon',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"></path>

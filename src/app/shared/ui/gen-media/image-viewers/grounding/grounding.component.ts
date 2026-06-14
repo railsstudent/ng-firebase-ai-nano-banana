@@ -16,7 +16,12 @@ export class GroundingComponent {
 
   safeRenderedContents = computed(() => {
     const unsafeContents = this.groundingMetadata()?.renderedContents || [];
-    return unsafeContents.map((unsafeContent) => this.sanitizer.bypassSecurityTrustHtml(unsafeContent));
+    return unsafeContents.map((unsafeContent) => {
+      const cleaned = unsafeContent
+        .replace(/class=["']container["']/g, 'class="google-container"')
+        .replace(/\.container\b/g, '.google-container');
+      this.sanitizer.bypassSecurityTrustHtml(cleaned);
+    });
   });
 
   constructor() {

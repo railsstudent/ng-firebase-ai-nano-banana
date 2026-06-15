@@ -2,10 +2,11 @@ import { ConfigService } from '@/features/ai/services/config.service';
 import { NavigationComponent } from '@/features/navigation/navigation.component';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FooterComponent } from './shared/ui/footer/footer.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavigationComponent],
+  imports: [RouterOutlet, NavigationComponent, FooterComponent],
   template: `
 <div class="min-h-screen bg-gray-900 text-white flex flex-col">
 
@@ -17,14 +18,8 @@ import { RouterOutlet } from '@angular/router';
       <router-outlet />
     </main>
   }
-
-  <footer class="bg-gray-800 mt-auto">
-    <div class="container mx-auto px-6 py-4 text-center text-gray-400">
-      <p>&copy; 2025 Photo Editing App. Built with Gemini, Angular, Firebase AI Logic & Tailwind.</p>
-    </div>
-  </footer>
-</div>
-  `,
+  <app-footer />
+</div>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {

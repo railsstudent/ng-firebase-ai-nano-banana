@@ -45,7 +45,7 @@ export function getBase64EncodedString({mimeType, data}: GenerativeContentBlob) 
   return `data:${mimeType};base64,${data}`;
 }
 
-export async function makeTemplateVaraibles({ imageFiles, aspectRatio, resolution }: GenerateImageParam) {
+export async function makeTemplateVariables({ imageFiles, aspectRatio, resolution }: GenerateImageParam) {
   const imageParts = await resolveImageParts(imageFiles);
   const inlineImages = imageParts.map(part => part.inlineData);
   return {

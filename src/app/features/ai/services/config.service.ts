@@ -81,7 +81,8 @@ export class ConfigService  {
         const thinkingLevel = ThinkingLevel[rawThinkingLevel as keyof typeof ThinkingLevel];
 
         const thinkingConfig: ThinkingConfig = {
-          thinkingLevel
+          thinkingLevel,
+          includeThoughts: true,
         };
 
         return {

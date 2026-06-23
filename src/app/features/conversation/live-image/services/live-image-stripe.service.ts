@@ -1,8 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Service, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LiveImageStripeService {
   #newSnapshot = signal<string | null>(null);
   newSnapshot = this.#newSnapshot.asReadonly();

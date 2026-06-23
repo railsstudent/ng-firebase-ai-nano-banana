@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ChatSession, getGenerativeModel, ImageConfigAspectRatio, ImageConfigImageSize, ModelParams } from 'firebase/ai';
 import { VERTEX_AI_BACKEND } from '../constants/firebase.constant';
 import { GenerateImageParam } from '../types/generate-image-param.type';
@@ -7,9 +7,7 @@ import { getBase64Images } from '../utils/generate-image.util';
 import { resolveImageParts } from '../utils/inline-image-data.util';
 import { ConfigService } from './config.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class FirebaseService  {
     #configService = inject(ConfigService);
     #ai = inject(VERTEX_AI_BACKEND);

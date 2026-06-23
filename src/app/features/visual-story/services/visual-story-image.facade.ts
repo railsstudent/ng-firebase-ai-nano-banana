@@ -1,13 +1,11 @@
 import { PromptHistoryService } from '@/shared/domain/prompt-history/prompt-history.service';
 import { GenMediaInput } from '@/shared/ui/gen-media/types/gen-media-input.type';
-import { inject, Injectable, linkedSignal, signal } from '@angular/core';
+import { inject, Injectable, linkedSignal, Service, signal } from '@angular/core';
 import { buildStepPrompts } from '@/features/visual-story/utils/visual-story-prompt.util';
 import { DEFAULT_VISUAL_STORY_FORM_VALUES } from '@/features/visual-story/visual-story-form/constants/visual-story-form-values.const';
 import { VisualStoryForm, VisualStoryStorage } from '@/features/visual-story/visual-story-form/types/visual-story-form.type';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class VisualStoryImageFacade {
   private readonly promptHistoryService = inject(PromptHistoryService);
 

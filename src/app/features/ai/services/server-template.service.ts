@@ -3,11 +3,9 @@ import { GenerateImageParam } from '@/features/ai/types/generate-image-param.typ
 import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { getTemplateBase64Images } from '@/features/ai/utils/generate-image.util';
 import { makeTemplateVariables } from '@/features/ai/utils/inline-image-data.util';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ServerTemplateService  {
     private readonly serverTemplateModel = inject(SERVER_TEMPLATE_MODEL);
 

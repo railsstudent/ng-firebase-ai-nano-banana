@@ -2,13 +2,11 @@ import { GenerateFromPrompts, GenerateFromTemplate, GenerateImageParam } from '@
 import { Metadata, MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { ImagesWithTokenUsage, ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { TokenUsage } from '@/features/ai/types/token-usage.type';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { IMAGE_GENERATOR_TOKEN } from '../constants/image-generator.token';
 import { DEFAULT_IMAGES_TOKEN_USAGE } from '../constants/images-token-usage.const';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class GenMediaService {
   private readonly imageGenerator = inject(IMAGE_GENERATOR_TOKEN);
 

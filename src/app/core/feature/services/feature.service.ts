@@ -1,13 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { DEFAULT_FEATURE, FEATURE_NESTED_LIST } from '../constants/features.const';
 import { FeatureDetails } from '../types/feature-details.type';
 import { buildNavigationBars } from '../util/navbar.util';
 
 const navbar = buildNavigationBars();
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class FeatureService {
   getNavBars() {
     return navbar;

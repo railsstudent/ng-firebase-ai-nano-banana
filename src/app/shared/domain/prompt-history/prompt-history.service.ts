@@ -1,11 +1,9 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Service, signal, WritableSignal } from '@angular/core';
 
 const MAX_HISTORY_SIZE = 5;
 const STORAGE_PREFIX = 'promptHistory_';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PromptHistoryService {
   private historySignals = new Map<string, WritableSignal<string[]>>();
 

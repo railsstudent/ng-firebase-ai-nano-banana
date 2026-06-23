@@ -1,11 +1,9 @@
 import { VideoGenerationResponse } from '@/features/ai/types/video.type';
 import { GenerateVideoFromFramesParams } from '@/features/visual-story/types/generate-video-from-frames-params.type';
 import { GenVideoService } from '@/shared/ui/gen-media/services/gen-video.service';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class VisualStoryVideoFacade {
   private readonly genVideoService = inject(GenVideoService);
 

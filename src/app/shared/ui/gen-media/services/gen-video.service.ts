@@ -1,12 +1,10 @@
 import { ConfigService } from '@/features/ai/services/config.service';
 import { VeoService } from '@/features/ai/services/veo.service';
 import { ExtendVideoRequest, GenerateVideoFromFramesRequest, GenerateVideoRequest, VideoGenerationResponse } from '@/features/ai/types/video.type';
-import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
 import { getValue } from 'firebase/remote-config';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class GenVideoService {
   private readonly veoService = inject(VeoService);
   private readonly configService = inject(ConfigService);

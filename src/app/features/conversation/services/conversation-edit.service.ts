@@ -1,12 +1,10 @@
 import { FirebaseService } from '@/features/ai/services/firebase.service';
 import { getBase64EncodedString } from '@/features/ai/utils/inline-image-data.util';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { ChatSession, GenerativeContentBlob } from 'firebase/ai';
 import { Base64InlineData } from '../types/base64-inline-data.type';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ConversationEditService {
   chat = signal<ChatSession | undefined>(undefined);
 

@@ -1,12 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { httpsCallable } from 'firebase/functions';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 import { CallableNames, DownloadVideoResponse, GenerateVideoRequest, VideoGenerationResponse } from '../types/video.type';
 import { ConfigService } from './config.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class VeoService {
   private readonly storage = getStorage();
   private readonly configService = inject(ConfigService);

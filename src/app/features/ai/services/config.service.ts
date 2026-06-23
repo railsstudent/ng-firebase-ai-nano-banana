@@ -1,7 +1,7 @@
 import remoteConfigDefaults from '@/firebase/remote_config_defaults.json';
 import config from '@/public/config.json';
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, isDevMode } from '@angular/core';
+import { inject, isDevMode, Service } from '@angular/core';
 import { ThinkingConfig, ThinkingLevel, Tool } from 'firebase/ai';
 import { FirebaseApp, initializeApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
@@ -10,9 +10,7 @@ import { fetchAndActivate, getRemoteConfig, getValue, RemoteConfig } from 'fireb
 import { catchError, lastValueFrom, throwError } from 'rxjs';
 import { FirebaseConfigResponse } from '../types/firebase-config.type';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ConfigService  {
     #appInstance: FirebaseApp | null = null;
     #remoteConfig: RemoteConfig | null = null;

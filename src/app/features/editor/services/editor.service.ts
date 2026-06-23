@@ -1,9 +1,7 @@
-import { Injectable, Signal, inject, linkedSignal } from '@angular/core';
 import { PromptHistoryService } from '@/shared/domain/prompt-history/prompt-history.service';
+import { Service, Signal, inject, linkedSignal } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class EditorService {
   private readonly promptHistoryService = inject(PromptHistoryService);
 

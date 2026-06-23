@@ -1,10 +1,8 @@
 import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
 import { TokenUsage } from '@/features/ai/types/token-usage.type';
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class TokenUsageService {
   calculateTokenUage(imageTokenUsages: ImageTokenUsage[]) {
 

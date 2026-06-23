@@ -1,10 +1,8 @@
 import { MetadataGroup } from '@/features/ai/types/grounding-metadata.type';
 import { ImageTokenUsage } from '@/features/ai/types/image-response.type';
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class GroundingMetadataService {
   mergeGroundingMetadata(imageTokenUsages: ImageTokenUsage[]) {
     const defaultMetadata: MetadataGroup = {
